@@ -3,7 +3,7 @@ extends TileMap
 var map = FastNoiseLite.new()
 var width = 70
 var height = 50
-var level = 0
+var level = 1
 @onready var player = get_parent().get_child(1)
 
 # Called when the node enters the scene tree for the first time.

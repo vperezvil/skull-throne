@@ -21,6 +21,11 @@ window/size/viewport_width=1920
 window/size/viewport_height=1080
 window/stretch/mode="canvas_items"
 
+[layer_names]
+
+2d_render/layer_1="World"
+2d_render/layer_2="Player"
+
 [physics]
 
 common/max_physics_steps_per_frame=26
