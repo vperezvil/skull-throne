@@ -45,9 +45,7 @@ func generate_map():
 		tilemap.print_room_border(room_position, room_size)
 
 		# Place room tiles
-		for x in range(room_size.x):
-			for y in range(room_size.y):
-				tilemap.generate_chunk(room_position + Vector2(x, y), room_size.x, room_size.y)
+		tilemap.generate_chunk(room_position, room_size)
 				
 	# Connect rooms with corridors
 	#for i in range(rooms.size() - 1):
