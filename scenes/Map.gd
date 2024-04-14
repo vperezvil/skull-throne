@@ -47,6 +47,6 @@ func print_room_border(room_position, room_size):
 
 	# Print right border
 	for y in range(room_position.y, room_bottom):
-		var floor_map = map.get_noise_2d(room_right, y) * 10
-		if !get_used_cells(0).has(Vector2i(room_right, y)):
-			set_cell(0, Vector2i(room_right, y), wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+		var floor_map = map.get_noise_2d(room_right - 1, y) * 10
+		if !get_used_cells(0).has(Vector2i(room_right - 1, y)):
+			set_cell(0, Vector2i(room_right - 1, y), wall_level, Vector2i(round((floor_map + 10) / 5), 0))
