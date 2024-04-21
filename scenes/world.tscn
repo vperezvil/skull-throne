@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bo28putf8abx6"]
+[gd_scene load_steps=12 format=3 uid="uid://bo28putf8abx6"]
 
 [ext_resource type="Script" path="res://scenes/world.gd" id="1_6dbgp"]
 [ext_resource type="Texture2D" uid="uid://daoantq6uxnc7" path="res://assets/map/floor/grass/grass_atlas_1.png" id="1_j8ert"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dobmn3f1283i6" path="res://assets/map/floor/cobble_atlas_1.png" id="2_jfbwa"]
 [ext_resource type="Texture2D" uid="uid://btocr5dtn0m3l" path="res://assets/map/wall/grass_wall.png" id="3_6ommp"]
 [ext_resource type="Script" path="res://scenes/Map.gd" id="3_wvnbh"]
+[ext_resource type="PackedScene" uid="uid://cpq13kxejjodc" path="res://scripts/ui.tscn" id="7_16ak5"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o0l37"]
 texture = ExtResource("1_j8ert")
@@ -138,3 +139,7 @@ script = ExtResource("3_wvnbh")
 
 [node name="TinyBones" parent="." instance=ExtResource("2_b0oxb")]
 position = Vector2(541, 346)
+
+[node name="ui" parent="." instance=ExtResource("7_16ak5")]
+
+[connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]

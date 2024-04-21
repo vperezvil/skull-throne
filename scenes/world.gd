@@ -3,13 +3,20 @@ extends Node2D
 var tilemap = null
 var player = null
 var boss_room_position = Vector2()
-
+var game_state
+enum GameState {IDLE, RUNNING, ENDED}
+@onready var ui = $ui
+signal map_generated
 var rooms = []
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	tilemap = $Map
 	player = $TinyBones
+	player.visible = false
+	ui.game_started.connect(game_started)
+	
 
+func game_started():
 	# Generate the map layout
 	generate_map()
 
@@ -18,12 +25,11 @@ func _ready():
 		var shape = ShapeCast2D.new() 
 		shape.shape = player.get_child(0)
 		if !shape.is_colliding():
-			player.set_position(r.end / 2)
-
+			player.set_position(r.get_center())
+	player.visible = true
 	# Place boss room
 	#place_boss_room()
-
-
+	map_generated.emit()
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass

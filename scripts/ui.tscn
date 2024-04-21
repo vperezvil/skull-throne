@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://cpq13kxejjodc"]
+
+[ext_resource type="Script" path="res://UI.gd" id="1_1ysiq"]
+
+[node name="UI" type="CanvasLayer"]
+script = ExtResource("1_1ysiq")
+
+[node name="in-game" type="Node2D" parent="."]
+
+[node name="main-menu" type="Node2D" parent="."]
+
+[node name="Play" type="Button" parent="main-menu"]
+offset_left = 829.0
+offset_top = 451.0
+offset_right = 949.0
+offset_bottom = 505.0
+text = "Start"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="main-menu"]
+offset_left = 760.0
+offset_top = 285.0
+offset_right = 1034.0
+offset_bottom = 414.0
+theme_override_font_sizes/normal_font_size = 45
+text = "Skull Throne"
+
+[connection signal="pressed" from="main-menu/Play" to="." method="_on_play_pressed"]
