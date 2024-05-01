@@ -138,7 +138,7 @@ format = 2
 script = ExtResource("3_wvnbh")
 
 [node name="TinyBones" parent="." instance=ExtResource("2_b0oxb")]
-position = Vector2(541, 346)
+position = Vector2(-1, 0)
 
 [node name="ui" parent="." instance=ExtResource("7_16ak5")]
 

@@ -20,9 +20,10 @@ func generate_chunk(room_position, room_size):
 	var tile_pos = local_to_map(room_position)
 	for x in range(room_size.x):
 		for y in range(room_size.y):
-			if !get_used_cells(0).has(Vector2i(room_position.x + x, room_position.y + y)):
+			var coord = Vector2i(room_position.x+ x, room_position.y + y)
+			if !get_used_cells(0).has(coord):
 				var floor_map = map.get_noise_2d(room_position.x + x, room_position.y + y)*10
-				set_cell(0,Vector2i(room_position.x+ x, room_position.y + y),level,Vector2i(round((floor_map+10)/1.3),0))
+				set_cell(0,coord,level,Vector2i(round((floor_map+10)/1.3),0))
 
 # Assuming `room_position` is the top-left corner of the room and `room_size` is its size
 func print_room_border(room_position, room_size):
@@ -31,22 +32,28 @@ func print_room_border(room_position, room_size):
 
 	# Print top border
 	for x in range(room_position.x, room_right):
-		var floor_map = map.get_noise_2d(x, room_position.y) * 10
-		set_cell(0, Vector2i(x, room_position.y), wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+		var coord = Vector2i(x, room_position.y)
+		if !get_used_cells(0).has(coord):
+			var floor_map = map.get_noise_2d(x, room_position.y) * 10
+			set_cell(0, coord, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
 
 	# Print bottom border
 	for x in range(room_position.x, room_right):
-		var floor_map = map.get_noise_2d(x, room_bottom) * 10
-		set_cell(0, Vector2i(x, room_bottom), wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+		var coord = Vector2i(x, room_bottom)
+		if !get_used_cells(0).has(coord):
+			var floor_map = map.get_noise_2d(x, room_bottom) * 10
+			set_cell(0, coord, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
 
 	# Print left border
 	for y in range(room_position.y, room_bottom):
-		var floor_map = map.get_noise_2d(room_position.x, y) * 10
-		if !get_used_cells(0).has(Vector2i(room_position.x, y)):
-			set_cell(0, Vector2i(room_position.x, y), wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+		var coord = Vector2i(room_position.x, y)
+		if !get_used_cells(0).has(coord):
+			var floor_map = map.get_noise_2d(room_position.x, y) * 10
+			set_cell(0, coord, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
 
 	# Print right border
 	for y in range(room_position.y, room_bottom):
-		var floor_map = map.get_noise_2d(room_right - 1, y) * 10
-		if !get_used_cells(0).has(Vector2i(room_right - 1, y)):
-			set_cell(0, Vector2i(room_right - 1, y), wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+		var coord = Vector2i(room_right - 1, y)
+		if !get_used_cells(0).has(coord):
+			var floor_map = map.get_noise_2d(room_right - 1, y) * 10
+			set_cell(0, coord, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
