@@ -532,14 +532,14 @@ texture = ExtResource("1_e22ca")
 hframes = 9
 vframes = 4
 
-[node name="HeadRobeHood" type="Sprite2D" parent="."]
-texture = ExtResource("2_a005i")
-hframes = 9
-vframes = 4
-
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_j1alm")
 }
+
+[node name="HeadRobeHood" type="Sprite2D" parent="."]
+texture = ExtResource("2_a005i")
+hframes = 9
+vframes = 4
 
 [node name="Camera2D" type="Camera2D" parent="."]

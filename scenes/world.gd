@@ -1,18 +1,23 @@
 extends Node2D
 
 var tilemap = null
-var player = null
 var boss_room_position = Vector2()
 var game_state
+var room_min_size = 10
+var room_max_size = 20
+var num_rooms = 1
 enum GameState {IDLE, RUNNING, ENDED}
 @onready var ui = $ui
 signal map_generated
 var rooms = []
+var characters = []
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	tilemap = $Map
-	player = $TinyBones
-	player.visible = false
+	#Add characters
+	characters.append($TinyBones)
+	for character in characters:
+		character.visible = false
 	ui.game_started.connect(game_started)
 	
 
@@ -21,12 +26,7 @@ func game_started():
 	generate_map()
 
 	# Generate player spawn position
-	for r in rooms:
-		var shape = ShapeCast2D.new() 
-		shape.shape = player.get_child(0)
-		if !shape.is_colliding():
-			player.set_position(r.get_center())
-	player.visible = true
+	spawn_player()
 	# Place boss room
 	#place_boss_room()
 	map_generated.emit()
@@ -36,17 +36,12 @@ func _process(delta):
 	
 func generate_map():
 	var map_size = tilemap.get_used_rect().size
-	var room_min_size = 10
-	var room_max_size = 20
-	var num_rooms = 1
-
-
 	# Generate rooms
 	for r in range(num_rooms):
 		var room_size = Vector2(randi_range(room_min_size, room_max_size), randi_range(room_min_size, room_max_size))
 		var room_position = Vector2(randi_range(1, map_size.x - room_size.x - 1), randi_range(1, map_size.y - room_size.y - 1))
 		rooms.append(Rect2(room_position, room_size))
-
+		
 		# Place border tiles
 		tilemap.print_room_border(room_position, room_size)
 
@@ -59,6 +54,12 @@ func generate_map():
 		#var room_b_center = rooms[i + 1].position + rooms[i + 1].size / 2
 		#connect_rooms(room_a_center, room_b_center)
 
+func spawn_player():
+	# Randomly select a room or select a specific one
+	var starting_room = rooms[randi() % rooms.size()]
+	for character in characters:
+		character.spawn(starting_room, tilemap)
+		
 func connect_rooms(center_a, center_b):
 	var delta = center_b - center_a
 
