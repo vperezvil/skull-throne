@@ -12,9 +12,14 @@ signal map_generated
 var rooms = []
 var characters = []
 var path #AStar2D
+var starting_room
+var boss_room
+var boss
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	tilemap = $Map
+	boss = $Boss
+	boss.visible = false
 	#Add characters
 	characters.append($TinyBones)
 	for character in characters:
@@ -28,6 +33,7 @@ func game_started():
 
 	# Generate player spawn position
 	spawn_player()
+	spawn_boss()
 	# Place boss room
 	#place_boss_room()
 	map_generated.emit()
@@ -50,8 +56,7 @@ func generate_map():
 
 		# Place room tiles
 		tilemap.generate_chunk(candidate_room.position, candidate_room.size)
-	var nodes = rooms.duplicate()
-	path = find_mst(nodes)
+	path = find_mst()
 	var connections_visited = []
 	if path:
 		for p in path.get_point_ids():
@@ -64,9 +69,13 @@ func generate_map():
 
 func spawn_player():
 	# Randomly select a room or select a specific one
-	var starting_room = rooms[randi() % rooms.size()]
+	starting_room = rooms[randi() % rooms.size()]
 	for character in characters:
 		character.spawn(starting_room, tilemap)
+		
+func spawn_boss():
+	boss_room = find_boss_room()
+	boss.spawn(boss_room, tilemap)
 		
 func generate_room(map_size):
 	var room_size = Vector2(randi_range(room_min_size, room_max_size), randi_range(room_min_size, room_max_size))
@@ -79,7 +88,8 @@ func check_intersect_room(candidate_room):
 			return true
 	return false
 	
-func find_mst(nodes):
+func find_mst():
+	var nodes = rooms.duplicate()
 	#Prim's algorithmn
 	var path = AStar2D.new()
 	path.add_point(path.get_available_point_id(), nodes.pop_front().get_center())
@@ -111,3 +121,15 @@ func connect_rooms(center_a, center_b):
 	tilemap.draw_corridor(horizontal_start, horizontal_end)
 	tilemap.draw_corridor(vertical_start, vertical_end)
 	
+func find_boss_room():
+	var nodes = rooms.duplicate()
+	nodes.erase(starting_room)
+	var start_position = starting_room.get_center()
+	var max_p = null # Position of the node with max distance
+	var max_dist = 0 #Maximum distance
+	for p1_id in path.get_point_ids():
+		var p1 = path.get_point_position(p1_id)
+		if p1 != start_position and p1.distance_to(start_position)>max_dist:
+			max_dist = p1.distance_to(start_position)
+			max_p = p1
+	return max_p
