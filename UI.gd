@@ -1,8 +1,12 @@
 extends CanvasLayer
 
 signal game_started
-@onready var menu = $"main-menu"
+signal character_added
+signal character_removed
+@onready var main_menu = $"Main-menu"
+@onready var character_menu = $"Character-menu"
 # Called when the node enters the scene tree for the first time.
+
 func _ready():
 	pass # Replace with function body.
 
@@ -13,7 +17,30 @@ func _process(delta):
 
 
 func _on_play_pressed():
-	game_started.emit()
+	#game_started.emit()
+	main_menu.visible = false
+	character_menu.visible = true
 
 func _on_world_map_generated():
-	menu.visible = false
+	character_menu.visible = false
+
+func character_toggle(toggled_on,id):
+	if toggled_on:
+		character_added.emit(id)
+	else:
+		character_removed.emit(id)
+
+func _on_start_run_pressed():
+	game_started.emit()
+
+func _on_player_0_select_toggled(toggled_on):
+	character_toggle(toggled_on,0)
+
+func _on_player_1_select_toggled(toggled_on):
+	character_toggle(toggled_on,1)
+
+func _on_player_2_select_toggled(toggled_on):
+	character_toggle(toggled_on,2)
+
+func _on_player_3_select_toggled(toggled_on):
+	character_toggle(toggled_on,3)

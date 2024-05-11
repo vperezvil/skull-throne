@@ -1,27 +1,379 @@
-[gd_scene load_steps=2 format=3 uid="uid://cpq13kxejjodc"]
+[gd_scene load_steps=47 format=3 uid="uid://cpq13kxejjodc"]
 
 [ext_resource type="Script" path="res://UI.gd" id="1_1ysiq"]
+[ext_resource type="Script" path="res://scripts/Character-menu.gd" id="2_xgiog"]
+[ext_resource type="Texture2D" uid="uid://gqmnnu6na04v" path="res://assets/players/tinybones/BODY_skeleton.png" id="2_yki2a"]
+[ext_resource type="Texture2D" uid="uid://doja20t8asyxk" path="res://assets/accessories/HEAD_robe_hood.png" id="3_4knjl"]
+[ext_resource type="Texture2D" uid="uid://bh4tc5sw485ej" path="res://assets/players/beth/mage_f.png" id="3_dwamy"]
+[ext_resource type="Texture2D" uid="uid://cccsqjr0mtjkm" path="res://assets/players/dalf/wizard.png" id="4_vjq34"]
+[ext_resource type="Texture2D" uid="uid://c1rup6awajp6e" path="res://assets/players/trece/lpccatratdog.png" id="5_ai2oh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jcbd3"]
+bg_color = Color(1, 0.552941, 0.301961, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f4t1p"]
+bg_color = Color(1, 0.552941, 0.301961, 1)
+
+[sub_resource type="Gradient" id="Gradient_7x5ty"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_a4onl"]
+gradient = SubResource("Gradient_7x5ty")
+fill_to = Vector2(0.00569801, 0.002849)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2s0xr"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(0, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_prrha"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(64, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lsupj"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(128, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nhp33"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(192, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_61sn1"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(256, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wd7rt"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(320, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7rmk"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(384, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t0lb5"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(448, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sygxk"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(512, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a8uqb"]
+atlas = ExtResource("3_dwamy")
+region = Rect2(0, 72, 32, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uuenr"]
+atlas = ExtResource("3_dwamy")
+region = Rect2(32, 72, 32, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ykgy7"]
+atlas = ExtResource("3_dwamy")
+region = Rect2(64, 72, 32, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sg321"]
+atlas = ExtResource("4_vjq34")
+region = Rect2(0, 128, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_te2yx"]
+atlas = ExtResource("4_vjq34")
+region = Rect2(48, 128, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yre50"]
+atlas = ExtResource("4_vjq34")
+region = Rect2(96, 128, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_va32a"]
+atlas = ExtResource("5_ai2oh")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_noy0h"]
+atlas = ExtResource("5_ai2oh")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dbbq5"]
+atlas = ExtResource("5_ai2oh")
+region = Rect2(256, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xeekd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2s0xr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_prrha")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lsupj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nhp33")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_61sn1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wd7rt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r7rmk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t0lb5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sygxk")
+}],
+"loop": true,
+"name": &"player0",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a8uqb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uuenr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ykgy7")
+}],
+"loop": true,
+"name": &"player1",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sg321")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_te2yx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yre50")
+}],
+"loop": true,
+"name": &"player2",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_va32a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_noy0h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dbbq5")
+}],
+"loop": true,
+"name": &"player3",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cc04l"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(0, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uur0q"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(64, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mssr7"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(128, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8exb1"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(192, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o1cf8"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(256, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uxidt"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(320, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sj0lh"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(384, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26j25"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(448, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a3jar"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(512, 128, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3xd46"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cc04l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uur0q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mssr7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8exb1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o1cf8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uxidt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sj0lh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26j25")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a3jar")
+}],
+"loop": true,
+"name": &"player 0",
+"speed": 5.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_l6adp"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pwbw6"]
+gradient = SubResource("Gradient_l6adp")
+fill_to = Vector2(0.002849, 0.00569801)
+
+[sub_resource type="Gradient" id="Gradient_kbuo7"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_e672n"]
+gradient = SubResource("Gradient_kbuo7")
+fill_to = Vector2(0.017094, 0.014245)
+
+[sub_resource type="Gradient" id="Gradient_d2xh0"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_kw5gs"]
+gradient = SubResource("Gradient_d2xh0")
+fill_to = Vector2(0.002849, 0.00569801)
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_1ysiq")
 
-[node name="in-game" type="Node2D" parent="."]
+[node name="In-game" type="Node2D" parent="."]
 
-[node name="main-menu" type="Node2D" parent="."]
+[node name="Main-menu" type="Node2D" parent="."]
 
-[node name="Play" type="Button" parent="main-menu"]
-offset_left = 829.0
-offset_top = 451.0
-offset_right = 949.0
-offset_bottom = 505.0
-text = "Start"
+[node name="Play" type="Button" parent="Main-menu"]
+offset_left = 843.0
+offset_top = 490.0
+offset_right = 963.0
+offset_bottom = 544.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
+text = "Play"
 
-[node name="RichTextLabel" type="RichTextLabel" parent="main-menu"]
-offset_left = 760.0
-offset_top = 285.0
-offset_right = 1034.0
-offset_bottom = 414.0
+[node name="RichTextLabel" type="RichTextLabel" parent="Main-menu"]
+offset_left = 768.0
+offset_top = 339.0
+offset_right = 1042.0
+offset_bottom = 468.0
 theme_override_font_sizes/normal_font_size = 45
 text = "Skull Throne"
 
-[connection signal="pressed" from="main-menu/Play" to="." method="_on_play_pressed"]
+[node name="Character-menu" type="Node2D" parent="."]
+script = ExtResource("2_xgiog")
+
+[node name="Start run" type="Button" parent="Character-menu"]
+offset_left = 848.0
+offset_top = 494.0
+offset_right = 963.0
+offset_bottom = 538.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_f4t1p")
+text = "Start run"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Character-menu"]
+offset_left = 640.0
+offset_top = 189.0
+offset_right = 1217.0
+offset_bottom = 237.0
+theme_override_font_sizes/normal_font_size = 22
+text = "Select the characters you want for your party (max 4)"
+
+[node name="CharacterSelection" type="Node2D" parent="Character-menu"]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Character-menu/CharacterSelection"]
+offset_left = 767.0
+offset_top = 342.0
+offset_right = 1035.0
+offset_bottom = 406.0
+alignment = 1
+
+[node name="Player0Select" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+action_mode = 0
+texture_pressed = SubResource("GradientTexture2D_a4onl")
+
+[node name="Player0" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Player0Select"]
+position = Vector2(32, 32)
+sprite_frames = SubResource("SpriteFrames_xeekd")
+animation = &"player0"
+frame_progress = 0.166595
+
+[node name="Player0Accessory" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Player0Select"]
+position = Vector2(32, 32)
+sprite_frames = SubResource("SpriteFrames_3xd46")
+animation = &"player 0"
+frame_progress = 0.223777
+
+[node name="Player1Select" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_pressed = SubResource("GradientTexture2D_pwbw6")
+
+[node name="Player1" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Player1Select"]
+position = Vector2(34, 37)
+scale = Vector2(1.3125, 1.38889)
+sprite_frames = SubResource("SpriteFrames_xeekd")
+animation = &"player1"
+frame_progress = 0.462869
+
+[node name="Player2Select" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_pressed = SubResource("GradientTexture2D_e672n")
+
+[node name="Player2" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Player2Select"]
+position = Vector2(32, 37)
+scale = Vector2(0.822916, 0.795139)
+sprite_frames = SubResource("SpriteFrames_xeekd")
+animation = &"player2"
+frame_progress = 0.231685
+
+[node name="Player3Select" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_pressed = SubResource("GradientTexture2D_kw5gs")
+
+[node name="Player3" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Player3Select"]
+position = Vector2(32, 40)
+scale = Vector2(1.38021, 1.46007)
+sprite_frames = SubResource("SpriteFrames_xeekd")
+animation = &"player3"
+frame_progress = 0.6075
+
+[connection signal="pressed" from="Main-menu/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Character-menu/Start run" to="." method="_on_start_run_pressed"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Player0Select" to="." method="_on_player_0_select_toggled"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Player1Select" to="." method="_on_player_1_select_toggled"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Player2Select" to="." method="_on_player_2_select_toggled"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Player3Select" to="." method="_on_player_3_select_toggled"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://c8xai0wl4sw44"]
 
-[ext_resource type="Script" path="res://scenes/boss.gd" id="1_xf1pf"]
+[ext_resource type="Script" path="res://scripts/boss.gd" id="1_xf1pf"]
 [ext_resource type="Texture2D" uid="uid://bq0r2dvfdak86" path="res://assets/monsters/unique/azrael.png" id="2_qockn"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k2quq"]

@@ -15,17 +15,31 @@ var path #AStar2D
 var starting_room
 var boss_room
 var boss
+@onready var character_dict = {
+	0: $Characters/TinyBones,
+	1: $Characters/Beth,
+	2: $Characters/Dalf,
+	3: $Characters/Trece
+}
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	tilemap = $Map
-	boss = $Boss
-	boss.visible = false
-	#Add characters
-	characters.append($TinyBones)
-	for character in characters:
-		character.visible = false
+	boss = $Enemies/Boss
 	ui.game_started.connect(game_started)
+	ui.character_added.connect(add_character)
+	ui.character_removed.connect(remove_character)
 	
+func add_character(id):
+	#Add characters
+	var character = character_dict[id]
+	if !characters.has(character):
+		characters.append(character)
+
+func remove_character(id):
+	#Remove characters
+	var character = character_dict[id]
+	if characters.has(character):
+		characters.erase(character)
 
 func game_started():
 	# Generate the map layout
@@ -37,10 +51,7 @@ func game_started():
 	# Place boss room
 	#place_boss_room()
 	map_generated.emit()
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	queue_redraw()
-	
+
 func generate_map():
 	var map_size = Vector2i(100,100)
 	# Generate rooms
@@ -48,12 +59,9 @@ func generate_map():
 		var candidate_room = generate_room(map_size)
 		while check_intersect_room(candidate_room):
 			candidate_room = generate_room(map_size)
-			
-					
 		rooms.append(candidate_room)	
 		# Place border tiles
 		tilemap.print_room_border(candidate_room.position,candidate_room.size)
-
 		# Place room tiles
 		tilemap.generate_chunk(candidate_room.position, candidate_room.size)
 	path = find_mst()
@@ -70,8 +78,13 @@ func generate_map():
 func spawn_player():
 	# Randomly select a room or select a specific one
 	starting_room = rooms[randi() % rooms.size()]
-	for character in characters:
-		character.spawn(starting_room, tilemap)
+	# Remove unneeded character nodes
+	for key in character_dict:
+		var character = character_dict[key]
+		if !characters.has(character):
+			character.queue_free()
+	characters[0].spawn(starting_room, tilemap)
+	characters[0].get_node("Camera2D").visible = true
 		
 func spawn_boss():
 	boss_room = find_boss_room()

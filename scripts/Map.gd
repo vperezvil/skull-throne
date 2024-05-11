@@ -7,17 +7,11 @@ var level = 0
 var wall_level = 6
 var border_width = 1
 var corridor_width = 2
-@onready var player = get_parent().get_child(1)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	map.seed = randi()
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(delta):
-	#generate_chunk(player.position)
-	
 func generate_chunk(room_position, room_size):
 	var tile_pos = local_to_map(room_position)
 	for x in range(room_size.x):

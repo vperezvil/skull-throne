@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://rxsdiynxpmok"]
 
 [ext_resource type="Texture2D" uid="uid://gqmnnu6na04v" path="res://assets/players/tinybones/BODY_skeleton.png" id="1_e22ca"]
-[ext_resource type="Script" path="res://scenes/tinybones.gd" id="1_lxtat"]
+[ext_resource type="Script" path="res://scripts/tinybones.gd" id="1_lxtat"]
 [ext_resource type="Texture2D" uid="uid://doja20t8asyxk" path="res://assets/accessories/HEAD_robe_hood.png" id="2_a005i"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_spnl6"]
@@ -108,7 +108,7 @@ tracks/7/keys = {
 
 [sub_resource type="Animation" id="Animation_u4t6q"]
 resource_name = "walk_down"
-length = 0.81
+length = 0.9
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -209,7 +209,7 @@ tracks/7/keys = {
 
 [sub_resource type="Animation" id="Animation_iu1qq"]
 resource_name = "walk_left"
-length = 0.81
+length = 0.9
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -310,7 +310,7 @@ tracks/7/keys = {
 
 [sub_resource type="Animation" id="Animation_e85fh"]
 resource_name = "walk_right"
-length = 0.81
+length = 0.9
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -411,7 +411,7 @@ tracks/7/keys = {
 
 [sub_resource type="Animation" id="Animation_pf3ik"]
 resource_name = "walk_up"
-length = 0.81
+length = 0.9
 loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -543,3 +543,4 @@ libraries = {
 }
 
 [node name="Camera2D" type="Camera2D" parent="."]
+visible = false
