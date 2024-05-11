@@ -22,22 +22,16 @@ func read_input():
 	if Input.is_action_pressed("ui_down"):
 		ap.play("walk_down")
 		velocity.y += 1
-		velocity = velocity.normalized() * SPEED
-		move_and_slide()
 	elif Input.is_action_pressed("ui_right"):
 		ap.play("walk_right")
 		velocity.x += 1
-		velocity = velocity.normalized() * SPEED
-		move_and_slide()
 	elif Input.is_action_pressed("ui_left"):
 		ap.play("walk_left")
 		velocity.x -= 1
-		velocity = velocity.normalized() * SPEED
-		move_and_slide()
 	elif Input.is_action_pressed("ui_up"):
 		ap.play("walk_up")
 		velocity.y -= 1
-		velocity = velocity.normalized() * SPEED
-		move_and_slide()
 	else:
 		ap.stop()
+	velocity = velocity.normalized() * SPEED
+	move_and_slide()

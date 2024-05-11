@@ -5,6 +5,8 @@ var width = 70
 var height = 50
 var level = 0
 var wall_level = 6
+var border_width = 1
+var corridor_width = 2
 @onready var player = get_parent().get_child(1)
 
 # Called when the node enters the scene tree for the first time.
@@ -57,3 +59,40 @@ func print_room_border(room_position, room_size):
 		if !get_used_cells(0).has(coord):
 			var floor_map = map.get_noise_2d(room_right - 1, y) * 10
 			set_cell(0, coord, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+			
+func draw_corridor(start, end):
+	# Determine the range for corridor drawing based on orientation
+	var is_vertical = start.x == end.x
+	var main_coord = start.x if is_vertical else start.y
+	var range_start = min(start.y, end.y) if is_vertical else min(start.x, end.x)
+	var range_end = max(start.y, end.y) if is_vertical else max(start.x, end.x)
+	# Adjust the range to ensure it covers borders
+	#range_start -= border_width
+	range_end += border_width
+	# Calculate total width including borders
+	var total_width = corridor_width + 2 * border_width
+	# Loop over the corridor width (including borders)
+	for offset in range(-border_width,total_width - border_width):  
+		# Loop over the length of the corridor
+		for i in range(range_start, range_end + 1):
+			# Calculate the current tile coordinate
+			var coord = Vector2i(main_coord + offset, i) if is_vertical else Vector2i(i, main_coord + offset)
+			var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
+
+			# Determine if this is a border tile
+			var is_border_tile = offset < 0 or offset >= corridor_width
+
+			# Place border tiles only if there is no existing tile
+			if is_border_tile and !get_used_cells(0).has(coord):
+				set_cell(0, coord, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+				# Calculate the edges
+				var start_edge = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i-1, main_coord + offset)
+				if !get_used_cells(0).has(start_edge) and i == range_start:
+					set_cell(0, start_edge, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+				var end_edge = Vector2i(main_coord + offset, i+1) if is_vertical else Vector2i(i+1, main_coord + offset)
+				if !get_used_cells(0).has(end_edge) and i == range_end:
+					set_cell(0, end_edge, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+			# Place main corridor tiles (potentially overwriting existing tiles if they're part of the corridor path)
+			elif !is_border_tile:
+				set_cell(0, coord, level, Vector2i(round((floor_map + 10) / 1.3), 0))
+				
