@@ -5,6 +5,8 @@ signal character_added
 signal character_removed
 @onready var main_menu = $"Main-menu"
 @onready var character_menu = $"Character-menu"
+@onready var error_message = $"Character-menu/Error"
+var character_ids_toggled = []
 # Called when the node enters the scene tree for the first time.
 
 func _ready():
@@ -26,12 +28,17 @@ func _on_world_map_generated():
 
 func character_toggle(toggled_on,id):
 	if toggled_on:
+		character_ids_toggled.append(id)
 		character_added.emit(id)
 	else:
+		character_ids_toggled.erase(id)
 		character_removed.emit(id)
 
 func _on_start_run_pressed():
-	game_started.emit()
+	if character_ids_toggled.size()>0:
+		game_started.emit()
+	else:
+		error_message.visible = true
 
 func _on_player_0_select_toggled(toggled_on):
 	character_toggle(toggled_on,0)

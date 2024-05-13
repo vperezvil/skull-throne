@@ -300,6 +300,16 @@ offset_bottom = 237.0
 theme_override_font_sizes/normal_font_size = 22
 text = "Select the characters you want for your party (max 4)"
 
+[node name="Error" type="RichTextLabel" parent="Character-menu"]
+visible = false
+offset_left = 645.0
+offset_top = 257.0
+offset_right = 1222.0
+offset_bottom = 305.0
+theme_override_colors/default_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+text = "You need to select at least one character"
+
 [node name="CharacterSelection" type="Node2D" parent="Character-menu"]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Character-menu/CharacterSelection"]
