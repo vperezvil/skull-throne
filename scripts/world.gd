@@ -6,8 +6,10 @@ var game_state
 var room_min_size = 10
 var room_max_size = 20
 var num_rooms = 5
+var enemies_total = 5
 enum GameState {IDLE, RUNNING, ENDED}
 @onready var ui = $ui
+@onready var battle_scene = $Battle
 signal map_generated
 var rooms = []
 var characters = []
@@ -84,6 +86,7 @@ func spawn_player():
 		if !characters.has(character):
 			character.queue_free()
 	characters[0].spawn(starting_room, tilemap)
+	characters[0].boss_battle_start.connect(start_boss_battle)
 	characters[0].get_node("Camera2D").visible = true
 		
 func spawn_boss():
@@ -146,3 +149,11 @@ func find_boss_room():
 			max_dist = p1.distance_to(start_position)
 			max_p = p1
 	return max_p
+
+func start_boss_battle():
+	battle_scene.start_battle(characters,[boss])
+	battle_scene.visible = true
+	tilemap.visible = false
+	boss.visible = false
+	for character in characters:
+		character.visible = false
