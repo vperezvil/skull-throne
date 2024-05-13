@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bo28putf8abx6"]
+[gd_scene load_steps=19 format=3 uid="uid://bo28putf8abx6"]
 
 [ext_resource type="Script" path="res://scripts/world.gd" id="1_6dbgp"]
 [ext_resource type="Texture2D" uid="uid://daoantq6uxnc7" path="res://assets/map/floor/grass/grass_atlas_1.png" id="1_j8ert"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://scripts/trece.gd" id="10_tokv7"]
 [ext_resource type="PackedScene" uid="uid://b2fgy51m2848s" path="res://scenes/dalf.tscn" id="11_6gioh"]
 [ext_resource type="Script" path="res://scripts/dalf.gd" id="12_0qeji"]
+[ext_resource type="PackedScene" uid="uid://diaay8e6lc31i" path="res://scenes/battle.tscn" id="14_a2yxr"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o0l37"]
 texture = ExtResource("1_j8ert")
@@ -137,6 +138,8 @@ tile_proxies/coords_level = [[0, Vector2i(0, 0)], [24, Vector2i(0, 0)], [1, Vect
 [node name="World" type="Node2D"]
 script = ExtResource("1_6dbgp")
 
+[node name="Battle" parent="." instance=ExtResource("14_a2yxr")]
+
 [node name="Map" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_tk8u3")
 rendering_quadrant_size = 24
@@ -165,6 +168,5 @@ script = ExtResource("10_tokv7")
 [node name="Enemies" type="Node2D" parent="."]
 
 [node name="Boss" parent="Enemies" instance=ExtResource("8_7hej8")]
-visible = false
 
 [connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]

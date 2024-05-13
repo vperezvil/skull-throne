@@ -1,0 +1,53 @@
+[gd_scene load_steps=4 format=3 uid="uid://diaay8e6lc31i"]
+
+[ext_resource type="Script" path="res://scripts/battle.gd" id="1_aib43"]
+
+[sub_resource type="Gradient" id="Gradient_oterq"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_8vtsp"]
+gradient = SubResource("Gradient_oterq")
+
+[node name="Battle" type="Node2D"]
+visible = false
+script = ExtResource("1_aib43")
+
+[node name="Background" type="TextureRect" parent="."]
+offset_right = 1934.0
+offset_bottom = 1072.0
+texture = SubResource("GradientTexture2D_8vtsp")
+
+[node name="EnemyGroup" type="Node2D" parent="."]
+
+[node name="EnemyContainer" type="VBoxContainer" parent="EnemyGroup"]
+offset_right = 371.0
+offset_bottom = 1084.0
+
+[node name="CharacterGroup" type="Node2D" parent="."]
+
+[node name="CharacterContainer" type="VBoxContainer" parent="CharacterGroup"]
+offset_left = 1561.0
+offset_top = 1.0
+offset_right = 1928.0
+offset_bottom = 1074.0
+alignment = 2
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Options" type="VBoxContainer" parent="UI"]
+visible = false
+offset_left = 1667.0
+offset_top = 950.0
+offset_right = 1836.0
+offset_bottom = 1051.0
+
+[node name="Attack" type="Button" parent="UI/Options"]
+layout_mode = 2
+text = "Attack"
+
+[node name="Defend" type="Button" parent="UI/Options"]
+layout_mode = 2
+text = "Defend"
+
+[node name="Run" type="Button" parent="UI/Options"]
+layout_mode = 2
+text = "Run"
