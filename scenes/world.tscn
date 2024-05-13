@@ -165,7 +165,6 @@ script = ExtResource("10_tokv7")
 [node name="Enemies" type="Node2D" parent="."]
 
 [node name="Boss" parent="Enemies" instance=ExtResource("8_7hej8")]
-visible = false
 
 [node name="Battle" type="Node2D" parent="."]
 
