@@ -167,4 +167,29 @@ script = ExtResource("10_tokv7")
 [node name="Boss" parent="Enemies" instance=ExtResource("8_7hej8")]
 visible = false
 
+[node name="Battle" type="Node2D" parent="."]
+
+[node name="TextureRect" type="TextureRect" parent="Battle"]
+offset_right = 1934.0
+offset_bottom = 1072.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Battle"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="EnemyGroup" type="Node2D" parent="Battle/HBoxContainer"]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Battle/HBoxContainer/EnemyGroup"]
+offset_right = 371.0
+offset_bottom = 1087.0
+
+[node name="CharacterGroup" type="Node2D" parent="Battle/HBoxContainer"]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Battle/HBoxContainer/CharacterGroup"]
+offset_left = 1552.0
+offset_top = 3.0
+offset_right = 1919.0
+offset_bottom = 1076.0
+alignment = 2
+
 [connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]
