@@ -1,6 +1,9 @@
-[gd_scene format=3 uid="uid://j0yjavdk5yib"]
+[gd_scene load_steps=2 format=3 uid="uid://j0yjavdk5yib"]
+
+[ext_resource type="Script" path="res://scripts/battle.gd" id="1_vkkjv"]
 
 [node name="Battle" type="Node2D"]
+script = ExtResource("1_vkkjv")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 offset_right = 1934.0
