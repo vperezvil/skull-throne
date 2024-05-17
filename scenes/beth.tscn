@@ -115,4 +115,11 @@ libraries = {
 "": SubResource("AnimationLibrary_q2qqj")
 }
 
+[node name="ProgressBar" type="ProgressBar" parent="."]
+visible = false
+offset_left = -65.0
+offset_top = -48.0
+offset_right = 71.0
+offset_bottom = -21.0
+
 [node name="Camera2D" type="Camera2D" parent="."]

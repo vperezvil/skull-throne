@@ -537,6 +537,13 @@ texture = ExtResource("2_a005i")
 hframes = 9
 vframes = 4
 
+[node name="ProgressBar" type="ProgressBar" parent="."]
+visible = false
+offset_left = -65.0
+offset_top = -49.0
+offset_right = 71.0
+offset_bottom = -22.0
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
 "": SubResource("AnimationLibrary_j1alm")

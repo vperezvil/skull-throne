@@ -47,14 +47,13 @@ func fill_enemies(enemies):
 		if enemy.get_parent() != character_container:
 			if enemy.get_parent() != null:
 				enemy.get_parent().remove_child(enemy)
-			#enemy.position = Vector2(0,0)
-			#enemy.position = enemy_container.get_rect().get_center()
 			if is_lonely_enemy:
 				var min_size = enemy_container.get_custom_minimum_size()
 				enemy.position = Vector2(min_size.x,min_size.y/2)
 			else:
 				enemy.position = Vector2(0,offset)
 				offset += spacing_between_enemies
+			enemy.progress_bar.visible = true
 			enemy_container.add_child(enemy)
 		enemy.visible = true
 

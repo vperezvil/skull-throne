@@ -3,9 +3,12 @@ extends CharacterBody2D
 
 const SPEED = 300.0
 @onready var ap = $AnimationPlayer
+@onready var progress_bar = $ProgressBar
 signal boss_battle_start
 signal enemy_battle_start
 var battle_started = false
+var max_hp = 150
+var current_hp
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	visible = false
@@ -14,6 +17,7 @@ func spawn(starting_room, tilemap):
 	var center = tilemap.map_to_local(starting_room.get_center())
 	position = center
 	visible = true
+	current_hp = max_hp
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
@@ -49,6 +53,13 @@ func handle_collision():
 		var collider = collision.get_collider()
 		if collider.name == "Boss" and !battle_started:
 			battle_started = true
+			update_progress_bar()
+			progress_bar.visible = true
 			boss_battle_start.emit()
 		if collider.name.contains("Enemy"):
+			update_progress_bar()
+			progress_bar.visible = true
 			enemy_battle_start.emit()
+
+func update_progress_bar():
+	progress_bar.value = (current_hp/max_hp) * 100

@@ -164,8 +164,12 @@ func end_battle():
 	tilemap.visible = true
 	for character in characters:
 		character.battle_started = false
+		character.progress_bar.visible = false
 	var main_character = characters[0]
 	main_character.visible = true
+	if boss.battle_started:
+		boss.visible = false
+		boss.battle_started = false
 	if main_character.has_node("Camera2D"):
 		var camera = main_character.get_node("Camera2D")
 		camera.enabled = true

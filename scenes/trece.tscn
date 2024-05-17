@@ -117,4 +117,11 @@ libraries = {
 "": SubResource("AnimationLibrary_trp81")
 }
 
+[node name="ProgressBar" type="ProgressBar" parent="."]
+visible = false
+offset_left = -65.0
+offset_top = -42.0
+offset_right = 71.0
+offset_bottom = -15.0
+
 [node name="Camera2D" type="Camera2D" parent="."]
