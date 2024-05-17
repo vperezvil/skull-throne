@@ -80,12 +80,18 @@ func draw_corridor(start, end):
 			if is_border_tile and !get_used_cells(0).has(coord):
 				set_cell(0, coord, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
 				# Calculate the edges
-				var start_edge = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i-1, main_coord + offset)
-				if !get_used_cells(0).has(start_edge) and i == range_start:
-					set_cell(0, start_edge, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
-				var end_edge = Vector2i(main_coord + offset, i+1) if is_vertical else Vector2i(i+1, main_coord + offset)
-				if !get_used_cells(0).has(end_edge) and i == range_end:
-					set_cell(0, end_edge, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+				var top_left_corner = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i-1, main_coord + offset)
+				if !get_used_cells(0).has(top_left_corner) and i == range_start:
+					set_cell(0, top_left_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+				var top_right_corner = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i+1, main_coord + offset)
+				if !get_used_cells(0).has(top_right_corner ) and i == range_start:
+					set_cell(0, top_right_corner , wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+				var bottom_right_corner = Vector2i(main_coord + offset, i+1) if is_vertical else Vector2i(i+1, main_coord + offset)
+				if !get_used_cells(0).has(bottom_right_corner) and i == range_end:
+					set_cell(0, bottom_right_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+				var bottom_left_corner = Vector2i(main_coord + offset , i+1) if is_vertical else Vector2i(i-1, main_coord + offset )
+				if !get_used_cells(0).has(bottom_left_corner) and i == range_end:
+					set_cell(0, bottom_left_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
 			# Place main corridor tiles (potentially overwriting existing tiles if they're part of the corridor path)
 			elif !is_border_tile:
 				set_cell(0, coord, level, Vector2i(round((floor_map + 10) / 1.3), 0))

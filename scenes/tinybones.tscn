@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://rxsdiynxpmok"]
 
+[ext_resource type="Script" path="res://scripts/Character.gd" id="1_17p46"]
 [ext_resource type="Texture2D" uid="uid://gqmnnu6na04v" path="res://assets/players/tinybones/BODY_skeleton.png" id="1_e22ca"]
-[ext_resource type="Script" path="res://scripts/tinybones.gd" id="1_lxtat"]
 [ext_resource type="Texture2D" uid="uid://doja20t8asyxk" path="res://assets/accessories/HEAD_robe_hood.png" id="2_a005i"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_spnl6"]
@@ -520,7 +520,7 @@ _data = {
 }
 
 [node name="TinyBones" type="CharacterBody2D"]
-script = ExtResource("1_lxtat")
+script = ExtResource("1_17p46")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 6)
@@ -543,4 +543,3 @@ libraries = {
 }
 
 [node name="Camera2D" type="Camera2D" parent="."]
-visible = false

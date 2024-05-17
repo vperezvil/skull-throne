@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://diaay8e6lc31i"]
+[gd_scene load_steps=4 format=3 uid="uid://j0yjavdk5yib"]
 
 [ext_resource type="Script" path="res://scripts/battle.gd" id="1_aib43"]
 
@@ -12,24 +12,25 @@ visible = false
 script = ExtResource("1_aib43")
 
 [node name="Background" type="TextureRect" parent="."]
-offset_right = 1934.0
-offset_bottom = 1072.0
+offset_right = 1922.0
+offset_bottom = 1077.0
 texture = SubResource("GradientTexture2D_8vtsp")
 
-[node name="EnemyGroup" type="Node2D" parent="."]
+[node name="EnemyContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(228, 815)
+offset_left = 334.0
+offset_top = 109.0
+offset_right = 562.0
+offset_bottom = 924.0
+alignment = 1
 
-[node name="EnemyContainer" type="VBoxContainer" parent="EnemyGroup"]
-offset_right = 371.0
-offset_bottom = 1084.0
-
-[node name="CharacterGroup" type="Node2D" parent="."]
-
-[node name="CharacterContainer" type="VBoxContainer" parent="CharacterGroup"]
-offset_left = 1561.0
-offset_top = 1.0
-offset_right = 1928.0
-offset_bottom = 1074.0
-alignment = 2
+[node name="CharacterContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(228, 815)
+offset_left = 1461.0
+offset_top = 109.0
+offset_right = 1689.0
+offset_bottom = 924.0
+alignment = 1
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -51,3 +52,8 @@ text = "Defend"
 [node name="Run" type="Button" parent="UI/Options"]
 layout_mode = 2
 text = "Run"
+
+[node name="BattleCamera" type="Camera2D" parent="."]
+position = Vector2(961, 539)
+
+[connection signal="pressed" from="UI/Options/Run" to="." method="_on_run_pressed"]

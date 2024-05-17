@@ -1,6 +1,6 @@
 [gd_scene load_steps=47 format=3 uid="uid://cpq13kxejjodc"]
 
-[ext_resource type="Script" path="res://UI.gd" id="1_1ysiq"]
+[ext_resource type="Script" path="res://scripts/UI.gd" id="1_1ysiq"]
 [ext_resource type="Script" path="res://scripts/Character-menu.gd" id="2_xgiog"]
 [ext_resource type="Texture2D" uid="uid://gqmnnu6na04v" path="res://assets/players/tinybones/BODY_skeleton.png" id="2_yki2a"]
 [ext_resource type="Texture2D" uid="uid://doja20t8asyxk" path="res://assets/accessories/HEAD_robe_hood.png" id="3_4knjl"]
@@ -294,11 +294,12 @@ text = "Start run"
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Character-menu"]
 offset_left = 640.0
-offset_top = 189.0
-offset_right = 1217.0
+offset_top = 154.0
+offset_right = 1223.0
 offset_bottom = 237.0
 theme_override_font_sizes/normal_font_size = 22
-text = "Select the characters you want for your party (max 4)"
+text = "Select the characters you want for your party (max 4) 
+The first character selected will represent your party"
 
 [node name="Error" type="RichTextLabel" parent="Character-menu"]
 visible = false

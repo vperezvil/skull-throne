@@ -19,6 +19,10 @@ func spawn(starting_room, tilemap):
 func _physics_process(delta):
 	if visible and !battle_started:
 		read_input()
+	if battle_started:
+		ap.play("walk_left")
+		ap.stop()
+		
 func read_input():
 	velocity = Vector2.ZERO
 	if Input.is_action_pressed("ui_down"):
@@ -48,4 +52,3 @@ func handle_collision():
 			boss_battle_start.emit()
 		if collider.name.contains("Enemy"):
 			enemy_battle_start.emit()
-			

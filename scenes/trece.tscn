@@ -1,6 +1,7 @@
-[gd_scene load_steps=9 format=3 uid="uid://b33ajjw6wtjvp"]
+[gd_scene load_steps=10 format=3 uid="uid://b33ajjw6wtjvp"]
 
 [ext_resource type="Texture2D" uid="uid://c1rup6awajp6e" path="res://assets/players/trece/lpccatratdog.png" id="1_hou22"]
+[ext_resource type="Script" path="res://scripts/Character.gd" id="1_j4qor"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_aei8x"]
 size = Vector2(30, 30)
@@ -98,6 +99,7 @@ _data = {
 }
 
 [node name="Trece" type="CharacterBody2D"]
+script = ExtResource("1_j4qor")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1)
@@ -116,4 +118,3 @@ libraries = {
 }
 
 [node name="Camera2D" type="Camera2D" parent="."]
-visible = false

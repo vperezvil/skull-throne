@@ -30,6 +30,7 @@ func _ready():
 	ui.game_started.connect(game_started)
 	ui.character_added.connect(add_character)
 	ui.character_removed.connect(remove_character)
+	battle_scene.battle_ended.connect(end_battle)
 	
 func add_character(id):
 	#Add characters
@@ -87,7 +88,7 @@ func spawn_player():
 			character.queue_free()
 	characters[0].spawn(starting_room, tilemap)
 	characters[0].boss_battle_start.connect(start_boss_battle)
-	characters[0].get_node("Camera2D").visible = true
+	characters[0].get_node("Camera2D").make_current()
 		
 func spawn_boss():
 	boss_room = find_boss_room()
@@ -151,9 +152,21 @@ func find_boss_room():
 	return max_p
 
 func start_boss_battle():
+	boss.battle_started = true
+	for character in characters:
+		character.battle_started = true
 	battle_scene.start_battle(characters,[boss])
 	battle_scene.visible = true
 	tilemap.visible = false
-	boss.visible = false
+
+func end_battle():
+	battle_scene.visible = false
+	tilemap.visible = true
 	for character in characters:
-		character.visible = false
+		character.battle_started = false
+	var main_character = characters[0]
+	main_character.visible = true
+	if main_character.has_node("Camera2D"):
+		var camera = main_character.get_node("Camera2D")
+		camera.enabled = true
+		camera.make_current()

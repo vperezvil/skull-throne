@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://cy5t48r5pe16n"]
 
-[ext_resource type="Script" path="res://scripts/Beth.gd" id="1_nmc3x"]
+[ext_resource type="Script" path="res://scripts/Character.gd" id="1_ho0vl"]
 [ext_resource type="Texture2D" uid="uid://bh4tc5sw485ej" path="res://assets/players/beth/mage_f.png" id="2_1jt2o"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h003h"]
@@ -99,7 +99,7 @@ _data = {
 }
 
 [node name="Beth" type="CharacterBody2D"]
-script = ExtResource("1_nmc3x")
+script = ExtResource("1_ho0vl")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_h003h")
@@ -116,4 +116,3 @@ libraries = {
 }
 
 [node name="Camera2D" type="Camera2D" parent="."]
-visible = false

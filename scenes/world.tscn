@@ -1,18 +1,17 @@
-[gd_scene load_steps=18 format=3 uid="uid://bo28putf8abx6"]
+[gd_scene load_steps=17 format=3 uid="uid://bo28putf8abx6"]
 
 [ext_resource type="Script" path="res://scripts/world.gd" id="1_6dbgp"]
 [ext_resource type="Texture2D" uid="uid://daoantq6uxnc7" path="res://assets/map/floor/grass/grass_atlas_1.png" id="1_j8ert"]
 [ext_resource type="PackedScene" uid="uid://rxsdiynxpmok" path="res://scenes/tinybones.tscn" id="2_b0oxb"]
 [ext_resource type="Texture2D" uid="uid://dobmn3f1283i6" path="res://assets/map/floor/cobble_atlas_1.png" id="2_jfbwa"]
+[ext_resource type="PackedScene" uid="uid://j0yjavdk5yib" path="res://scenes/battle.tscn" id="2_mlip8"]
 [ext_resource type="Texture2D" uid="uid://btocr5dtn0m3l" path="res://assets/map/wall/grass_wall.png" id="3_6ommp"]
 [ext_resource type="Script" path="res://scripts/Map.gd" id="3_wvnbh"]
-[ext_resource type="PackedScene" uid="uid://cpq13kxejjodc" path="res://scripts/ui.tscn" id="7_16ak5"]
+[ext_resource type="PackedScene" uid="uid://cpq13kxejjodc" path="res://scenes/ui.tscn" id="7_16ak5"]
 [ext_resource type="PackedScene" uid="uid://cy5t48r5pe16n" path="res://scenes/beth.tscn" id="8_1diee"]
 [ext_resource type="PackedScene" uid="uid://c8xai0wl4sw44" path="res://scenes/boss.tscn" id="8_7hej8"]
 [ext_resource type="PackedScene" uid="uid://b33ajjw6wtjvp" path="res://scenes/trece.tscn" id="9_sblpo"]
-[ext_resource type="Script" path="res://scripts/trece.gd" id="10_tokv7"]
 [ext_resource type="PackedScene" uid="uid://b2fgy51m2848s" path="res://scenes/dalf.tscn" id="11_6gioh"]
-[ext_resource type="Script" path="res://scripts/dalf.gd" id="12_0qeji"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o0l37"]
 texture = ExtResource("1_j8ert")
@@ -137,6 +136,8 @@ tile_proxies/coords_level = [[0, Vector2i(0, 0)], [24, Vector2i(0, 0)], [1, Vect
 [node name="World" type="Node2D"]
 script = ExtResource("1_6dbgp")
 
+[node name="Battle" parent="." instance=ExtResource("2_mlip8")]
+
 [node name="Map" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_tk8u3")
 rendering_quadrant_size = 24
@@ -156,39 +157,12 @@ visible = false
 
 [node name="Dalf" parent="Characters" instance=ExtResource("11_6gioh")]
 visible = false
-script = ExtResource("12_0qeji")
 
 [node name="Trece" parent="Characters" instance=ExtResource("9_sblpo")]
 visible = false
-script = ExtResource("10_tokv7")
 
 [node name="Enemies" type="Node2D" parent="."]
 
 [node name="Boss" parent="Enemies" instance=ExtResource("8_7hej8")]
-
-[node name="Battle" type="Node2D" parent="."]
-
-[node name="TextureRect" type="TextureRect" parent="Battle"]
-offset_right = 1934.0
-offset_bottom = 1072.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Battle"]
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="EnemyGroup" type="Node2D" parent="Battle/HBoxContainer"]
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Battle/HBoxContainer/EnemyGroup"]
-offset_right = 371.0
-offset_bottom = 1087.0
-
-[node name="CharacterGroup" type="Node2D" parent="Battle/HBoxContainer"]
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Battle/HBoxContainer/CharacterGroup"]
-offset_left = 1552.0
-offset_top = 3.0
-offset_right = 1919.0
-offset_bottom = 1076.0
-alignment = 2
 
 [connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]
