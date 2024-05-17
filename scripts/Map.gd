@@ -84,13 +84,13 @@ func draw_corridor(start, end):
 				if !get_used_cells(0).has(top_left_corner) and i == range_start:
 					set_cell(0, top_left_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
 				var top_right_corner = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i+1, main_coord + offset)
-				if !get_used_cells(0).has(top_right_corner ) and i == range_start:
+				if !get_used_cells(0).has(top_right_corner ) and i == range_end:
 					set_cell(0, top_right_corner , wall_level, Vector2i(round((floor_map + 10) / 5), 0))
 				var bottom_right_corner = Vector2i(main_coord + offset, i+1) if is_vertical else Vector2i(i+1, main_coord + offset)
 				if !get_used_cells(0).has(bottom_right_corner) and i == range_end:
 					set_cell(0, bottom_right_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
-				var bottom_left_corner = Vector2i(main_coord + offset , i+1) if is_vertical else Vector2i(i-1, main_coord + offset )
-				if !get_used_cells(0).has(bottom_left_corner) and i == range_end:
+				var bottom_left_corner = Vector2i(main_coord + offset, i+1) if is_vertical else Vector2i(i-1, main_coord + offset )
+				if !get_used_cells(0).has(bottom_left_corner) and i == range_start:
 					set_cell(0, bottom_left_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
 			# Place main corridor tiles (potentially overwriting existing tiles if they're part of the corridor path)
 			elif !is_border_tile:
