@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://j0yjavdk5yib"]
+[gd_scene load_steps=5 format=3 uid="uid://j0yjavdk5yib"]
 
 [ext_resource type="Script" path="res://scripts/battle.gd" id="1_aib43"]
+[ext_resource type="Theme" uid="uid://dw2gfj0ojn62k" path="res://assets/themes/dialog_box.tres" id="2_5jgp7"]
 
 [sub_resource type="Gradient" id="Gradient_oterq"]
 
@@ -53,9 +54,15 @@ text = "Defend"
 layout_mode = 2
 text = "Run"
 
-[node name="EnemyOptions" type="VBoxContainer" parent="UI"]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="CombatDialog" type="RichTextLabel" parent="UI"]
+visible = false
+offset_left = 362.0
+offset_top = 938.0
+offset_right = 1649.0
+offset_bottom = 1082.0
+theme = ExtResource("2_5jgp7")
+scroll_active = false
+scroll_following = true
 
 [node name="BattleCamera" type="Camera2D" parent="."]
 position = Vector2(961, 539)

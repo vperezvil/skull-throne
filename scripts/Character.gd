@@ -4,6 +4,7 @@ extends CharacterBody2D
 const SPEED = 300.0
 @onready var ap = $AnimationPlayer
 @onready var progress_bar = $ProgressBar
+@onready var focus = $Focus
 signal boss_battle_start
 signal enemy_battle_start
 var battle_started = false

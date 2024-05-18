@@ -11,7 +11,8 @@ var initiative:int
 var attack = 10
 var ENEMY_NAME = 'Evil Geanie'
 @onready var progress_bar = $ProgressBar
-
+@onready var focus = $Focus
+signal enemy_selected
 func _ready():
 	visible = false
 	progress_bar.max_value = max_hp
@@ -36,3 +37,7 @@ func receive_damage(damage):
 	current_hp -= damage
 	ap.play("hurt")
 	update_progress_bar()
+
+
+func _on_focus_pressed():
+	enemy_selected.emit()

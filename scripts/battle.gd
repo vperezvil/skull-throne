@@ -5,11 +5,15 @@ extends Node2D
 @onready var enemy_container = $EnemyContainer
 @onready var battle_menu = $UI/Options
 @onready var battle_camera = $BattleCamera
-@onready var enemy_options = $UI/EnemyOptions
+@onready var combat_dialog = $UI/CombatDialog
 var original_positions = {}
 var original_parents = {}
 var combatants = []
 var current_turn = 0
+var BATTLE_STARTED = "Battle started"
+var ATTACK_MSG = "\n{player1} attacking: {player2}"
+var SELECT_ENEMY = "\nSelect Enemy to attack"
+var DAMAGE_DEALT = "\n{player1} dealt {damage} to {player2}"
 signal battle_ended
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -25,6 +29,8 @@ func start_battle(characters, enemies):
 	battle_camera.make_current()
 	initialize_combatants(characters,enemies)
 	sort_combatants_by_initiative()
+	combat_dialog.visible = true
+	combat_dialog.text = true
 	start_turn()
 	
 func fill_characters(characters):
@@ -81,33 +87,27 @@ func _on_attack_pressed():
 	show_enemy_options()
 
 func show_enemy_options():
-	for node in enemy_options.get_children():
-		enemy_options.remove_child(node)
-		node.queue_free()
-	enemy_options.visible = true
+	combat_dialog.text += SELECT_ENEMY
 	var enemies = enemy_container.get_children()
 	for enemy in enemies:
-		var button = Button.new()
-		button.text = enemy.ENEMY_NAME
-		button.connect("pressed",_on_enemy_selected.bind(enemy))
-		 # Position button relative to enemy sprite
-		var enemy_pos = enemy.position
-		enemy_pos.y += enemy.get_node("CollisionShape2D").shape.size.y  # Position below the enemy sprite
-		button.position = enemy_pos
-		enemy_options.add_child(button)
+		enemy.focus.visible = true
+		enemy.enemy_selected.connect(_on_enemy_selected.bind(enemy))
 
 func _on_enemy_selected(enemy):
 	var current_combatant = combatants[current_turn]
+	combat_dialog.text += ATTACK_MSG.replace("{player1}", current_combatant.name).replace("{player2}", enemy.name)
 	if check_if_container_has_child(character_container,current_combatant):
 		enemy.receive_damage(current_combatant.attack)
-	enemy_options.visible = false
+		enemy.focus.visible = false
+	combat_dialog.text += DAMAGE_DEALT.replace("{player1}", current_combatant.name).replace("{damage}", str(current_combatant.attack)).replace("{player2}", enemy.name)
+	remove_highlight(current_combatant)
 	advance_turn()
 
 func _on_defend_pressed():
 	var current_combatant = combatants[current_turn]
 	if check_if_container_has_child(character_container,current_combatant):
-		# Implement defend logic (e.g., increase defense stat temporarily)
 		current_combatant.defend()
+	remove_highlight(current_combatant)
 	advance_turn()
 
 
@@ -129,6 +129,7 @@ func start_turn():
 
 	var current_combatant = combatants[current_turn]
 	if check_if_container_has_child(character_container,current_combatant):
+		highlight_character(current_combatant)
 		show_battle_menu(current_combatant)
 	else:
 		enemy_take_turn(current_combatant)
@@ -144,10 +145,14 @@ func enemy_take_turn(enemy):
 	battle_menu.visible = false
 	var targets = character_container.get_children()
 	var random_target = targets[randi() % targets.size()]
+	combat_dialog.text += ATTACK_MSG.replace("{player1}", enemy.name).replace("{player2}", random_target.name)
+	await get_tree().create_timer(2.0).timeout
 	random_target.receive_damage(enemy.attack)
+	combat_dialog.text += DAMAGE_DEALT.replace("{player1}", enemy.name).replace("{damage}", str(enemy.attack)).replace("{player2}", random_target.name)
 	advance_turn()
 
 func advance_turn():
+	await get_tree().create_timer(2.0).timeout
 	current_turn += 1
 	start_turn()
 
@@ -156,3 +161,9 @@ func check_if_container_has_child(container,child):
 		if children == child:
 			return true
 	return false 
+	
+func highlight_character(character):
+	character.focus.visible = true
+
+func remove_highlight(character):
+	character.focus.visible = false

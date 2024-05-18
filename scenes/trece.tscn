@@ -1,8 +1,9 @@
-[gd_scene load_steps=13 format=3 uid="uid://b33ajjw6wtjvp"]
+[gd_scene load_steps=14 format=3 uid="uid://b33ajjw6wtjvp"]
 
 [ext_resource type="Texture2D" uid="uid://c1rup6awajp6e" path="res://assets/players/trece/lpccatratdog.png" id="1_hou22"]
 [ext_resource type="Script" path="res://scripts/Character.gd" id="1_j4qor"]
 [ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="3_qwnty"]
+[ext_resource type="Texture2D" uid="uid://c7mmy81n0morr" path="res://assets/hand_cursor0000.png" id="4_hxnja"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_aei8x"]
 size = Vector2(30, 30)
@@ -20,6 +21,37 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [6]
+}
+
+[sub_resource type="Animation" id="Animation_fjutx"]
+resource_name = "defend"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(40.157, 29.921, 0.394, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_xblbi"]
+resource_name = "hurt"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1), Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_pr1k4"]
@@ -90,37 +122,6 @@ tracks/0/keys = {
 "values": [33, 34, 35]
 }
 
-[sub_resource type="Animation" id="Animation_xblbi"]
-resource_name = "hurt"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Body:self_modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.5),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_fjutx"]
-resource_name = "defend"
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Body:self_modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(40.157, 29.921, 0.394, 1)]
-}
-
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_trp81"]
 _data = {
 "RESET": SubResource("Animation_b157r"),
@@ -160,5 +161,11 @@ offset_bottom = -15.0
 theme = ExtResource("3_qwnty")
 step = 1.0
 show_percentage = false
+
+[node name="Focus" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(32, 8)
+texture = ExtResource("4_hxnja")
+flip_h = true
 
 [node name="Camera2D" type="Camera2D" parent="."]
