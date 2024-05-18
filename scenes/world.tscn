@@ -165,6 +165,8 @@ visible = false
 
 [node name="Evil Geanie Boss" parent="Enemies" instance=ExtResource("8_7hej8")]
 
+[node name="CharacterBody2D" type="CharacterBody2D" parent="Enemies"]
+
 [connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]
 [connection signal="game_over" from="Battle" to="ui" method="_on_battle_game_over"]
 [connection signal="level_ended" from="Battle" to="ui" method="_on_battle_level_ended"]

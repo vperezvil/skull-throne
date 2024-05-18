@@ -94,7 +94,11 @@ func spawn_player():
 func spawn_boss():
 	boss_room = find_boss_room()
 	boss.spawn(boss_room, tilemap)
-		
+
+func spawn_enemies():
+	for r in range(enemies_total):
+		var spawn_room = rooms[randi() % rooms.size()]
+
 func generate_room(map_size):
 	var room_size = Vector2(randi_range(room_min_size, room_max_size), randi_range(room_min_size, room_max_size))
 	var room_position = Vector2(randi_range(1, map_size.x - room_size.x - 1), randi_range(1, map_size.y - room_size.y - 1))
