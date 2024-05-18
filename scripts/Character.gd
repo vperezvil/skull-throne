@@ -9,23 +9,26 @@ signal enemy_battle_start
 var battle_started = false
 var max_hp = 150
 var current_hp
+var initiative:int
+var attack = 10
+var is_defending = false
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	visible = false
+	progress_bar.max_value = max_hp
+	current_hp = max_hp
 	
 func spawn(starting_room, tilemap):
 	var center = tilemap.map_to_local(starting_room.get_center())
 	position = center
+	initiative = clamp(initiative, 1, 100)
 	visible = true
-	current_hp = max_hp
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	if visible and !battle_started:
 		read_input()
-	if battle_started:
-		ap.play("walk_left")
-		ap.stop()
 		
 func read_input():
 	velocity = Vector2.ZERO
@@ -52,14 +55,33 @@ func handle_collision():
 		var collision = get_slide_collision(i)
 		var collider = collision.get_collider()
 		if collider.name == "Boss" and !battle_started:
-			battle_started = true
-			update_progress_bar()
-			progress_bar.visible = true
+			collided_with_enemy()
 			boss_battle_start.emit()
-		if collider.name.contains("Enemy"):
-			update_progress_bar()
-			progress_bar.visible = true
+		if collider.name.contains("Enemy") and !battle_started:
+			collided_with_enemy()
 			enemy_battle_start.emit()
-
+			
+func collided_with_enemy():
+	battle_started = true
+	update_progress_bar()
+	progress_bar.visible = true
+	ap.play("walk_left")
+	ap.stop()
+	
 func update_progress_bar():
-	progress_bar.value = (current_hp/max_hp) * 100
+	progress_bar.value = current_hp
+
+func receive_damage(damage):
+	if is_defending:
+		current_hp -= damage/2
+	else:
+		current_hp -= damage
+	ap.play("hurt")
+	is_defending = false
+	# Ensure health doesn't go below 0
+	current_hp = max(current_hp, 0)
+	update_progress_bar()
+
+func defend():
+	is_defending = true
+	ap.play("defend")

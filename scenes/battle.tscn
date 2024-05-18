@@ -53,7 +53,13 @@ text = "Defend"
 layout_mode = 2
 text = "Run"
 
+[node name="EnemyOptions" type="VBoxContainer" parent="UI"]
+offset_right = 40.0
+offset_bottom = 40.0
+
 [node name="BattleCamera" type="Camera2D" parent="."]
 position = Vector2(961, 539)
 
+[connection signal="pressed" from="UI/Options/Attack" to="." method="_on_attack_pressed"]
+[connection signal="pressed" from="UI/Options/Defend" to="." method="_on_defend_pressed"]
 [connection signal="pressed" from="UI/Options/Run" to="." method="_on_run_pressed"]

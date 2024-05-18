@@ -79,7 +79,7 @@ func generate_map():
 			connections_visited.append(p)
 
 func spawn_player():
-	# Randomly select a room or select a specific one
+	# Randomly select a room
 	starting_room = rooms[randi() % rooms.size()]
 	# Remove unneeded character nodes
 	for key in character_dict:
