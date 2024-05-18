@@ -14,7 +14,10 @@ var BATTLE_STARTED = "Battle started"
 var ATTACK_MSG = "\n{player1} attacking: {player2}"
 var SELECT_ENEMY = "\nSelect Enemy to attack"
 var DAMAGE_DEALT = "\n{player1} dealt {damage} to {player2}"
+var RUN_BOSS = "\nCan't run from the boss!!!"
+var dead_players = 0
 signal battle_ended
+signal game_over
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	battle_camera.enabled = false
@@ -30,7 +33,7 @@ func start_battle(characters, enemies):
 	initialize_combatants(characters,enemies)
 	sort_combatants_by_initiative()
 	combat_dialog.visible = true
-	combat_dialog.text = true
+	combat_dialog.text = BATTLE_STARTED
 	start_turn()
 	
 func fill_characters(characters):
@@ -48,6 +51,7 @@ func fill_characters(characters):
 			character.position = Vector2(0,offset)
 			offset += spacing_between_characters
 			character.collided_with_enemy()
+			character.character_defeated.connect(_on_character_defeated.bind(character))
 			character_container.add_child(character)
 		character.visible = true
 		
@@ -66,21 +70,28 @@ func fill_enemies(enemies):
 				enemy.position = Vector2(0,offset)
 				offset += spacing_between_enemies
 			enemy.progress_bar.visible = true
+			enemy.enemy_defeated.connect(_on_enemy_defeated.bind(enemy))
 			enemy_container.add_child(enemy)
 		enemy.visible = true
 
 func end_battle():
 	battle_camera.enabled = false
-	# Restore original parents and positions
-	for character in original_parents.keys():
-		var parent = original_parents[character]
-		if character.get_parent() == character_container:
-			character_container.remove_child(character)
-		character.position = original_positions[character]
-		character.visible = false
-		parent.add_child(character)
 	battle_menu.visible = false
-	battle_ended.emit()
+	if original_parents.size() == 0:
+		game_over.emit(dead_players)
+		visible = false
+	else:
+		var remaining_characters = []
+		# Restore original parents and positions
+		for character in original_parents.keys():
+			var parent = original_parents[character]
+			if character.get_parent() == character_container:
+				character_container.remove_child(character)
+			character.position = original_positions[character]
+			character.visible = false
+			parent.add_child(character)
+			remaining_characters.append(character)
+		battle_ended.emit(remaining_characters)
 
 func _on_attack_pressed():
 	battle_menu.visible = false
@@ -112,7 +123,10 @@ func _on_defend_pressed():
 
 
 func _on_run_pressed():
-	end_battle() # Replace with function body.
+	if enemy_container.has_node("Boss"):
+		combat_dialog += RUN_BOSS
+	else:
+		end_battle() # Replace with function body.
 	
 func initialize_combatants(characters, enemies):
 	combatants = characters + enemies
@@ -146,15 +160,16 @@ func enemy_take_turn(enemy):
 	var targets = character_container.get_children()
 	var random_target = targets[randi() % targets.size()]
 	combat_dialog.text += ATTACK_MSG.replace("{player1}", enemy.name).replace("{player2}", random_target.name)
-	await get_tree().create_timer(2.0).timeout
-	random_target.receive_damage(enemy.attack)
+	await get_tree().create_timer(1.0).timeout
 	combat_dialog.text += DAMAGE_DEALT.replace("{player1}", enemy.name).replace("{damage}", str(enemy.attack)).replace("{player2}", random_target.name)
+	random_target.receive_damage(enemy.attack)
 	advance_turn()
 
 func advance_turn():
 	await get_tree().create_timer(2.0).timeout
-	current_turn += 1
-	start_turn()
+	if character_container.get_child_count() > 0 and enemy_container.get_child_count() > 0:
+		current_turn += 1
+		start_turn()
 
 func check_if_container_has_child(container,child):
 	for children in container.get_children():
@@ -167,3 +182,18 @@ func highlight_character(character):
 
 func remove_highlight(character):
 	character.focus.visible = false
+
+func _on_enemy_defeated(enemy):
+	enemy_container.remove_child(enemy)
+	combatants.erase(enemy)
+	if enemy_container.get_child_count() == 0:
+		end_battle()
+
+func _on_character_defeated(character):
+	character_container.remove_child(character)
+	original_parents.erase(character)
+	combatants.erase(character)
+	dead_players += 1
+	if character_container.get_child_count() == 0:
+		end_battle()
+	

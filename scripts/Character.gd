@@ -7,6 +7,7 @@ const SPEED = 300.0
 @onready var focus = $Focus
 signal boss_battle_start
 signal enemy_battle_start
+signal character_defeated
 var battle_started = false
 var max_hp = 150
 var current_hp
@@ -55,7 +56,7 @@ func handle_collision():
 	for i in get_slide_collision_count():
 		var collision = get_slide_collision(i)
 		var collider = collision.get_collider()
-		if collider.name == "Boss" and !battle_started:
+		if collider.name.contains("Boss") and !battle_started:
 			collided_with_enemy()
 			boss_battle_start.emit()
 		if collider.name.contains("Enemy") and !battle_started:
@@ -71,6 +72,11 @@ func collided_with_enemy():
 	
 func update_progress_bar():
 	progress_bar.value = current_hp
+	if current_hp == 0:
+		ap.play("death")
+		await get_tree().create_timer(1.0).timeout
+		progress_bar.visible = false
+		character_defeated.emit()
 
 func receive_damage(damage):
 	if is_defending:

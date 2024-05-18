@@ -26,7 +26,7 @@ var boss
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	tilemap = $Map
-	boss = $Enemies/Boss
+	boss = $"Enemies/Evil Geanie Boss"
 	ui.game_started.connect(game_started)
 	ui.character_added.connect(add_character)
 	ui.character_removed.connect(remove_character)
@@ -159,9 +159,10 @@ func start_boss_battle():
 	battle_scene.visible = true
 	tilemap.visible = false
 
-func end_battle():
+func end_battle(remaining_characters):
 	battle_scene.visible = false
 	tilemap.visible = true
+	characters = remaining_characters
 	for character in characters:
 		character.battle_started = false
 		character.progress_bar.visible = false
@@ -174,3 +175,4 @@ func end_battle():
 		var camera = main_character.get_node("Camera2D")
 		camera.enabled = true
 		camera.make_current()
+

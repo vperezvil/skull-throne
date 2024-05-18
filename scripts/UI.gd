@@ -5,7 +5,9 @@ signal character_added
 signal character_removed
 @onready var main_menu = $"Main-menu"
 @onready var character_menu = $"Character-menu"
+@onready var game_over_menu = $"Game-Over"
 @onready var error_message = $"Character-menu/Error"
+@onready var death_count_message = $"Game-Over/InfoDeathsLabel"
 var character_ids_toggled = []
 # Called when the node enters the scene tree for the first time.
 
@@ -19,7 +21,6 @@ func _process(delta):
 
 
 func _on_play_pressed():
-	#game_started.emit()
 	main_menu.visible = false
 	character_menu.visible = true
 
@@ -51,3 +52,14 @@ func _on_player_2_select_toggled(toggled_on):
 
 func _on_player_3_select_toggled(toggled_on):
 	character_toggle(toggled_on,3)
+
+func _on_battle_game_over(dead_players):
+	if dead_players > 1:
+		death_count_message.text = death_count_message.text.replace("{COUNT}", str(dead_players))
+	else:
+		death_count_message.text = death_count_message.text.replace("{COUNT}", str(dead_players)).replace("skulls", "skull")
+	game_over_menu.visible = true
+
+func _on_retry_pressed():
+	game_over_menu.visible = false
+	main_menu.visible = true

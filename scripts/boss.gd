@@ -8,11 +8,11 @@ var battle_started = false
 var max_hp = 150
 var current_hp
 var initiative:int
-var attack = 10
-var ENEMY_NAME = 'Evil Geanie'
+var attack = 20
 @onready var progress_bar = $ProgressBar
 @onready var focus = $Focus
 signal enemy_selected
+signal enemy_defeated
 func _ready():
 	visible = false
 	progress_bar.max_value = max_hp
@@ -32,12 +32,18 @@ func _physics_process(delta):
 
 func update_progress_bar():
 	progress_bar.value = current_hp
+	if current_hp == 0:
+		ap.play("death")
+		await get_tree().create_timer(1.0).timeout
+		progress_bar.visible = false
+		enemy_defeated.emit()
 
 func receive_damage(damage):
 	current_hp -= damage
 	ap.play("hurt")
+	# Ensure health doesn't go below 0
+	current_hp = max(current_hp, 0)
 	update_progress_bar()
-
 
 func _on_focus_pressed():
 	enemy_selected.emit()

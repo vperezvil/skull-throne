@@ -261,7 +261,31 @@ fill_to = Vector2(0.002849, 0.00569801)
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_1ysiq")
 
-[node name="In-game" type="Node2D" parent="."]
+[node name="Game-Over" type="Node2D" parent="."]
+visible = false
+
+[node name="GameOverLabel" type="RichTextLabel" parent="Game-Over"]
+offset_left = 763.0
+offset_top = 256.0
+offset_right = 1061.0
+offset_bottom = 338.0
+theme_override_font_sizes/normal_font_size = 50
+text = "GAME OVER"
+
+[node name="InfoDeathsLabel" type="RichTextLabel" parent="Game-Over"]
+offset_left = 744.0
+offset_top = 357.0
+offset_right = 1082.0
+offset_bottom = 405.0
+text = "{COUNT} skulls added to the Skull Throne"
+
+[node name="Retry" type="Button" parent="Game-Over"]
+offset_left = 843.0
+offset_top = 490.0
+offset_right = 963.0
+offset_bottom = 544.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
+text = "Retry"
 
 [node name="Main-menu" type="Node2D" parent="."]
 
@@ -382,6 +406,7 @@ sprite_frames = SubResource("SpriteFrames_xeekd")
 animation = &"player3"
 frame_progress = 0.6075
 
+[connection signal="pressed" from="Game-Over/Retry" to="." method="_on_retry_pressed"]
 [connection signal="pressed" from="Main-menu/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="Character-menu/Start run" to="." method="_on_start_run_pressed"]
 [connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Player0Select" to="." method="_on_player_0_select_toggled"]

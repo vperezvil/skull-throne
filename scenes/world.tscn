@@ -163,6 +163,7 @@ visible = false
 
 [node name="Enemies" type="Node2D" parent="."]
 
-[node name="Boss" parent="Enemies" instance=ExtResource("8_7hej8")]
+[node name="Evil Geanie Boss" parent="Enemies" instance=ExtResource("8_7hej8")]
 
 [connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]
+[connection signal="game_over" from="Battle" to="ui" method="_on_battle_game_over"]

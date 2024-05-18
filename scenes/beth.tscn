@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cy5t48r5pe16n"]
+[gd_scene load_steps=15 format=3 uid="uid://cy5t48r5pe16n"]
 
 [ext_resource type="Script" path="res://scripts/Character.gd" id="1_ho0vl"]
 [ext_resource type="Texture2D" uid="uid://bh4tc5sw485ej" path="res://assets/players/beth/mage_f.png" id="2_1jt2o"]
@@ -122,9 +122,25 @@ tracks/0/keys = {
 "values": [0, 1, 2]
 }
 
+[sub_resource type="Animation" id="Animation_xanv8"]
+resource_name = "death"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Body:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_q2qqj"]
 _data = {
 "RESET": SubResource("Animation_7l2rm"),
+"death": SubResource("Animation_xanv8"),
 "defend": SubResource("Animation_fxs0g"),
 "hurt": SubResource("Animation_vuwvk"),
 "walk_down": SubResource("Animation_cdx2n"),
