@@ -61,7 +61,7 @@ func handle_collision():
 			boss_battle_start.emit()
 		if collider.name.contains("Enemy") and !battle_started:
 			collided_with_enemy()
-			enemy_battle_start.emit()
+			enemy_battle_start.emit(collider)
 			
 func collided_with_enemy():
 	battle_started = true

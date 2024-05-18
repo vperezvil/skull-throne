@@ -1,8 +1,8 @@
 extends TileMap
 
 var map = FastNoiseLite.new()
-var width = 70
-var height = 50
+var width = 570
+var height = 550
 var level = 0
 var wall_level = 6
 var border_width = 1

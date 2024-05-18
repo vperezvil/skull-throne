@@ -9,6 +9,7 @@ extends Node2D
 @onready var background_boss = $"Background Boss"
 @onready var background_enemy = $"Background Enemy"
 var original_positions = {}
+var original_scales = {}
 var original_parents = {}
 var combatants = []
 var current_turn = 0
@@ -44,17 +45,24 @@ func start_battle(characters, enemies):
 func fill_characters(characters):
 	var offset = 30
 	var spacing_between_characters = 150
+	var is_lonely_character = characters.size() == 1
 	for character in characters:
 		if character.get_parent() != character_container:
 			if character.get_parent() != null:
 				original_parents[character] = character.get_parent()
 				original_positions[character] = character.position
+				original_scales[character] = character.scale
 				character.get_parent().remove_child(character)
 			if character.has_node("Camera2D"):
 				var camera = character.get_node("Camera2D")
 				camera.enabled = false
-			character.position = Vector2(0,offset)
+			if is_lonely_character:
+				var min_size = character_container.get_custom_minimum_size()
+				character.position = Vector2(min_size.x,min_size.y/2)
+			else:
+				character.position = Vector2(0,offset)
 			offset += spacing_between_characters
+			character.scale *= 3
 			character.collided_with_enemy()
 			character.character_defeated.connect(_on_character_defeated.bind(character))
 			character_container.add_child(character)
@@ -81,6 +89,7 @@ func fill_enemies(enemies):
 			else:
 				enemy.position = Vector2(0,offset)
 				offset += spacing_between_enemies
+			enemy.scale *= 3
 			enemy.progress_bar.visible = true
 			enemy.enemy_defeated.connect(_on_enemy_defeated.bind(enemy))
 			enemy_container.add_child(enemy)
@@ -93,6 +102,15 @@ func end_battle():
 		game_over.emit(dead_players)
 		visible = false
 	else:
+		combat_dialog.visible = false
+		var enemies = enemy_container.get_children()
+		for enemy in enemies:
+			enemy.focus.visible = false
+		
+		var characters = character_container.get_children()
+		for character in characters:
+			character.focus.visible = false
+			
 		var remaining_characters = []
 		# Restore original parents and positions
 		for character in original_parents.keys():
@@ -100,9 +118,11 @@ func end_battle():
 			if character.get_parent() == character_container:
 				character_container.remove_child(character)
 			character.position = original_positions[character]
+			character.scale = original_scales[character]
 			character.visible = false
 			parent.add_child(character)
 			remaining_characters.append(character)
+		clear_characters_and_enemies()
 		if is_boss_battle:
 			level_ended.emit(remaining_characters)
 		else:
@@ -206,4 +226,10 @@ func _on_character_defeated(character):
 	dead_players += 1
 	if character_container.get_child_count() == 0:
 		end_battle()
+
+func clear_characters_and_enemies():
+	for child in character_container.get_children():
+		character_container.remove_child(child)
+	for child in enemy_container.get_children():
+		enemy_container.remove_child(child)
 	

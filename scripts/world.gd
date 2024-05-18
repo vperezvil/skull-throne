@@ -5,18 +5,22 @@ var boss_room_position = Vector2()
 var game_state
 var room_min_size = 10
 var room_max_size = 20
-var num_rooms = 5
-var enemies_total = 5
+var num_rooms = 15
+var enemies_total = 15
 enum GameState {IDLE, RUNNING, ENDED}
 @onready var ui = $ui
 @onready var battle_scene = $Battle
 signal map_generated
 var rooms = []
 var characters = []
+var enemies = []
+var walkable_tiles = []
 var path #AStar2D
 var starting_room
 var boss_room
 var boss
+var enemy1
+var enemy2
 @onready var character_dict = {
 	0: $Characters/TinyBones,
 	1: $Characters/Beth,
@@ -27,6 +31,8 @@ var boss
 func _ready():
 	tilemap = $Map
 	boss = $"Enemies/Evil Geanie Boss"
+	enemy1 = $"Enemies/Rock Troll Enemy"
+	enemy2 = $"Enemies/Rock Troll Enemy Variant"
 	ui.game_started.connect(game_started)
 	ui.character_added.connect(add_character)
 	ui.character_removed.connect(remove_character)
@@ -52,8 +58,8 @@ func game_started():
 	# Generate player spawn position
 	spawn_player()
 	spawn_boss()
-	# Place boss room
-	#place_boss_room()
+	collect_walkable_tiles()
+	spawn_enemies()
 	map_generated.emit()
 
 func generate_map():
@@ -89,15 +95,41 @@ func spawn_player():
 			character.queue_free()
 	characters[0].spawn(starting_room, tilemap)
 	characters[0].boss_battle_start.connect(start_boss_battle)
+	characters[0].enemy_battle_start.connect(start_battle)
 	characters[0].get_node("Camera2D").make_current()
 		
 func spawn_boss():
 	boss_room = find_boss_room()
 	boss.spawn(boss_room, tilemap)
 
+func collect_walkable_tiles():
+	walkable_tiles.clear()
+	walkable_tiles = tilemap.get_used_cells(0)
+	for cell in tilemap.get_used_cells_by_id(0, tilemap.wall_level):
+		walkable_tiles.erase(cell)
+	# Remove tiles in the starting room and boss room
+	for x in range(starting_room.position.x, starting_room.position.x + starting_room.size.x):
+		for y in range(starting_room.position.y, starting_room.position.y + starting_room.size.y):
+			var tile = Vector2i(x, y)
+			walkable_tiles.erase(tile)
+	
+	for x in range(boss_room.x, boss_room.x + boss_room.x):
+		for y in range(boss_room.y, boss_room.y + boss_room.y):
+			var tile = Vector2i(x, y)
+			walkable_tiles.erase(tile)
+
 func spawn_enemies():
-	for r in range(enemies_total):
-		var spawn_room = rooms[randi() % rooms.size()]
+	for i in range(enemies_total):
+		if walkable_tiles.size() == 0:
+			break  # No more walkable tiles available to spawn enemies
+
+		var index = randi() % walkable_tiles.size()
+		var spawn_position = walkable_tiles[index]
+		walkable_tiles.erase(index)  # Remove the tile to avoid multiple enemies in the same spot
+
+		# Randomly select an enemy type
+		var enemy = enemy1 if randi() % 2 == 0 else enemy2
+		enemy.spawn(spawn_position, tilemap)
 
 func generate_room(map_size):
 	var room_size = Vector2(randi_range(room_min_size, room_max_size), randi_range(room_min_size, room_max_size))
@@ -164,6 +196,23 @@ func start_boss_battle():
 	battle_scene.visible = true
 	tilemap.visible = false
 
+func start_battle(enemy):
+	boss.visible = false
+	enemy.battle_started = true
+	#TODO: multiply the enemies
+	#var enemies = []
+	#var num_enemies = randi() % 3 + 1
+	#for i in range(num_enemies):
+		#enemies.append(enemy.duplicate())
+	for character in characters:
+		character.battle_started = true
+	for e in enemies:
+		if !e.battle_started:
+			e.visible = false
+	battle_scene.start_battle(characters,[enemy])
+	battle_scene.visible = true
+	tilemap.visible = false
+
 func end_battle(remaining_characters):
 	battle_scene.visible = false
 	tilemap.visible = true
@@ -176,6 +225,11 @@ func end_battle(remaining_characters):
 	if boss.battle_started:
 		boss.visible = false
 		boss.battle_started = false
+	else:
+		boss.visible = true
+	for e in enemies:
+		if !e.battle_started:
+			e.visible = true
 	if main_character.has_node("Camera2D"):
 		var camera = main_character.get_node("Camera2D")
 		camera.enabled = true
