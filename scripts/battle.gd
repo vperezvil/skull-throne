@@ -44,7 +44,7 @@ func start_battle(characters, enemies):
 	
 func fill_characters(characters):
 	var offset = 30
-	var spacing_between_characters = 150
+	var spacing_between_characters = 200
 	var is_lonely_character = characters.size() == 1
 	for character in characters:
 		if character.get_parent() != character_container:
@@ -56,13 +56,13 @@ func fill_characters(characters):
 			if character.has_node("Camera2D"):
 				var camera = character.get_node("Camera2D")
 				camera.enabled = false
+			character.scale *= 2
 			if is_lonely_character:
 				var min_size = character_container.get_custom_minimum_size()
 				character.position = Vector2(min_size.x,min_size.y/2)
 			else:
 				character.position = Vector2(0,offset)
 			offset += spacing_between_characters
-			character.scale *= 3
 			character.collided_with_enemy()
 			character.character_defeated.connect(_on_character_defeated.bind(character))
 			character_container.add_child(character)

@@ -2,23 +2,23 @@
 
 [ext_resource type="Script" path="res://scripts/battle.gd" id="1_aib43"]
 [ext_resource type="Theme" uid="uid://dw2gfj0ojn62k" path="res://assets/themes/dialog_box.tres" id="2_5jgp7"]
-[ext_resource type="Texture2D" uid="uid://bu5ceuk56q742" path="res://assets/map/Background Dungeon Files/Layers/Dungeon-door.png" id="2_5rdrd"]
-[ext_resource type="Texture2D" uid="uid://dys35hl78ygrc" path="res://assets/map/Background Dungeon Files/Layers/Dungeon-door-skull.png" id="2_rxq6c"]
+[ext_resource type="Texture2D" uid="uid://dc3ppxvo0oeit" path="res://assets/map/BG/battleback1.png" id="2_xfriw"]
+[ext_resource type="Texture2D" uid="uid://bsneqpcknr15l" path="res://assets/map/BG/battleback8.png" id="3_wklv1"]
 
 [node name="Battle" type="Node2D"]
+visible = false
 script = ExtResource("1_aib43")
 
 [node name="Background Enemy" type="TextureRect" parent="."]
-visible = false
 offset_right = 1922.0
 offset_bottom = 1077.0
-texture = ExtResource("2_5rdrd")
+texture = ExtResource("2_xfriw")
 
 [node name="Background Boss" type="TextureRect" parent="."]
 visible = false
 offset_right = 1922.0
 offset_bottom = 1077.0
-texture = ExtResource("2_rxq6c")
+texture = ExtResource("3_wklv1")
 
 [node name="EnemyContainer" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(228, 815)
@@ -30,9 +30,9 @@ alignment = 1
 
 [node name="CharacterContainer" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(228, 815)
-offset_left = 1461.0
+offset_left = 1312.0
 offset_top = 109.0
-offset_right = 1689.0
+offset_right = 1540.0
 offset_bottom = 924.0
 alignment = 1
 
