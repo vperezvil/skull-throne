@@ -30,6 +30,7 @@ func _ready():
 	ui.game_started.connect(game_started)
 	ui.character_added.connect(add_character)
 	ui.character_removed.connect(remove_character)
+	ui.restart_game.connect(restart_game)
 	battle_scene.battle_ended.connect(end_battle)
 	
 func add_character(id):
@@ -176,3 +177,5 @@ func end_battle(remaining_characters):
 		camera.enabled = true
 		camera.make_current()
 
+func restart_game():
+	get_tree().reload_current_scene()

@@ -277,9 +277,37 @@ offset_left = 744.0
 offset_top = 357.0
 offset_right = 1082.0
 offset_bottom = 405.0
-text = "{COUNT} skulls added to the Skull Throne"
+text = "{COUNT} skulls added to the Skull Throne. 
+There's currently {TOTAL_COUNT} skulls on the throne."
 
 [node name="Retry" type="Button" parent="Game-Over"]
+offset_left = 843.0
+offset_top = 490.0
+offset_right = 963.0
+offset_bottom = 544.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
+text = "Retry"
+
+[node name="Level-Ended" type="Node2D" parent="."]
+visible = false
+
+[node name="EndLabel" type="RichTextLabel" parent="Level-Ended"]
+offset_left = 763.0
+offset_top = 256.0
+offset_right = 1061.0
+offset_bottom = 338.0
+theme_override_font_sizes/normal_font_size = 50
+text = "YOU WON!
+For now..."
+
+[node name="ExplanationLabel" type="RichTextLabel" parent="Level-Ended"]
+offset_left = 744.0
+offset_top = 357.0
+offset_right = 1082.0
+offset_bottom = 405.0
+text = "You have overcome the first of many levels with: {PARTY_MEMBERS} . For now this is as far as you can go. You can keep replaying."
+
+[node name="Retry" type="Button" parent="Level-Ended"]
 offset_left = 843.0
 offset_top = 490.0
 offset_right = 963.0
@@ -407,6 +435,7 @@ animation = &"player3"
 frame_progress = 0.6075
 
 [connection signal="pressed" from="Game-Over/Retry" to="." method="_on_retry_pressed"]
+[connection signal="pressed" from="Level-Ended/Retry" to="." method="_on_retry_pressed"]
 [connection signal="pressed" from="Main-menu/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="Character-menu/Start run" to="." method="_on_start_run_pressed"]
 [connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Player0Select" to="." method="_on_player_0_select_toggled"]

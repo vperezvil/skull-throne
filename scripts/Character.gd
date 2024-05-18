@@ -76,6 +76,7 @@ func update_progress_bar():
 		ap.play("death")
 		await get_tree().create_timer(1.0).timeout
 		progress_bar.visible = false
+		Global.increment_death_count()
 		character_defeated.emit()
 
 func receive_damage(damage):

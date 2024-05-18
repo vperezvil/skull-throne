@@ -2,20 +2,24 @@
 
 [ext_resource type="Script" path="res://scripts/battle.gd" id="1_aib43"]
 [ext_resource type="Theme" uid="uid://dw2gfj0ojn62k" path="res://assets/themes/dialog_box.tres" id="2_5jgp7"]
-
-[sub_resource type="Gradient" id="Gradient_oterq"]
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_8vtsp"]
-gradient = SubResource("Gradient_oterq")
+[ext_resource type="Texture2D" uid="uid://bu5ceuk56q742" path="res://assets/map/Background Dungeon Files/Layers/Dungeon-door.png" id="2_5rdrd"]
+[ext_resource type="Texture2D" uid="uid://dys35hl78ygrc" path="res://assets/map/Background Dungeon Files/Layers/Dungeon-door-skull.png" id="2_rxq6c"]
 
 [node name="Battle" type="Node2D"]
 visible = false
 script = ExtResource("1_aib43")
 
-[node name="Background" type="TextureRect" parent="."]
+[node name="Background Enemy" type="TextureRect" parent="."]
+visible = false
 offset_right = 1922.0
 offset_bottom = 1077.0
-texture = SubResource("GradientTexture2D_8vtsp")
+texture = ExtResource("2_5rdrd")
+
+[node name="Background Boss" type="TextureRect" parent="."]
+visible = false
+offset_right = 1922.0
+offset_bottom = 1077.0
+texture = ExtResource("2_rxq6c")
 
 [node name="EnemyContainer" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(228, 815)

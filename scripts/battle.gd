@@ -6,17 +6,22 @@ extends Node2D
 @onready var battle_menu = $UI/Options
 @onready var battle_camera = $BattleCamera
 @onready var combat_dialog = $UI/CombatDialog
+@onready var background_boss = $"Background Boss"
+@onready var background_enemy = $"Background Enemy"
 var original_positions = {}
 var original_parents = {}
 var combatants = []
 var current_turn = 0
 var BATTLE_STARTED = "Battle started"
 var ATTACK_MSG = "\n{player1} attacking: {player2}"
+var DEFEND_MSG = "\n{player1} is defending, will receive half damage on next attack"
 var SELECT_ENEMY = "\nSelect Enemy to attack"
-var DAMAGE_DEALT = "\n{player1} dealt {damage} to {player2}"
+var DAMAGE_DEALT = "\n{player1} dealt {damage} damage to {player2}"
 var RUN_BOSS = "\nCan't run from the boss!!!"
 var dead_players = 0
+var is_boss_battle = false
 signal battle_ended
+signal level_ended
 signal game_over
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -57,6 +62,13 @@ func fill_characters(characters):
 		
 func fill_enemies(enemies):
 	var is_lonely_enemy = enemies.size() == 1
+	for enemy in enemies:
+		if enemy.name.contains("Boss"):
+			is_boss_battle = true
+	if is_boss_battle:
+		background_boss.visible = true
+	else:
+		background_enemy.visible = true
 	var offset = 30
 	var spacing_between_enemies = 250
 	for enemy in enemies:
@@ -91,7 +103,10 @@ func end_battle():
 			character.visible = false
 			parent.add_child(character)
 			remaining_characters.append(character)
-		battle_ended.emit(remaining_characters)
+		if is_boss_battle:
+			level_ended.emit(remaining_characters)
+		else:
+			battle_ended.emit(remaining_characters)
 
 func _on_attack_pressed():
 	battle_menu.visible = false
@@ -118,6 +133,7 @@ func _on_defend_pressed():
 	var current_combatant = combatants[current_turn]
 	if check_if_container_has_child(character_container,current_combatant):
 		current_combatant.defend()
+	combat_dialog.text += DEFEND_MSG.replace("{player1}", current_combatant.name)
 	remove_highlight(current_combatant)
 	advance_turn()
 
@@ -143,19 +159,12 @@ func start_turn():
 
 	var current_combatant = combatants[current_turn]
 	if check_if_container_has_child(character_container,current_combatant):
+		battle_menu.visible = true
 		highlight_character(current_combatant)
-		show_battle_menu(current_combatant)
 	else:
 		enemy_take_turn(current_combatant)
 
-func show_battle_menu(character):
-	battle_menu.visible = true
-	# Set up the menu for the character to take an action
-	# Connect the menu options to relevant functions
-
 func enemy_take_turn(enemy):
-	# Logic for enemy actions
-	# After the enemy action, move to the next turn
 	battle_menu.visible = false
 	var targets = character_container.get_children()
 	var random_target = targets[randi() % targets.size()]
@@ -166,6 +175,7 @@ func enemy_take_turn(enemy):
 	advance_turn()
 
 func advance_turn():
+	battle_menu.visible = false
 	await get_tree().create_timer(2.0).timeout
 	if character_container.get_child_count() > 0 and enemy_container.get_child_count() > 0:
 		current_turn += 1
