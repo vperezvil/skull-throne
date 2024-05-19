@@ -299,20 +299,22 @@ stream = ExtResource("2_qsy3c")
 visible = false
 
 [node name="EndLabel" type="RichTextLabel" parent="Level-Ended"]
-offset_left = 763.0
-offset_top = 256.0
-offset_right = 1061.0
+offset_left = 768.0
+offset_top = 206.0
+offset_right = 1033.0
 offset_bottom = 338.0
 theme_override_font_sizes/normal_font_size = 50
 text = "YOU WON!
 For now..."
+scroll_active = false
 
 [node name="ExplanationLabel" type="RichTextLabel" parent="Level-Ended"]
-offset_left = 744.0
+offset_left = 677.0
 offset_top = 357.0
-offset_right = 1082.0
-offset_bottom = 405.0
+offset_right = 1181.0
+offset_bottom = 445.0
 text = "You have overcome the first of many levels with: {PARTY_MEMBERS} . For now this is as far as you can go. You can keep replaying."
+scroll_active = false
 
 [node name="Retry" type="Button" parent="Level-Ended"]
 offset_left = 843.0
@@ -429,6 +431,7 @@ animation = &"player1"
 frame_progress = 0.462869
 
 [node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/Beth"]
+layout_mode = 0
 offset_left = 16.0
 offset_top = 65.0
 offset_right = 56.0
@@ -451,6 +454,7 @@ animation = &"player2"
 frame_progress = 0.231685
 
 [node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/Dalf"]
+layout_mode = 0
 offset_left = 17.0
 offset_top = 65.0
 offset_right = 57.0
@@ -473,6 +477,7 @@ animation = &"player3"
 frame_progress = 0.6075
 
 [node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/Trece"]
+layout_mode = 0
 offset_left = 12.0
 offset_top = 65.0
 offset_right = 59.0

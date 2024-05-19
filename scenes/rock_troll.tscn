@@ -84,10 +84,10 @@ show_percentage = false
 
 [node name="Focus" type="TextureButton" parent="."]
 visible = false
-offset_left = -121.0
-offset_top = -19.0
-offset_right = -89.0
-offset_bottom = 13.0
+offset_left = -57.0
+offset_top = -23.0
+offset_right = 22.0
+offset_bottom = 18.0
 texture_normal = ExtResource("4_54uu0")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

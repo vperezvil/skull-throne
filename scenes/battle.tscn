@@ -1,9 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://j0yjavdk5yib"]
+[gd_scene load_steps=8 format=3 uid="uid://j0yjavdk5yib"]
 
 [ext_resource type="Script" path="res://scripts/battle.gd" id="1_aib43"]
 [ext_resource type="Theme" uid="uid://dw2gfj0ojn62k" path="res://assets/themes/dialog_box.tres" id="2_5jgp7"]
 [ext_resource type="Texture2D" uid="uid://dc3ppxvo0oeit" path="res://assets/map/BG/battleback1.png" id="2_xfriw"]
 [ext_resource type="Texture2D" uid="uid://bsneqpcknr15l" path="res://assets/map/BG/battleback8.png" id="3_wklv1"]
+[ext_resource type="AudioStream" path="res://assets/music/boss theme.ogg" id="5_qejjf"]
+[ext_resource type="AudioStream" path="res://assets/music/osn2u.mp3" id="6_gw83j"]
+[ext_resource type="AudioStream" path="res://assets/music/win music 1-2.mp3" id="6_qajjw"]
 
 [node name="Battle" type="Node2D"]
 visible = false
@@ -60,16 +63,25 @@ text = "Run"
 
 [node name="CombatDialog" type="RichTextLabel" parent="UI"]
 visible = false
-offset_left = 362.0
-offset_top = 938.0
-offset_right = 1649.0
-offset_bottom = 1082.0
+offset_left = 353.0
+offset_top = 934.0
+offset_right = 1640.0
+offset_bottom = 1078.0
 theme = ExtResource("2_5jgp7")
 scroll_active = false
 scroll_following = true
 
 [node name="BattleCamera" type="Camera2D" parent="."]
 position = Vector2(961, 539)
+
+[node name="Boss Battle" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_qejjf")
+
+[node name="Enemy Battle" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_gw83j")
+
+[node name="Win Battle" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_qajjw")
 
 [connection signal="pressed" from="UI/Options/Attack" to="." method="_on_attack_pressed"]
 [connection signal="pressed" from="UI/Options/Defend" to="." method="_on_defend_pressed"]
