@@ -1,12 +1,30 @@
-[gd_scene load_steps=8 format=3 uid="uid://j0yjavdk5yib"]
+[gd_scene load_steps=14 format=3 uid="uid://j0yjavdk5yib"]
 
 [ext_resource type="Script" path="res://scripts/battle.gd" id="1_aib43"]
 [ext_resource type="Theme" uid="uid://dw2gfj0ojn62k" path="res://assets/themes/dialog_box.tres" id="2_5jgp7"]
 [ext_resource type="Texture2D" uid="uid://dc3ppxvo0oeit" path="res://assets/map/BG/battleback1.png" id="2_xfriw"]
 [ext_resource type="Texture2D" uid="uid://bsneqpcknr15l" path="res://assets/map/BG/battleback8.png" id="3_wklv1"]
-[ext_resource type="AudioStream" path="res://assets/music/boss theme.ogg" id="5_qejjf"]
-[ext_resource type="AudioStream" path="res://assets/music/osn2u.mp3" id="6_gw83j"]
-[ext_resource type="AudioStream" path="res://assets/music/win music 1-2.mp3" id="6_qajjw"]
+[ext_resource type="AudioStream" uid="uid://cwgvvguq14tvl" path="res://assets/music/boss theme.ogg" id="5_qejjf"]
+[ext_resource type="AudioStream" uid="uid://djbmxa6m1ajap" path="res://assets/music/osn2u.mp3" id="6_gw83j"]
+[ext_resource type="AudioStream" uid="uid://u62qep3qmb1p" path="res://assets/music/win music 1-2.mp3" id="6_qajjw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a5vok"]
+bg_color = Color(0.862745, 0.541176, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0rhnp"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f4g5b"]
+bg_color = Color(0.862745, 0.541176, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u62lx"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_atdy4"]
+bg_color = Color(0.862745, 0.541176, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nr0db"]
+bg_color = Color(0, 0, 0, 1)
 
 [node name="Battle" type="Node2D"]
 visible = false
@@ -51,14 +69,20 @@ offset_bottom = 1051.0
 
 [node name="Attack" type="Button" parent="UI/Options"]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_a5vok")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_0rhnp")
 text = "Attack"
 
 [node name="Defend" type="Button" parent="UI/Options"]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_f4g5b")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_u62lx")
 text = "Defend"
 
 [node name="Run" type="Button" parent="UI/Options"]
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_atdy4")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_nr0db")
 text = "Run"
 
 [node name="CombatDialog" type="RichTextLabel" parent="UI"]

@@ -6,7 +6,7 @@ var game_state
 var room_min_size = 10
 var room_max_size = 20
 var num_rooms = 15
-var enemies_total = 15
+var enemies_total = 25
 enum GameState {IDLE, RUNNING, ENDED}
 @onready var ui = $ui
 @onready var battle_scene = $Battle
@@ -224,6 +224,7 @@ func end_battle(remaining_characters):
 	tilemap.visible = true
 	characters = remaining_characters
 	for character in characters:
+		character.ap.stop()
 		character.battle_started = false
 		character.progress_bar.visible = false
 	var main_character = characters[0]
