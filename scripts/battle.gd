@@ -175,7 +175,7 @@ func _on_defend_pressed():
 
 func _on_run_pressed():
 	if enemy_container.has_node("Evil Geanie Boss"):
-		combat_dialog += RUN_BOSS
+		combat_dialog.text += RUN_BOSS
 	else:
 		end_battle() # Replace with function body.
 	
