@@ -10,6 +10,7 @@ visible = false
 script = ExtResource("1_aib43")
 
 [node name="Background Enemy" type="TextureRect" parent="."]
+visible = false
 offset_right = 1922.0
 offset_bottom = 1077.0
 texture = ExtResource("2_xfriw")
