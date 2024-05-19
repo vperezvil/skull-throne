@@ -1,0 +1,75 @@
+[gd_scene load_steps=5 format=3 uid="uid://j0yjavdk5yib"]
+
+[ext_resource type="Script" path="res://scripts/battle.gd" id="1_aib43"]
+[ext_resource type="Theme" uid="uid://dw2gfj0ojn62k" path="res://assets/themes/dialog_box.tres" id="2_5jgp7"]
+[ext_resource type="Texture2D" uid="uid://bu5ceuk56q742" path="res://assets/map/Background Dungeon Files/Layers/Dungeon-door.png" id="2_5rdrd"]
+[ext_resource type="Texture2D" uid="uid://dys35hl78ygrc" path="res://assets/map/Background Dungeon Files/Layers/Dungeon-door-skull.png" id="2_rxq6c"]
+
+[node name="Battle" type="Node2D"]
+script = ExtResource("1_aib43")
+
+[node name="Background Enemy" type="TextureRect" parent="."]
+visible = false
+offset_right = 1922.0
+offset_bottom = 1077.0
+texture = ExtResource("2_5rdrd")
+
+[node name="Background Boss" type="TextureRect" parent="."]
+visible = false
+offset_right = 1922.0
+offset_bottom = 1077.0
+texture = ExtResource("2_rxq6c")
+
+[node name="EnemyContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(228, 815)
+offset_left = 334.0
+offset_top = 109.0
+offset_right = 562.0
+offset_bottom = 924.0
+alignment = 1
+
+[node name="CharacterContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(228, 815)
+offset_left = 1461.0
+offset_top = 109.0
+offset_right = 1689.0
+offset_bottom = 924.0
+alignment = 1
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Options" type="VBoxContainer" parent="UI"]
+visible = false
+offset_left = 1667.0
+offset_top = 950.0
+offset_right = 1836.0
+offset_bottom = 1051.0
+
+[node name="Attack" type="Button" parent="UI/Options"]
+layout_mode = 2
+text = "Attack"
+
+[node name="Defend" type="Button" parent="UI/Options"]
+layout_mode = 2
+text = "Defend"
+
+[node name="Run" type="Button" parent="UI/Options"]
+layout_mode = 2
+text = "Run"
+
+[node name="CombatDialog" type="RichTextLabel" parent="UI"]
+visible = false
+offset_left = 362.0
+offset_top = 938.0
+offset_right = 1649.0
+offset_bottom = 1082.0
+theme = ExtResource("2_5jgp7")
+scroll_active = false
+scroll_following = true
+
+[node name="BattleCamera" type="Camera2D" parent="."]
+position = Vector2(961, 539)
+
+[connection signal="pressed" from="UI/Options/Attack" to="." method="_on_attack_pressed"]
+[connection signal="pressed" from="UI/Options/Defend" to="." method="_on_defend_pressed"]
+[connection signal="pressed" from="UI/Options/Run" to="." method="_on_run_pressed"]

@@ -1,0 +1,509 @@
+[gd_scene load_steps=54 format=3 uid="uid://cpq13kxejjodc"]
+
+[ext_resource type="Script" path="res://scripts/UI.gd" id="1_1ysiq"]
+[ext_resource type="AudioStream" uid="uid://ddd6be4vrlx03" path="res://assets/music/win music 1.wav" id="2_dl3am"]
+[ext_resource type="AudioStream" uid="uid://j1wvypup53fs" path="res://assets/music/the road&#039;s end.mp3" id="2_qsy3c"]
+[ext_resource type="AudioStream" uid="uid://w8ndfa4qni53" path="res://assets/music/pheonton - war - 01 - maintheme.mp3" id="2_sflr1"]
+[ext_resource type="Script" path="res://scripts/Character-menu.gd" id="2_xgiog"]
+[ext_resource type="Texture2D" uid="uid://gqmnnu6na04v" path="res://assets/players/tinybones/BODY_skeleton.png" id="2_yki2a"]
+[ext_resource type="Texture2D" uid="uid://doja20t8asyxk" path="res://assets/accessories/HEAD_robe_hood.png" id="3_4knjl"]
+[ext_resource type="Texture2D" uid="uid://bh4tc5sw485ej" path="res://assets/players/beth/mage_f.png" id="3_dwamy"]
+[ext_resource type="Texture2D" uid="uid://cccsqjr0mtjkm" path="res://assets/players/dalf/wizard.png" id="4_vjq34"]
+[ext_resource type="Texture2D" uid="uid://c1rup6awajp6e" path="res://assets/players/trece/lpccatratdog.png" id="5_ai2oh"]
+[ext_resource type="Script" path="res://scripts/PlayerSelectName.gd" id="11_2oxo3"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jcbd3"]
+bg_color = Color(1, 0.552941, 0.301961, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ny071"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pudy4"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qeu2o"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f4t1p"]
+bg_color = Color(1, 0.552941, 0.301961, 1)
+
+[sub_resource type="Gradient" id="Gradient_7x5ty"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_a4onl"]
+gradient = SubResource("Gradient_7x5ty")
+fill_to = Vector2(0.00569801, 0.002849)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2s0xr"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(0, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_prrha"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(64, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lsupj"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(128, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nhp33"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(192, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_61sn1"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(256, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wd7rt"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(320, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r7rmk"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(384, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t0lb5"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(448, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sygxk"]
+atlas = ExtResource("2_yki2a")
+region = Rect2(512, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a8uqb"]
+atlas = ExtResource("3_dwamy")
+region = Rect2(0, 72, 32, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uuenr"]
+atlas = ExtResource("3_dwamy")
+region = Rect2(32, 72, 32, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ykgy7"]
+atlas = ExtResource("3_dwamy")
+region = Rect2(64, 72, 32, 36)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sg321"]
+atlas = ExtResource("4_vjq34")
+region = Rect2(0, 128, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_te2yx"]
+atlas = ExtResource("4_vjq34")
+region = Rect2(48, 128, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yre50"]
+atlas = ExtResource("4_vjq34")
+region = Rect2(96, 128, 48, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_va32a"]
+atlas = ExtResource("5_ai2oh")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_noy0h"]
+atlas = ExtResource("5_ai2oh")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dbbq5"]
+atlas = ExtResource("5_ai2oh")
+region = Rect2(256, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xeekd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2s0xr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_prrha")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lsupj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nhp33")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_61sn1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wd7rt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r7rmk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t0lb5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sygxk")
+}],
+"loop": true,
+"name": &"player0",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a8uqb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uuenr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ykgy7")
+}],
+"loop": true,
+"name": &"player1",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sg321")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_te2yx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yre50")
+}],
+"loop": true,
+"name": &"player2",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_va32a")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_noy0h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dbbq5")
+}],
+"loop": true,
+"name": &"player3",
+"speed": 5.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cc04l"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(0, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uur0q"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(64, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mssr7"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(128, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8exb1"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(192, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o1cf8"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(256, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uxidt"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(320, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sj0lh"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(384, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_26j25"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(448, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a3jar"]
+atlas = ExtResource("3_4knjl")
+region = Rect2(512, 128, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3xd46"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cc04l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uur0q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mssr7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8exb1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o1cf8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uxidt")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sj0lh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26j25")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a3jar")
+}],
+"loop": true,
+"name": &"player 0",
+"speed": 5.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_l6adp"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_pwbw6"]
+gradient = SubResource("Gradient_l6adp")
+fill_to = Vector2(0.002849, 0.00569801)
+
+[sub_resource type="Gradient" id="Gradient_kbuo7"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_e672n"]
+gradient = SubResource("Gradient_kbuo7")
+fill_to = Vector2(0.017094, 0.014245)
+
+[sub_resource type="Gradient" id="Gradient_d2xh0"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_kw5gs"]
+gradient = SubResource("Gradient_d2xh0")
+fill_to = Vector2(0.002849, 0.00569801)
+
+[node name="UI" type="CanvasLayer"]
+script = ExtResource("1_1ysiq")
+
+[node name="Game-Over" type="Node2D" parent="."]
+visible = false
+
+[node name="GameOverLabel" type="RichTextLabel" parent="Game-Over"]
+offset_left = 763.0
+offset_top = 256.0
+offset_right = 1061.0
+offset_bottom = 338.0
+theme_override_font_sizes/normal_font_size = 50
+text = "GAME OVER"
+
+[node name="InfoDeathsLabel" type="RichTextLabel" parent="Game-Over"]
+offset_left = 744.0
+offset_top = 357.0
+offset_right = 1082.0
+offset_bottom = 405.0
+text = "{COUNT} skulls added to the Skull Throne. 
+There's currently {TOTAL_COUNT} skulls on the throne."
+
+[node name="Retry" type="Button" parent="Game-Over"]
+offset_left = 843.0
+offset_top = 490.0
+offset_right = 963.0
+offset_bottom = 544.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ny071")
+text = "Retry"
+
+[node name="Game Over Theme" type="AudioStreamPlayer" parent="Game-Over"]
+stream = ExtResource("2_qsy3c")
+
+[node name="Level-Ended" type="Node2D" parent="."]
+visible = false
+
+[node name="EndLabel" type="RichTextLabel" parent="Level-Ended"]
+offset_left = 768.0
+offset_top = 206.0
+offset_right = 1033.0
+offset_bottom = 338.0
+theme_override_font_sizes/normal_font_size = 50
+text = "YOU WON!
+For now..."
+scroll_active = false
+
+[node name="ExplanationLabel" type="RichTextLabel" parent="Level-Ended"]
+offset_left = 677.0
+offset_top = 357.0
+offset_right = 1181.0
+offset_bottom = 445.0
+text = "You have overcome the first of many levels with: {PARTY_MEMBERS} . For now this is as far as you can go. You can keep replaying."
+scroll_active = false
+
+[node name="Retry" type="Button" parent="Level-Ended"]
+offset_left = 843.0
+offset_top = 490.0
+offset_right = 963.0
+offset_bottom = 544.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pudy4")
+text = "Retry"
+
+[node name="Game Won Theme" type="AudioStreamPlayer" parent="Level-Ended"]
+stream = ExtResource("2_dl3am")
+
+[node name="Main-menu" type="Node2D" parent="."]
+
+[node name="Play" type="Button" parent="Main-menu"]
+offset_left = 843.0
+offset_top = 490.0
+offset_right = 963.0
+offset_bottom = 544.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qeu2o")
+text = "Play"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Main-menu"]
+offset_left = 748.0
+offset_top = 339.0
+offset_right = 1063.0
+offset_bottom = 411.0
+theme_override_font_sizes/normal_font_size = 50
+text = "Skull Throne"
+scroll_active = false
+
+[node name="Main Theme" type="AudioStreamPlayer" parent="Main-menu"]
+stream = ExtResource("2_sflr1")
+
+[node name="Character-menu" type="Node2D" parent="."]
+script = ExtResource("2_xgiog")
+
+[node name="Start run" type="Button" parent="Character-menu"]
+offset_left = 848.0
+offset_top = 494.0
+offset_right = 963.0
+offset_bottom = 538.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_f4t1p")
+text = "Start run"
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Character-menu"]
+offset_left = 640.0
+offset_top = 137.0
+offset_right = 1223.0
+offset_bottom = 237.0
+theme_override_font_sizes/normal_font_size = 22
+text = "Your objective is to defeat the Evil Geanie
+Select the characters you want for your party (max 4) 
+The first character selected will represent your party"
+
+[node name="Error" type="RichTextLabel" parent="Character-menu"]
+visible = false
+offset_left = 645.0
+offset_top = 257.0
+offset_right = 1222.0
+offset_bottom = 305.0
+theme_override_colors/default_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+text = "You need to select at least one character"
+
+[node name="CharacterSelection" type="Node2D" parent="Character-menu"]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Character-menu/CharacterSelection"]
+offset_left = 767.0
+offset_top = 342.0
+offset_right = 1035.0
+offset_bottom = 406.0
+alignment = 1
+
+[node name="TinyBones" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+action_mode = 0
+texture_pressed = SubResource("GradientTexture2D_a4onl")
+
+[node name="Player0" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/TinyBones"]
+position = Vector2(32, 32)
+sprite_frames = SubResource("SpriteFrames_xeekd")
+animation = &"player0"
+frame_progress = 0.166595
+
+[node name="Player0Accessory" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/TinyBones"]
+position = Vector2(32, 32)
+sprite_frames = SubResource("SpriteFrames_3xd46")
+animation = &"player 0"
+frame_progress = 0.223777
+
+[node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/TinyBones"]
+layout_mode = 0
+offset_left = -7.0
+offset_top = 65.0
+offset_right = 74.0
+offset_bottom = 85.0
+scroll_active = false
+script = ExtResource("11_2oxo3")
+
+[node name="Beth" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_pressed = SubResource("GradientTexture2D_pwbw6")
+
+[node name="Player1" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Beth"]
+position = Vector2(34, 37)
+scale = Vector2(1.3125, 1.38889)
+sprite_frames = SubResource("SpriteFrames_xeekd")
+animation = &"player1"
+frame_progress = 0.462869
+
+[node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/Beth"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 65.0
+offset_right = 56.0
+offset_bottom = 85.0
+scroll_active = false
+script = ExtResource("11_2oxo3")
+
+[node name="Dalf" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_pressed = SubResource("GradientTexture2D_e672n")
+
+[node name="Player2" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Dalf"]
+position = Vector2(32, 37)
+scale = Vector2(0.822916, 0.795139)
+sprite_frames = SubResource("SpriteFrames_xeekd")
+animation = &"player2"
+frame_progress = 0.231685
+
+[node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/Dalf"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 65.0
+offset_right = 57.0
+offset_bottom = 85.0
+scroll_active = false
+script = ExtResource("11_2oxo3")
+
+[node name="Trece" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+toggle_mode = true
+texture_pressed = SubResource("GradientTexture2D_kw5gs")
+
+[node name="Player3" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Trece"]
+position = Vector2(32, 40)
+scale = Vector2(1.38021, 1.46007)
+sprite_frames = SubResource("SpriteFrames_xeekd")
+animation = &"player3"
+frame_progress = 0.6075
+
+[node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/Trece"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 65.0
+offset_right = 59.0
+offset_bottom = 85.0
+scroll_active = false
+script = ExtResource("11_2oxo3")
+
+[connection signal="pressed" from="Game-Over/Retry" to="." method="_on_retry_pressed"]
+[connection signal="pressed" from="Level-Ended/Retry" to="." method="_on_retry_pressed"]
+[connection signal="pressed" from="Main-menu/Play" to="." method="_on_play_pressed"]
+[connection signal="pressed" from="Character-menu/Start run" to="." method="_on_start_run_pressed"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/TinyBones" to="." method="_on_player_0_select_toggled"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Beth" to="." method="_on_player_1_select_toggled"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Dalf" to="." method="_on_player_2_select_toggled"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Trece" to="." method="_on_player_3_select_toggled"]

@@ -1,0 +1,40 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Skull Throne"
+run/main_scene="res://scenes/world.tscn"
+config/features=PackedStringArray("4.2", "Forward Plus")
+config/icon="res://assets/logo.png"
+
+[autoload]
+
+Global="*res://scripts/global.gd"
+
+[display]
+
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/stretch/mode="canvas_items"
+
+[layer_names]
+
+2d_render/layer_1="World"
+2d_render/layer_2="Player"
+
+[physics]
+
+common/max_physics_steps_per_frame=26
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
+viewport/transparent_background=true
