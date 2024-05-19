@@ -11,4 +11,5 @@ func _process(delta):
 	if visible:
 		for selectButtons in get_node("CharacterSelection/HBoxContainer").get_children():
 			for character in selectButtons.get_children():
-				character.play()
+				if character is AnimatedSprite2D:
+					character.play()

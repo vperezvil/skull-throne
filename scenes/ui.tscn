@@ -1,15 +1,16 @@
-[gd_scene load_steps=50 format=3 uid="uid://cpq13kxejjodc"]
+[gd_scene load_steps=51 format=3 uid="uid://cpq13kxejjodc"]
 
 [ext_resource type="Script" path="res://scripts/UI.gd" id="1_1ysiq"]
-[ext_resource type="AudioStream" uid="uid://ddd6be4vrlx03" path="res://assets/music/win music 1.wav" id="2_dl3am"]
-[ext_resource type="AudioStream" uid="uid://j1wvypup53fs" path="res://assets/music/the road&#039;s end.mp3" id="2_qsy3c"]
-[ext_resource type="AudioStream" uid="uid://w8ndfa4qni53" path="res://assets/music/pheonton - war - 01 - maintheme.mp3" id="2_sflr1"]
+[ext_resource type="AudioStream" path="res://assets/music/win music 1.wav" id="2_dl3am"]
+[ext_resource type="AudioStream" path="res://assets/music/the road&#039;s end.mp3" id="2_qsy3c"]
+[ext_resource type="AudioStream" path="res://assets/music/pheonton - war - 01 - maintheme.mp3" id="2_sflr1"]
 [ext_resource type="Script" path="res://scripts/Character-menu.gd" id="2_xgiog"]
 [ext_resource type="Texture2D" uid="uid://gqmnnu6na04v" path="res://assets/players/tinybones/BODY_skeleton.png" id="2_yki2a"]
 [ext_resource type="Texture2D" uid="uid://doja20t8asyxk" path="res://assets/accessories/HEAD_robe_hood.png" id="3_4knjl"]
 [ext_resource type="Texture2D" uid="uid://bh4tc5sw485ej" path="res://assets/players/beth/mage_f.png" id="3_dwamy"]
 [ext_resource type="Texture2D" uid="uid://cccsqjr0mtjkm" path="res://assets/players/dalf/wizard.png" id="4_vjq34"]
 [ext_resource type="Texture2D" uid="uid://c1rup6awajp6e" path="res://assets/players/trece/lpccatratdog.png" id="5_ai2oh"]
+[ext_resource type="Script" path="res://scripts/PlayerSelectName.gd" id="11_2oxo3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jcbd3"]
 bg_color = Color(1, 0.552941, 0.301961, 1)
@@ -298,20 +299,22 @@ stream = ExtResource("2_qsy3c")
 visible = false
 
 [node name="EndLabel" type="RichTextLabel" parent="Level-Ended"]
-offset_left = 763.0
-offset_top = 256.0
-offset_right = 1061.0
+offset_left = 768.0
+offset_top = 206.0
+offset_right = 1033.0
 offset_bottom = 338.0
 theme_override_font_sizes/normal_font_size = 50
 text = "YOU WON!
 For now..."
+scroll_active = false
 
 [node name="ExplanationLabel" type="RichTextLabel" parent="Level-Ended"]
-offset_left = 744.0
+offset_left = 677.0
 offset_top = 357.0
-offset_right = 1082.0
-offset_bottom = 405.0
+offset_right = 1181.0
+offset_bottom = 445.0
 text = "You have overcome the first of many levels with: {PARTY_MEMBERS} . For now this is as far as you can go. You can keep replaying."
+scroll_active = false
 
 [node name="Retry" type="Button" parent="Level-Ended"]
 offset_left = 843.0
@@ -384,7 +387,7 @@ offset_right = 1035.0
 offset_bottom = 406.0
 alignment = 1
 
-[node name="Player0Select" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+[node name="TinyBones" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -392,65 +395,101 @@ toggle_mode = true
 action_mode = 0
 texture_pressed = SubResource("GradientTexture2D_a4onl")
 
-[node name="Player0" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Player0Select"]
+[node name="Player0" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/TinyBones"]
 position = Vector2(32, 32)
 sprite_frames = SubResource("SpriteFrames_xeekd")
 animation = &"player0"
 frame_progress = 0.166595
 
-[node name="Player0Accessory" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Player0Select"]
+[node name="Player0Accessory" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/TinyBones"]
 position = Vector2(32, 32)
 sprite_frames = SubResource("SpriteFrames_3xd46")
 animation = &"player 0"
 frame_progress = 0.223777
 
-[node name="Player1Select" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+[node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/TinyBones"]
+layout_mode = 0
+offset_left = -7.0
+offset_top = 65.0
+offset_right = 74.0
+offset_bottom = 85.0
+scroll_active = false
+script = ExtResource("11_2oxo3")
+
+[node name="Beth" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 toggle_mode = true
 texture_pressed = SubResource("GradientTexture2D_pwbw6")
 
-[node name="Player1" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Player1Select"]
+[node name="Player1" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Beth"]
 position = Vector2(34, 37)
 scale = Vector2(1.3125, 1.38889)
 sprite_frames = SubResource("SpriteFrames_xeekd")
 animation = &"player1"
 frame_progress = 0.462869
 
-[node name="Player2Select" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+[node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/Beth"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 65.0
+offset_right = 56.0
+offset_bottom = 85.0
+scroll_active = false
+script = ExtResource("11_2oxo3")
+
+[node name="Dalf" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 toggle_mode = true
 texture_pressed = SubResource("GradientTexture2D_e672n")
 
-[node name="Player2" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Player2Select"]
+[node name="Player2" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Dalf"]
 position = Vector2(32, 37)
 scale = Vector2(0.822916, 0.795139)
 sprite_frames = SubResource("SpriteFrames_xeekd")
 animation = &"player2"
 frame_progress = 0.231685
 
-[node name="Player3Select" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
+[node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/Dalf"]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 65.0
+offset_right = 57.0
+offset_bottom = 85.0
+scroll_active = false
+script = ExtResource("11_2oxo3")
+
+[node name="Trece" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 toggle_mode = true
 texture_pressed = SubResource("GradientTexture2D_kw5gs")
 
-[node name="Player3" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Player3Select"]
+[node name="Player3" type="AnimatedSprite2D" parent="Character-menu/CharacterSelection/HBoxContainer/Trece"]
 position = Vector2(32, 40)
 scale = Vector2(1.38021, 1.46007)
 sprite_frames = SubResource("SpriteFrames_xeekd")
 animation = &"player3"
 frame_progress = 0.6075
 
+[node name="Label" type="RichTextLabel" parent="Character-menu/CharacterSelection/HBoxContainer/Trece"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 65.0
+offset_right = 59.0
+offset_bottom = 85.0
+scroll_active = false
+script = ExtResource("11_2oxo3")
+
 [connection signal="pressed" from="Game-Over/Retry" to="." method="_on_retry_pressed"]
 [connection signal="pressed" from="Level-Ended/Retry" to="." method="_on_retry_pressed"]
 [connection signal="pressed" from="Main-menu/Play" to="." method="_on_play_pressed"]
 [connection signal="pressed" from="Character-menu/Start run" to="." method="_on_start_run_pressed"]
-[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Player0Select" to="." method="_on_player_0_select_toggled"]
-[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Player1Select" to="." method="_on_player_1_select_toggled"]
-[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Player2Select" to="." method="_on_player_2_select_toggled"]
-[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Player3Select" to="." method="_on_player_3_select_toggled"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/TinyBones" to="." method="_on_player_0_select_toggled"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Beth" to="." method="_on_player_1_select_toggled"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Dalf" to="." method="_on_player_2_select_toggled"]
+[connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Trece" to="." method="_on_player_3_select_toggled"]
