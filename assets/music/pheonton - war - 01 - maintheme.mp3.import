@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://w8ndfa4qni53"
+path="res://.godot/imported/pheonton - war - 01 - maintheme.mp3-ee9e1a007a56baa626e8ac0111196002.mp3str"
+
+[deps]
+
+source_file="res://assets/music/pheonton - war - 01 - maintheme.mp3"
+dest_files=["res://.godot/imported/pheonton - war - 01 - maintheme.mp3-ee9e1a007a56baa626e8ac0111196002.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0.0
+bpm=0.0
+beat_count=0
+bar_beats=4

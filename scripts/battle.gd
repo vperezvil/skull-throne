@@ -8,6 +8,9 @@ extends Node2D
 @onready var combat_dialog = $UI/CombatDialog
 @onready var background_boss = $"Background Boss"
 @onready var background_enemy = $"Background Enemy"
+@onready var boss_music = $"Boss Battle"
+@onready var enemy_music = $"Enemy Battle"
+@onready var win_music = $"Win Battle"
 var original_positions = {}
 var original_scales = {}
 var original_parents = {}
@@ -19,6 +22,7 @@ var DEFEND_MSG = "\n{player1} is defending, will receive half damage on next att
 var SELECT_ENEMY = "\nSelect Enemy to attack"
 var DAMAGE_DEALT = "\n{player1} dealt {damage} damage to {player2}"
 var RUN_BOSS = "\nCan't run from the boss!!!"
+var WIN_BATTLE = "\nBattle won!"
 var dead_players = 0
 var is_boss_battle = false
 signal battle_ended
@@ -75,8 +79,11 @@ func fill_enemies(enemies):
 			is_boss_battle = true
 	if is_boss_battle:
 		background_boss.visible = true
+		boss_music.play()
+		
 	else:
 		background_enemy.visible = true
+		enemy_music.play()
 	var offset = 30
 	var spacing_between_enemies = 250
 	for enemy in enemies:
@@ -98,11 +105,16 @@ func fill_enemies(enemies):
 func end_battle():
 	battle_camera.enabled = false
 	battle_menu.visible = false
+	if is_boss_battle:
+		boss_music.stop()
+	else:
+		enemy_music.stop()
 	if original_parents.size() == 0:
 		game_over.emit(dead_players)
 		visible = false
 	else:
-		combat_dialog.visible = false
+		win_music.play()
+		combat_dialog.text += WIN_BATTLE
 		var enemies = enemy_container.get_children()
 		for enemy in enemies:
 			enemy.focus.visible = false
@@ -122,7 +134,10 @@ func end_battle():
 			character.visible = false
 			parent.add_child(character)
 			remaining_characters.append(character)
+		await get_tree().create_timer(5.0).timeout
 		clear_characters_and_enemies()
+		combat_dialog.visible = false
+		win_music.stop()
 		if is_boss_battle:
 			level_ended.emit(remaining_characters)
 		else:

@@ -1,6 +1,9 @@
-[gd_scene load_steps=47 format=3 uid="uid://cpq13kxejjodc"]
+[gd_scene load_steps=50 format=3 uid="uid://cpq13kxejjodc"]
 
 [ext_resource type="Script" path="res://scripts/UI.gd" id="1_1ysiq"]
+[ext_resource type="AudioStream" uid="uid://ddd6be4vrlx03" path="res://assets/music/win music 1.wav" id="2_dl3am"]
+[ext_resource type="AudioStream" uid="uid://j1wvypup53fs" path="res://assets/music/the road&#039;s end.mp3" id="2_qsy3c"]
+[ext_resource type="AudioStream" uid="uid://w8ndfa4qni53" path="res://assets/music/pheonton - war - 01 - maintheme.mp3" id="2_sflr1"]
 [ext_resource type="Script" path="res://scripts/Character-menu.gd" id="2_xgiog"]
 [ext_resource type="Texture2D" uid="uid://gqmnnu6na04v" path="res://assets/players/tinybones/BODY_skeleton.png" id="2_yki2a"]
 [ext_resource type="Texture2D" uid="uid://doja20t8asyxk" path="res://assets/accessories/HEAD_robe_hood.png" id="3_4knjl"]
@@ -288,6 +291,9 @@ offset_bottom = 544.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
 text = "Retry"
 
+[node name="Game Over Theme" type="AudioStreamPlayer" parent="Game-Over"]
+stream = ExtResource("2_qsy3c")
+
 [node name="Level-Ended" type="Node2D" parent="."]
 visible = false
 
@@ -315,6 +321,9 @@ offset_bottom = 544.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
 text = "Retry"
 
+[node name="Game Won Theme" type="AudioStreamPlayer" parent="Level-Ended"]
+stream = ExtResource("2_dl3am")
+
 [node name="Main-menu" type="Node2D" parent="."]
 
 [node name="Play" type="Button" parent="Main-menu"]
@@ -332,6 +341,9 @@ offset_right = 1042.0
 offset_bottom = 468.0
 theme_override_font_sizes/normal_font_size = 45
 text = "Skull Throne"
+
+[node name="Main Theme" type="AudioStreamPlayer" parent="Main-menu"]
+stream = ExtResource("2_sflr1")
 
 [node name="Character-menu" type="Node2D" parent="."]
 script = ExtResource("2_xgiog")

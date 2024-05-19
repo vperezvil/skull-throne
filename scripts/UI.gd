@@ -11,11 +11,14 @@ signal restart_game
 @onready var error_message = $"Character-menu/Error"
 @onready var death_count_message = $"Game-Over/InfoDeathsLabel"
 @onready var end_message = $"Level-Ended/ExplanationLabel"
+@onready var main_theme = $"Main-menu/Main Theme"
+@onready var game_won_music = $"Level-Ended/Game Won Theme"
+@onready var game_over_music = $"Game-Over/Game Over Theme"
 var character_ids_toggled = []
 # Called when the node enters the scene tree for the first time.
 
 func _ready():
-	pass # Replace with function body.
+	main_theme.play()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -28,6 +31,7 @@ func _on_play_pressed():
 	character_menu.visible = true
 
 func _on_world_map_generated():
+	main_theme.stop()
 	character_menu.visible = false
 
 func character_toggle(toggled_on,id):
@@ -66,11 +70,13 @@ func _on_battle_game_over(dead_players):
 	else:
 		death_count_message.text = death_count_message.text.replace("{TOTAL_COUNT} skulls", str(Global.total_deaths)+" skull")
 	game_over_menu.visible = true
+	game_over_music.play()
 
 func _on_retry_pressed():
 	game_over_menu.visible = false
+	game_won_music.stop()
+	game_over_music.stop()
 	restart_game.emit()
-
 
 func _on_battle_level_ended(remaining_characters):
 	var character_names = []
@@ -78,3 +84,4 @@ func _on_battle_level_ended(remaining_characters):
 		character_names.append(character.name)
 	end_message.text = end_message.text.replace("{PARTY_MEMBERS}",",".join(character_names))
 	end_game_menu.visible = true
+	game_won_music.play()

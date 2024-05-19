@@ -21,6 +21,7 @@ var boss_room
 var boss
 var enemy1
 var enemy2
+@onready var map_music = $"Map Theme"
 @onready var character_dict = {
 	0: $Characters/TinyBones,
 	1: $Characters/Beth,
@@ -61,6 +62,7 @@ func game_started():
 	collect_walkable_tiles()
 	spawn_enemies()
 	map_generated.emit()
+	map_music.play()
 
 func generate_map():
 	var map_size = Vector2i(100,100)
@@ -113,9 +115,9 @@ func collect_walkable_tiles():
 			var tile = Vector2i(x, y)
 			walkable_tiles.erase(tile)
 	
-	for x in range(boss_room.x, boss_room.x + boss_room.x):
-		for y in range(boss_room.y, boss_room.y + boss_room.y):
-			var tile = Vector2i(x, y)
+	for x in range(boss_room.x, boss_room.x + room_max_size):
+		for y in range(boss_room.y, boss_room.y + room_max_size):
+			var tile = Vector2i(boss_room.x, boss_room.y)
 			walkable_tiles.erase(tile)
 
 func spawn_enemies():
@@ -130,6 +132,7 @@ func spawn_enemies():
 		# Randomly select an enemy type
 		var enemy = enemy1 if randi() % 2 == 0 else enemy2
 		enemy.spawn(spawn_position, tilemap)
+		enemies.append(enemy)
 
 func generate_room(map_size):
 	var room_size = Vector2(randi_range(room_min_size, room_max_size), randi_range(room_min_size, room_max_size))
@@ -189,6 +192,7 @@ func find_boss_room():
 	return max_p
 
 func start_boss_battle():
+	map_music.stop()
 	boss.battle_started = true
 	for character in characters:
 		character.battle_started = true
@@ -197,6 +201,7 @@ func start_boss_battle():
 	tilemap.visible = false
 
 func start_battle(enemy):
+	map_music.stop()
 	boss.visible = false
 	enemy.battle_started = true
 	#TODO: multiply the enemies
@@ -214,6 +219,7 @@ func start_battle(enemy):
 	tilemap.visible = false
 
 func end_battle(remaining_characters):
+	map_music.play()
 	battle_scene.visible = false
 	tilemap.visible = true
 	characters = remaining_characters
