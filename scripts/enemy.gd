@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
 
-const SPEED = 300.0
-const DETECTION_RANGE = 300.0
+const SPEED = 100.0
+const DETECTION_RANGE = 500.0
 const RANDOM_MOVE_TIME = 2.0
 @onready var ap = $AnimationPlayer
 @onready var sprite = $EnemySprite
@@ -77,8 +77,27 @@ func check_line_of_sight():
 			is_chasing = true
 	
 func chase_player(delta):
-	velocity = (player.position - position).normalized()
-	velocity *= SPEED
+	var direction = Vector2.ZERO
+	
+	# Calculate the difference in position
+	var delta_pos = player.position - position
+
+	# Determine the primary direction of movement
+	if abs(delta_pos.x) > abs(delta_pos.y):
+		if delta_pos.x > 0:
+			direction.x = 1  # Move right
+		else:
+			direction.x = -1  # Move left
+	else:
+		if delta_pos.y > 0:
+			direction.y = 1  # Move down
+		else:
+			direction.y = -1  # Move up
+
+	# Normalize and scale the direction by speed
+	velocity = direction.normalized() * SPEED
+
+	# Move the enemy
 	move_and_slide()
 
 	# If the player is out of detection range, stop chasing
@@ -96,5 +115,20 @@ func has_clear_path_to_player():
 	return result.size() == 0 or result["collider"] == player
 	
 func _on_timer_timeout():
-	random_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized() 
+	random_direction = get_random_direction() 
 	timer.start(RANDOM_MOVE_TIME)
+	
+func get_random_direction():
+	# Generate a random integer between 0 and 3
+	var direction_index = randi() % 4
+	# Map the random integer to a cardinal direction
+	match direction_index:
+		0:
+			return Vector2(1, 0)  # Right
+		1:
+			return Vector2(-1, 0)  # Left
+		2:
+			return Vector2(0, 1)  # Down
+		3:
+			return Vector2(0, -1)  # Up
+

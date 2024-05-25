@@ -6,7 +6,7 @@ var game_state
 var room_min_size = 10
 var room_max_size = 20
 var num_rooms = 15
-var enemies_total = 25
+var enemies_total = 15
 enum GameState {IDLE, RUNNING, ENDED}
 @onready var ui = $ui
 @onready var battle_scene = $Battle
@@ -106,10 +106,7 @@ func spawn_boss():
 	boss.spawn(boss_room, tilemap)
 
 func collect_walkable_tiles():
-	walkable_tiles = tilemap.get_used_cells(0)
-	
-	for cell in tilemap.get_used_cells_by_id(0, tilemap.wall_level):
-		walkable_tiles.erase(cell)
+	walkable_tiles = tilemap.get_used_cells_by_id(0, tilemap.level)
 
 	# Remove tiles in the starting room and boss room
 	for x in range(starting_room.position.x, starting_room.position.x + starting_room.size.x):
@@ -117,8 +114,8 @@ func collect_walkable_tiles():
 			var tile = Vector2i(x, y)
 			walkable_tiles.erase(tile)
 	
-	for x in range(boss_room.x -  room_max_size/2, boss_room.x + room_max_size/2):
-		for y in range(boss_room.y - room_max_size/2, boss_room.y +  room_max_size/2):
+	for x in range(boss_room.x - room_max_size / 2 + 1, boss_room.x + room_max_size / 2 - 1):
+		for y in range(boss_room.y - room_max_size / 2 + 1, boss_room.y + room_max_size / 2 - 1):
 			var tile = Vector2i(x, y)
 			walkable_tiles.erase(tile)
 
@@ -215,19 +212,22 @@ func start_battle(enemy):
 	map_music.stop()
 	boss.visible = false
 	enemy.battle_started = true
-	var enemies = [enemy]
-	#var num_enemies = randi() % 2 + 1
-	#for i in range(num_enemies):
-		#var dup_enemy = enemy.duplicate()
-		#dup_enemy.name = enemy.name + str(i)
-		#dup_enemy.request_ready()
-		#enemies.append(dup_enemy)
+	var enemies_to_battle = [enemy]
+	var num_enemies = randi() % 2 + 1
+	for i in range(num_enemies):
+		var dup_enemy = enemy.duplicate()
+		dup_enemy.name = enemy.name + " ("+str(i)+ ") "
+		enemy_node.add_child(dup_enemy)
+		dup_enemy.request_ready()
+		dup_enemy.spawn(enemy.position, tilemap, characters[0])
+		dup_enemy.battle_started = true
+		enemies_to_battle.append(dup_enemy)
 	for character in characters:
 		character.battle_started = true
 	for e in enemies:
 		if !e.battle_started:
 			e.visible = false
-	battle_scene.start_battle(characters,enemies)
+	battle_scene.start_battle(characters,enemies_to_battle)
 	battle_scene.visible = true
 	tilemap.visible = false
 

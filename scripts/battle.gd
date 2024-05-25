@@ -167,6 +167,7 @@ func _on_enemy_selected(enemy):
 		enemy.receive_damage(current_combatant.attack)
 		enemy.focus.visible = false
 	combat_dialog.text += DAMAGE_DEALT.replace("{player1}", current_combatant.name).replace("{damage}", str(current_combatant.attack)).replace("{player2}", enemy.name)
+	remove_focus()
 	remove_highlight(current_combatant)
 	advance_turn()
 
@@ -255,4 +256,7 @@ func clear_characters_and_enemies():
 		character_container.remove_child(child)
 	for child in enemy_container.get_children():
 		enemy_container.remove_child(child)
-	
+
+func remove_focus():
+	for child in enemy_container.get_children():
+		child.focus.visible = false
