@@ -10,6 +10,7 @@ var enemies_total = 25
 enum GameState {IDLE, RUNNING, ENDED}
 @onready var ui = $ui
 @onready var battle_scene = $Battle
+@onready var enemy_node = $Enemies
 signal map_generated
 var rooms = []
 var characters = []
@@ -105,19 +106,20 @@ func spawn_boss():
 	boss.spawn(boss_room, tilemap)
 
 func collect_walkable_tiles():
-	walkable_tiles.clear()
 	walkable_tiles = tilemap.get_used_cells(0)
+	
 	for cell in tilemap.get_used_cells_by_id(0, tilemap.wall_level):
 		walkable_tiles.erase(cell)
+
 	# Remove tiles in the starting room and boss room
 	for x in range(starting_room.position.x, starting_room.position.x + starting_room.size.x):
 		for y in range(starting_room.position.y, starting_room.position.y + starting_room.size.y):
 			var tile = Vector2i(x, y)
 			walkable_tiles.erase(tile)
 	
-	for x in range(boss_room.x, boss_room.x + room_max_size):
-		for y in range(boss_room.y, boss_room.y + room_max_size):
-			var tile = Vector2i(boss_room.x, boss_room.y)
+	for x in range(boss_room.x -  room_max_size/2, boss_room.x + room_max_size/2):
+		for y in range(boss_room.y - room_max_size/2, boss_room.y +  room_max_size/2):
+			var tile = Vector2i(x, y)
 			walkable_tiles.erase(tile)
 
 func spawn_enemies():
@@ -125,13 +127,22 @@ func spawn_enemies():
 		if walkable_tiles.size() == 0:
 			break  # No more walkable tiles available to spawn enemies
 
-		var index = randi() % walkable_tiles.size()
+		var index = randi() % (walkable_tiles.size() - 1)
 		var spawn_position = walkable_tiles[index]
 		walkable_tiles.erase(index)  # Remove the tile to avoid multiple enemies in the same spot
 
 		# Randomly select an enemy type
-		var enemy = enemy1 if randi() % 2 == 0 else enemy2
-		enemy.spawn(spawn_position, tilemap)
+		var enemy
+		var random_num = randi() % 2 
+		if random_num == 0:
+			enemy = enemy1.duplicate()
+			enemy.name = enemy1.name + " " + str(i)
+		else:
+			enemy = enemy2.duplicate()
+			enemy.name = enemy2.name + " " + str(i)
+		enemy_node.add_child(enemy)
+		enemy.request_ready()
+		enemy.spawn(spawn_position, tilemap, characters[0])
 		enemies.append(enemy)
 
 func generate_room(map_size):
@@ -204,17 +215,19 @@ func start_battle(enemy):
 	map_music.stop()
 	boss.visible = false
 	enemy.battle_started = true
-	#TODO: multiply the enemies
-	#var enemies = []
-	#var num_enemies = randi() % 3 + 1
+	var enemies = [enemy]
+	#var num_enemies = randi() % 2 + 1
 	#for i in range(num_enemies):
-		#enemies.append(enemy.duplicate())
+		#var dup_enemy = enemy.duplicate()
+		#dup_enemy.name = enemy.name + str(i)
+		#dup_enemy.request_ready()
+		#enemies.append(dup_enemy)
 	for character in characters:
 		character.battle_started = true
 	for e in enemies:
 		if !e.battle_started:
 			e.visible = false
-	battle_scene.start_battle(characters,[enemy])
+	battle_scene.start_battle(characters,enemies)
 	battle_scene.visible = true
 	tilemap.visible = false
 

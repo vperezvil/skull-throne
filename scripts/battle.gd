@@ -22,9 +22,11 @@ var DEFEND_MSG = "\n{player1} is defending, will receive half damage on next att
 var SELECT_ENEMY = "\nSelect Enemy to attack"
 var DAMAGE_DEALT = "\n{player1} dealt {damage} damage to {player2}"
 var RUN_BOSS = "\nCan't run from the boss!!!"
+var RUN = "\nRun successfully"
 var WIN_BATTLE = "\nBattle won!"
 var dead_players = 0
 var is_boss_battle = false
+var is_run_pressed = false
 signal battle_ended
 signal level_ended
 signal game_over
@@ -114,7 +116,10 @@ func end_battle():
 		visible = false
 	else:
 		win_music.play()
-		combat_dialog.text += WIN_BATTLE
+		if !is_run_pressed:
+			combat_dialog.text += WIN_BATTLE
+		else:
+			is_run_pressed = false
 		var enemies = enemy_container.get_children()
 		for enemy in enemies:
 			enemy.focus.visible = false
@@ -132,6 +137,7 @@ func end_battle():
 			character.position = original_positions[character]
 			character.scale = original_scales[character]
 			character.visible = false
+			character.ap.play("RESET")
 			parent.add_child(character)
 			remaining_characters.append(character)
 		await get_tree().create_timer(5.0).timeout
@@ -177,6 +183,8 @@ func _on_run_pressed():
 	if enemy_container.has_node("Evil Geanie Boss"):
 		combat_dialog.text += RUN_BOSS
 	else:
+		combat_dialog.text += RUN
+		is_run_pressed = true
 		end_battle() # Replace with function body.
 	
 func initialize_combatants(characters, enemies):
