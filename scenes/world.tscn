@@ -167,10 +167,13 @@ visible = false
 [node name="Enemies" type="Node2D" parent="."]
 
 [node name="Evil Geanie Boss" parent="Enemies" instance=ExtResource("8_7hej8")]
+visible = false
 
 [node name="Rock Troll Enemy" parent="Enemies" instance=ExtResource("13_likad")]
+visible = false
 
 [node name="Rock Troll Enemy Variant" parent="Enemies" instance=ExtResource("14_52fy1")]
+visible = false
 
 [node name="Map Theme" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("15_the6d")

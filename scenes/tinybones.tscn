@@ -1,6 +1,6 @@
 [gd_scene load_steps=16 format=3 uid="uid://rxsdiynxpmok"]
 
-[ext_resource type="Script" path="res://scripts/Character.gd" id="1_17p46"]
+[ext_resource type="Script" path="res://scripts/tinybones.gd" id="1_aopqd"]
 [ext_resource type="Texture2D" uid="uid://gqmnnu6na04v" path="res://assets/players/tinybones/BODY_skeleton.png" id="1_e22ca"]
 [ext_resource type="Texture2D" uid="uid://doja20t8asyxk" path="res://assets/accessories/HEAD_robe_hood.png" id="2_a005i"]
 [ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="4_bj6yj"]
@@ -631,7 +631,7 @@ _data = {
 }
 
 [node name="TinyBones" type="CharacterBody2D"]
-script = ExtResource("1_17p46")
+script = ExtResource("1_aopqd")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 6)

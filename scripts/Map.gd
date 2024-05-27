@@ -21,7 +21,7 @@ func generate_chunk(room_position, room_size):
 				var floor_map = map.get_noise_2d(room_position.x + x, room_position.y + y)*10
 				set_cell(0,coord,level,Vector2i(round((floor_map+10)/1.3),0))
 
-# Assuming `room_position` is the top-left corner of the room and `room_size` is its size
+# 'room_position' is the top-left corner of the room and 'room_size' is its size
 func print_room_border(room_position, room_size):
 	var room_right = room_position.x + room_size.x
 	var room_bottom = room_position.y + room_size.y
@@ -73,25 +73,25 @@ func draw_corridor(start, end):
 
 			# Determine if this is a border tile
 			var is_border_tile = offset < 0 or offset >= corridor_width
-
+			
+			if (i == range_start or i == range_end) and (offset == -border_width or offset == corridor_width - border_width - 1):
+				# Calculate the edges
+				var top_left_corner = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i-1, main_coord + offset)
+				var top_right_corner = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i+1, main_coord + offset)
+				var bottom_left_corner = Vector2i(main_coord + offset, i+1) if is_vertical else Vector2i(i-1, main_coord + offset)
+				var bottom_right_corner = Vector2i(main_coord + offset, i+1) if is_vertical else Vector2i(i+1, main_coord + offset)
+				if !get_used_cells(0).has(top_left_corner):
+					set_cell(0, top_left_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+				if !get_used_cells(0).has(top_right_corner ):
+					set_cell(0, top_right_corner , wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+				if !get_used_cells(0).has(bottom_left_corner):
+					set_cell(0, bottom_left_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
+				if !get_used_cells(0).has(bottom_right_corner):
+					set_cell(0, bottom_right_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
 			# Place border tiles only if there is no existing tile
 			if is_border_tile and !get_used_cells(0).has(coord):
 				set_cell(0, coord, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
-				if i == range_start or i == range_end:
-					# Calculate the edges
-					var top_left_corner = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i-1, main_coord + offset)
-					var top_right_corner = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i+1, main_coord + offset)
-					var bottom_left_corner = Vector2i(main_coord + offset, i+1) if is_vertical else Vector2i(i-1, main_coord + offset)
-					var bottom_right_corner = Vector2i(main_coord + offset, i+1) if is_vertical else Vector2i(i+1, main_coord + offset)
-					if !get_used_cells(0).has(top_left_corner):
-						set_cell(0, top_left_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
-					if !get_used_cells(0).has(top_right_corner ):
-						set_cell(0, top_right_corner , wall_level, Vector2i(round((floor_map + 10) / 5), 0))
-					if !get_used_cells(0).has(bottom_left_corner):
-						set_cell(0, bottom_left_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
-					if !get_used_cells(0).has(bottom_right_corner):
-						set_cell(0, bottom_right_corner, wall_level, Vector2i(round((floor_map + 10) / 5), 0))
 			# Place main corridor tiles (potentially overwriting existing tiles if they're part of the corridor path)
 			elif !is_border_tile:
 				set_cell(0, coord, level, Vector2i(round((floor_map + 10) / 1.3), 0))
-				
+			
