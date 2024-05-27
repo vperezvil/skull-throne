@@ -1,7 +1,8 @@
 extends CharacterBody2D
 
 
-const SPEED = 100.0
+const CHASE_SPEED = 100.0
+const SPEED = 50.0
 const DETECTION_RANGE = 500.0
 const RANDOM_MOVE_TIME = 2.0
 @onready var ap = $AnimationPlayer
@@ -22,6 +23,7 @@ var player
 @onready var timer = Timer.new()
 signal enemy_selected
 signal enemy_defeated
+signal enemy_battle_start
 func _ready():
 	visible = false
 	progress_bar.max_value = max_hp
@@ -29,10 +31,12 @@ func _ready():
 	add_child(timer)
 	timer.connect("timeout", _on_timer_timeout)
 	timer.start(RANDOM_MOVE_TIME)
-	random_direction = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized() * SPEED
+	random_direction = get_random_direction()
 
 func spawn(spawn_position, tilemap, main_character):
 	position = tilemap.map_to_local(spawn_position)
+	var test = tilemap.get_cell_source_id(0,position)
+	var test2 = tilemap.get_cell_source_id(0,spawn_position)
 	initiative = clamp(initiative, 1, 100)
 	visible = true
 	player = main_character
@@ -77,7 +81,7 @@ func check_line_of_sight():
 			is_chasing = true
 	
 func chase_player(delta):
-	var direction = Vector2.ZERO
+	velocity = Vector2.ZERO
 	
 	# Calculate the difference in position
 	var delta_pos = player.position - position
@@ -85,24 +89,23 @@ func chase_player(delta):
 	# Determine the primary direction of movement
 	if abs(delta_pos.x) > abs(delta_pos.y):
 		if delta_pos.x > 0:
-			direction.x = 1  # Move right
+			velocity.x = 1  # Move right
 		else:
-			direction.x = -1  # Move left
+			velocity.x = -1  # Move left
 	else:
 		if delta_pos.y > 0:
-			direction.y = 1  # Move down
+			velocity.y = 1  # Move down
 		else:
-			direction.y = -1  # Move up
+			velocity.y = -1  # Move up
 
-	# Normalize and scale the direction by speed
-	velocity = direction.normalized() * SPEED
+	velocity = velocity.normalized() * CHASE_SPEED
 
 	# Move the enemy
 	move_and_slide()
-
 	# If the player is out of detection range, stop chasing
 	if position.distance_to(player.position) > DETECTION_RANGE:
 		is_chasing = false
+	handle_collision()
 
 func has_clear_path_to_player():
 	var direction = (player.position - position).normalized()
@@ -131,4 +134,12 @@ func get_random_direction():
 			return Vector2(0, 1)  # Down
 		3:
 			return Vector2(0, -1)  # Up
+
+func handle_collision():
+	for i in get_slide_collision_count():
+		var collision = get_slide_collision(i)
+		var collider = collision.get_collider()
+		if collider.name == player.name and !battle_started:
+			collider.collided_with_enemy()
+			enemy_battle_start.emit(self)
 

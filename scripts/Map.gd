@@ -21,7 +21,7 @@ func generate_chunk(room_position, room_size):
 				var floor_map = map.get_noise_2d(room_position.x + x, room_position.y + y)*10
 				set_cell(0,coord,level,Vector2i(round((floor_map+10)/1.3),0))
 
-# Assuming `room_position` is the top-left corner of the room and `room_size` is its size
+# 'room_position' is the top-left corner of the room and 'room_size' is its size
 func print_room_border(room_position, room_size):
 	var room_right = room_position.x + room_size.x
 	var room_bottom = room_position.y + room_size.y

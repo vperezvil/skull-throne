@@ -107,15 +107,14 @@ func spawn_boss():
 
 func collect_walkable_tiles():
 	walkable_tiles = tilemap.get_used_cells_by_id(0, tilemap.level)
-
 	# Remove tiles in the starting room and boss room
 	for x in range(starting_room.position.x, starting_room.position.x + starting_room.size.x):
 		for y in range(starting_room.position.y, starting_room.position.y + starting_room.size.y):
 			var tile = Vector2i(x, y)
 			walkable_tiles.erase(tile)
 	
-	for x in range(boss_room.x - room_max_size / 2 + 1, boss_room.x + room_max_size / 2 - 1):
-		for y in range(boss_room.y - room_max_size / 2 + 1, boss_room.y + room_max_size / 2 - 1):
+	for x in range(boss_room.x - room_max_size / 2, boss_room.x + room_max_size / 2):
+		for y in range(boss_room.y - room_max_size / 2, boss_room.y + room_max_size / 2):
 			var tile = Vector2i(x, y)
 			walkable_tiles.erase(tile)
 
@@ -140,6 +139,7 @@ func spawn_enemies():
 		enemy_node.add_child(enemy)
 		enemy.request_ready()
 		enemy.spawn(spawn_position, tilemap, characters[0])
+		enemy.enemy_battle_start.connect(start_battle)
 		enemies.append(enemy)
 
 func generate_room(map_size):
@@ -227,6 +227,7 @@ func start_battle(enemy):
 	for e in enemies:
 		if !e.battle_started:
 			e.visible = false
+			e.is_chasing = false
 	battle_scene.start_battle(characters,enemies_to_battle)
 	battle_scene.visible = true
 	tilemap.visible = false
