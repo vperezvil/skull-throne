@@ -1,5 +1,5 @@
 extends CharacterBody2D
-
+class_name Character
 
 const SPEED = 300.0
 @onready var ap = $AnimationPlayer
@@ -55,13 +55,15 @@ func read_input():
 func handle_collision():
 	for i in get_slide_collision_count():
 		var collision = get_slide_collision(i)
-		var collider = collision.get_collider()
-		if collider.name.contains("Boss") and !battle_started:
-			collided_with_enemy()
-			boss_battle_start.emit()
-		if collider.name.contains("Enemy") and !battle_started:
-			collided_with_enemy()
-			enemy_battle_start.emit(collider)
+		if collision != null:
+			var collider = collision.get_collider()
+			if collider != null:
+				if collider.name.contains("Boss") and !battle_started:
+					collided_with_enemy()
+					boss_battle_start.emit()
+				if collider.name.contains("Enemy") and !battle_started:
+					collided_with_enemy()
+					enemy_battle_start.emit(collider)
 			
 func collided_with_enemy():
 	battle_started = true

@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://4y4cmx343lgm"]
 
-[ext_resource type="Script" path="res://scripts/enemy.gd" id="1_6njbk"]
+[ext_resource type="Script" path="res://scripts/rock_troll_b.gd" id="1_bb4dg"]
 [ext_resource type="Texture2D" uid="uid://dfoi41wptswqe" path="res://assets/monsters/rock_troll_monk_ghost.png" id="2_s7p1o"]
 [ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="3_51b6r"]
 [ext_resource type="Texture2D" uid="uid://c7mmy81n0morr" path="res://assets/hand_cursor0000.png" id="4_gat3l"]
@@ -61,7 +61,7 @@ _data = {
 }
 
 [node name="Rock Troll Enemy Variant" type="CharacterBody2D"]
-script = ExtResource("1_6njbk")
+script = ExtResource("1_bb4dg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_hfjs6")

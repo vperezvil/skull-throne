@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://b2fgy51m2848s"]
 
-[ext_resource type="Script" path="res://scripts/Character.gd" id="1_2xgwj"]
+[ext_resource type="Script" path="res://scripts/dalf.gd" id="1_o8wq7"]
 [ext_resource type="Texture2D" uid="uid://cccsqjr0mtjkm" path="res://assets/players/dalf/wizard.png" id="1_o026e"]
 [ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="3_3skdx"]
 [ext_resource type="Texture2D" uid="uid://c7mmy81n0morr" path="res://assets/hand_cursor0000.png" id="4_7ku01"]
@@ -162,7 +162,7 @@ _data = {
 }
 
 [node name="Dalf" type="CharacterBody2D"]
-script = ExtResource("1_2xgwj")
+script = ExtResource("1_o8wq7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)

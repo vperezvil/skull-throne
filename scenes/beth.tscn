@@ -1,6 +1,6 @@
 [gd_scene load_steps=15 format=3 uid="uid://cy5t48r5pe16n"]
 
-[ext_resource type="Script" path="res://scripts/Character.gd" id="1_ho0vl"]
+[ext_resource type="Script" path="res://scripts/beth.gd" id="1_ukkhl"]
 [ext_resource type="Texture2D" uid="uid://bh4tc5sw485ej" path="res://assets/players/beth/mage_f.png" id="2_1jt2o"]
 [ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="3_joxat"]
 [ext_resource type="Texture2D" uid="uid://c7mmy81n0morr" path="res://assets/hand_cursor0000.png" id="4_0i06t"]
@@ -162,7 +162,7 @@ _data = {
 }
 
 [node name="Beth" type="CharacterBody2D"]
-script = ExtResource("1_ho0vl")
+script = ExtResource("1_ukkhl")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_h003h")

@@ -120,6 +120,7 @@ func end_battle():
 			combat_dialog.text += WIN_BATTLE
 		else:
 			is_run_pressed = false
+		
 		var enemies = enemy_container.get_children()
 		for enemy in enemies:
 			enemy.focus.visible = false
@@ -129,6 +130,7 @@ func end_battle():
 			character.focus.visible = false
 			
 		var remaining_characters = []
+		await get_tree().create_timer(5.0).timeout
 		# Restore original parents and positions
 		for character in original_parents.keys():
 			var parent = original_parents[character]
@@ -140,7 +142,6 @@ func end_battle():
 			character.ap.play("RESET")
 			parent.add_child(character)
 			remaining_characters.append(character)
-		await get_tree().create_timer(5.0).timeout
 		clear_characters_and_enemies()
 		combat_dialog.visible = false
 		win_music.stop()

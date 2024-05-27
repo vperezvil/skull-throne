@@ -1,4 +1,5 @@
 extends CharacterBody2D
+class_name Enemy
 
 
 const CHASE_SPEED = 100.0
@@ -138,8 +139,10 @@ func get_random_direction():
 func handle_collision():
 	for i in get_slide_collision_count():
 		var collision = get_slide_collision(i)
-		var collider = collision.get_collider()
-		if collider.name == player.name and !battle_started:
-			collider.collided_with_enemy()
-			enemy_battle_start.emit(self)
+		if collision != null:
+			var collider = collision.get_collider()
+			if collider != null:
+				if collider.name == player.name and !battle_started and !collider.battle_started:
+					collider.collided_with_enemy()
+					enemy_battle_start.emit(self)
 
