@@ -1,7 +1,7 @@
 [gd_scene load_steps=15 format=3 uid="uid://b33ajjw6wtjvp"]
 
 [ext_resource type="Texture2D" uid="uid://c1rup6awajp6e" path="res://assets/players/trece/lpccatratdog.png" id="1_hou22"]
-[ext_resource type="Script" path="res://scripts/Character.gd" id="1_j4qor"]
+[ext_resource type="Script" path="res://scripts/trece.gd" id="1_oinyv"]
 [ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="3_qwnty"]
 [ext_resource type="Texture2D" uid="uid://c7mmy81n0morr" path="res://assets/hand_cursor0000.png" id="4_hxnja"]
 
@@ -162,7 +162,7 @@ _data = {
 }
 
 [node name="Trece" type="CharacterBody2D"]
-script = ExtResource("1_j4qor")
+script = ExtResource("1_oinyv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 1)

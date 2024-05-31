@@ -27,7 +27,6 @@ bg_color = Color(0.862745, 0.541176, 0, 1)
 bg_color = Color(0, 0, 0, 1)
 
 [node name="Battle" type="Node2D"]
-visible = false
 script = ExtResource("1_aib43")
 
 [node name="Background Enemy" type="TextureRect" parent="."]
@@ -43,19 +42,19 @@ offset_bottom = 1077.0
 texture = ExtResource("3_wklv1")
 
 [node name="EnemyContainer" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(228, 815)
-offset_left = 334.0
-offset_top = 109.0
-offset_right = 562.0
-offset_bottom = 924.0
+custom_minimum_size = Vector2(228, 715)
+offset_left = 333.0
+offset_top = 201.0
+offset_right = 561.0
+offset_bottom = 1016.0
 alignment = 1
 
 [node name="CharacterContainer" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(228, 815)
+custom_minimum_size = Vector2(228, 715)
 offset_left = 1312.0
-offset_top = 109.0
+offset_top = 201.0
 offset_right = 1540.0
-offset_bottom = 924.0
+offset_bottom = 1016.0
 alignment = 1
 
 [node name="UI" type="CanvasLayer" parent="."]
