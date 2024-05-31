@@ -14,6 +14,7 @@ config/name="Skull Throne"
 run/main_scene="res://scenes/world.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://assets/logo.png"
+config/windows_native_icon="res://assets/logo.ico"
 
 [autoload]
 
