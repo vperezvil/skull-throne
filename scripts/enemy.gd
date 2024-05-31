@@ -8,6 +8,7 @@ const DETECTION_RANGE = 500.0
 const RANDOM_MOVE_TIME = 2.0
 @onready var ap = $AnimationPlayer
 @onready var sprite = $EnemySprite
+@onready var damage_text = $DamageReceived
 var battle_started = false
 var max_hp = 100
 var current_hp
@@ -65,10 +66,14 @@ func update_progress_bar():
 
 func receive_damage(damage):
 	current_hp -= damage
+	damage_text.text = "-"+str(damage)
+	damage_text.visible = true
 	ap.play("hurt")
 	# Ensure health doesn't go below 0
 	current_hp = max(current_hp, 0)
 	update_progress_bar()
+	await get_tree().create_timer(1.0).timeout
+	damage_text.visible = false
 
 func _on_focus_pressed():
 	enemy_selected.emit()
