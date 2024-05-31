@@ -35,10 +35,22 @@ tracks/0/path = NodePath("BossSprite:self_modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2, 0.4, 0.6),
-"transitions": PackedFloat32Array(1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1), Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1)]
+"values": [Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1), Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1), Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DamageReceived:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(0.729412, 0.0392157, 0.0235294, 1), Color(0.729412, 0.0392157, 0.0235294, 0), Color(0.729412, 0.0392157, 0.0235294, 1), Color(0.729412, 0.0392157, 0.0235294, 0), Color(0.729412, 0.0392157, 0.0235294, 1), Color(0.729412, 0.0392157, 0.0235294, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_5881r"]
@@ -56,6 +68,7 @@ position = Vector2(-2.5, -5)
 shape = SubResource("RectangleShape2D_k2quq")
 
 [node name="BossSprite" type="Sprite2D" parent="."]
+self_modulate = Color(0.729412, 0.0392157, 0.0235294, 1)
 position = Vector2(1.90735e-06, 9.53674e-07)
 scale = Vector2(5, 5)
 texture = ExtResource("2_qockn")
@@ -69,6 +82,15 @@ offset_bottom = -85.0
 theme = ExtResource("3_ghafo")
 step = 1.0
 show_percentage = false
+
+[node name="DamageReceived" type="RichTextLabel" parent="."]
+visible = false
+self_modulate = Color(0.729412, 0.0392157, 0.0235294, 0)
+offset_left = -13.0
+offset_top = -111.0
+offset_right = 11.0
+offset_bottom = -86.0
+scroll_active = false
 
 [node name="Focus" type="TextureButton" parent="."]
 visible = false

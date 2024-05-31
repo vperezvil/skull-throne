@@ -5,6 +5,7 @@ const SPEED = 300.0
 @onready var ap = $AnimationPlayer
 @onready var progress_bar = $ProgressBar
 @onready var focus = $Focus
+@onready var damage_text = $DamageReceived
 signal boss_battle_start
 signal enemy_battle_start
 signal character_defeated
@@ -82,15 +83,20 @@ func update_progress_bar():
 		character_defeated.emit()
 
 func receive_damage(damage):
+	var damage_received = damage
 	if is_defending:
-		current_hp -= damage/2
-	else:
-		current_hp -= damage
+		damage_received = damage/2
+	current_hp -= damage_received
+	damage_text.text = "-"+str(damage_received)
+	damage_text.visible = true
 	ap.play("hurt")
 	is_defending = false
 	# Ensure health doesn't go below 0
 	current_hp = max(current_hp, 0)
 	update_progress_bar()
+	await get_tree().create_timer(1.0).timeout
+	damage_text.visible = false
+	
 
 func defend():
 	is_defending = true
