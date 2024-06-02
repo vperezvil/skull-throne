@@ -1,0 +1,39 @@
+[gd_scene load_steps=7 format=3 uid="uid://df62qslhjtvf8"]
+
+[ext_resource type="Script" path="res://scripts/healing_fountain.gd" id="1_bl22i"]
+[ext_resource type="Texture2D" uid="uid://brhvkfysgkut7" path="res://assets/map/dngn_blood_fountain2.png" id="2_akq5i"]
+[ext_resource type="Texture2D" uid="uid://c4x4ywocpfpak" path="res://assets/map/dngn_blood_fountain.png" id="3_c03mw"]
+[ext_resource type="AudioStream" uid="uid://b0x6dlivqfi2v" path="res://assets/music/magic.ogg" id="4_bsb32"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_87v2a"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_akq5i")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_c03mw")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kbhg3"]
+size = Vector2(48, 50)
+
+[node name="Healing Fountain" type="StaticBody2D"]
+visible = false
+script = ExtResource("1_bl22i")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(1.53125, 1.5625)
+sprite_frames = SubResource("SpriteFrames_87v2a")
+frame_progress = 0.544531
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1, 0)
+shape = SubResource("RectangleShape2D_kbhg3")
+
+[node name="HealSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_bsb32")

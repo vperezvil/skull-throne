@@ -1,9 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://c8xai0wl4sw44"]
+[gd_scene load_steps=12 format=3 uid="uid://c8xai0wl4sw44"]
 
 [ext_resource type="Script" path="res://scripts/boss.gd" id="1_xf1pf"]
 [ext_resource type="Texture2D" uid="uid://bq0r2dvfdak86" path="res://assets/monsters/unique/azrael.png" id="2_qockn"]
 [ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="3_ghafo"]
 [ext_resource type="Texture2D" uid="uid://c7mmy81n0morr" path="res://assets/hand_cursor0000.png" id="4_e2t7s"]
+[ext_resource type="AudioStream" uid="uid://dvj7v2caadhru" path="res://assets/music/hit.ogg" id="4_w7wm4"]
+[ext_resource type="AudioStream" uid="uid://5f2a6wtfmgsy" path="res://assets/music/hurt.ogg" id="5_sf8td"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k2quq"]
 size = Vector2(145, 150)
@@ -68,7 +70,6 @@ position = Vector2(-2.5, -5)
 shape = SubResource("RectangleShape2D_k2quq")
 
 [node name="BossSprite" type="Sprite2D" parent="."]
-self_modulate = Color(0.729412, 0.0392157, 0.0235294, 1)
 position = Vector2(1.90735e-06, 9.53674e-07)
 scale = Vector2(5, 5)
 texture = ExtResource("2_qockn")
@@ -91,6 +92,13 @@ offset_top = -111.0
 offset_right = 11.0
 offset_bottom = -86.0
 scroll_active = false
+
+[node name="DamageSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_w7wm4")
+volume_db = -5.0
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_sf8td")
 
 [node name="Focus" type="TextureButton" parent="."]
 visible = false

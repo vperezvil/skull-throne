@@ -12,6 +12,8 @@ var attack = 20
 @onready var progress_bar = $ProgressBar
 @onready var focus = $Focus
 @onready var damage_text = $DamageReceived
+@onready var damage_sound = $DamageSound
+@onready var death_sound = $DeathSound
 signal enemy_selected
 signal enemy_defeated
 func _ready():
@@ -35,8 +37,10 @@ func update_progress_bar():
 	progress_bar.value = current_hp
 	if current_hp == 0:
 		ap.play("death")
+		death_sound.play()
 		await get_tree().create_timer(1.0).timeout
 		progress_bar.visible = false
+		death_sound.stop()
 		enemy_defeated.emit()
 
 func receive_damage(damage):
@@ -44,11 +48,13 @@ func receive_damage(damage):
 	damage_text.text = "-"+str(damage)
 	damage_text.visible = true
 	ap.play("hurt")
+	damage_sound.play()
 	# Ensure health doesn't go below 0
 	current_hp = max(current_hp, 0)
 	update_progress_bar()
 	await get_tree().create_timer(1.0).timeout
 	damage_text.visible = false
+	damage_sound.stop()
 
 func _on_focus_pressed():
 	enemy_selected.emit()
