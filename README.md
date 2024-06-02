@@ -1,6 +1,6 @@
 # Skull Throne
 [![Latest Release](https://img.shields.io/github/v/release/vperezvil/skull-throne)](https://github.com/vperezvil/skull-throne/releases/latest)
-[![License: CC BY-NC-ND 3.0 ES](https://licensebuttons.net/l/by-nc-nd/3.0/80x15.png)](https://creativecommons.org/licenses/by-nc-nd/3.0/es/)
+[![License: CC BY-NC-ND 3.0 ES](https://licensebuttons.net/l/by-nc-nd/3.0/es/88x31.png)](https://creativecommons.org/licenses/by-nc-nd/3.0/es/)
 ## Table of Contents
 - [Introduction](#introduction)
 - [Usage](#usage)
