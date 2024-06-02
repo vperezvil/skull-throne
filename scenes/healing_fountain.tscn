@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bouta4rsagdgm"]
+[gd_scene load_steps=7 format=3 uid="uid://df62qslhjtvf8"]
 
 [ext_resource type="Script" path="res://scripts/healing_fountain.gd" id="1_bl22i"]
 [ext_resource type="Texture2D" uid="uid://brhvkfysgkut7" path="res://assets/map/dngn_blood_fountain2.png" id="2_akq5i"]
@@ -22,7 +22,7 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kbhg3"]
 size = Vector2(48, 50)
 
-[node name="Healing Fountain" type="CharacterBody2D"]
+[node name="Healing Fountain" type="StaticBody2D"]
 visible = false
 script = ExtResource("1_bl22i")
 

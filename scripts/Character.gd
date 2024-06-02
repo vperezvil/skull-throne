@@ -17,6 +17,7 @@ var current_hp
 var initiative:int
 var attack = 10
 var is_defending = false
+var is_colliding = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -64,12 +65,16 @@ func handle_collision():
 				if collider.name.contains("Boss") and !battle_started:
 					collided_with_enemy()
 					boss_battle_start.emit()
-				if collider.name.contains("Enemy") and !battle_started:
+				elif collider.name.contains("Enemy") and !battle_started:
 					collided_with_enemy()
 					enemy_battle_start.emit(collider)
-				if collider.name.contains("Fountain") and !battle_started:
-					collider.handle_collision()
-			
+				elif collider.name.contains("Fountain") and !battle_started:
+					if !is_colliding:
+						collider.handle_collision()
+						is_colliding = true
+	if is_colliding and get_slide_collision_count() == 0:
+		is_colliding = false
+
 func collided_with_enemy():
 	battle_started = true
 	update_progress_bar()
