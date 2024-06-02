@@ -1,6 +1,5 @@
 # Skull Throne
 [![Latest Release](https://img.shields.io/github/v/release/vperezvil/skull-throne)](https://github.com/vperezvil/skull-throne/releases/latest)
-[![License: CC BY-NC-ND 4.0](https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-nd/4.0/deed)
 ## Table of Contents
 - [Introduction](#introduction)
 - [Usage](#usage)
@@ -20,7 +19,9 @@ TODO: guide
 
 ## License
 
-This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivs 3.0 Spain License.
+This work is licensed under a [Creative Commons Attribution-NonCommercial-NoDerivs 4.0 Spain License][https://creativecommons.org/licenses/by-nc-nd/4.0/deed.es].
+
+[![License: CC BY-NC-ND 4.0](https://licensebuttons.net/l/by-nc-nd/4.0/88x31.png)](https://creativecommons.org/licenses/by-nc-nd/4.0/deed)
 
 ## Acknowledgements
 
