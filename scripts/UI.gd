@@ -4,10 +4,12 @@ signal game_started
 signal character_added
 signal character_removed
 signal restart_game
+
 @onready var main_menu = $"Main-menu"
 @onready var character_menu = $"Character-menu"
 @onready var game_over_menu = $"Game-Over"
 @onready var end_game_menu = $"Level-Ended"
+@onready var game_menu = $"Game-menu"
 @onready var error_message = $"Character-menu/Error"
 @onready var death_count_message = $"Game-Over/InfoDeathsLabel"
 @onready var end_message = $"Level-Ended/ExplanationLabel"
@@ -85,3 +87,9 @@ func _on_battle_level_ended(remaining_characters):
 	end_message.text = end_message.text.replace("{PARTY_MEMBERS}",",".join(character_names))
 	end_game_menu.visible = true
 	game_won_music.play()
+	
+func _on_escape_pressed():
+	game_menu.visible = true
+
+func _on_inventory_pressed():
+	pass

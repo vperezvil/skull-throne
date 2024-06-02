@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://bo28putf8abx6"]
+[gd_scene load_steps=23 format=3 uid="uid://bo28putf8abx6"]
 
 [ext_resource type="Script" path="res://scripts/world.gd" id="1_6dbgp"]
 [ext_resource type="Texture2D" uid="uid://daoantq6uxnc7" path="res://assets/map/floor/grass/grass_atlas_1.png" id="1_j8ert"]
@@ -16,6 +16,8 @@
 [ext_resource type="PackedScene" uid="uid://4y4cmx343lgm" path="res://scenes/rock_troll_b.tscn" id="14_52fy1"]
 [ext_resource type="AudioStream" uid="uid://rhsr76xvfsmb" path="res://assets/music/medieval.ogg" id="15_the6d"]
 [ext_resource type="PackedScene" uid="uid://df62qslhjtvf8" path="res://scenes/healing_fountain.tscn" id="16_1mke5"]
+[ext_resource type="PackedScene" uid="uid://bmd684oqlrkjg" path="res://scenes/potion.tscn" id="17_3wkjj"]
+[ext_resource type="Script" path="res://scripts/potion.gd" id="18_2kt11"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o0l37"]
 texture = ExtResource("1_j8ert")
@@ -184,6 +186,9 @@ stream = ExtResource("15_the6d")
 [node name="Healing Fountain" parent="Objects" instance=ExtResource("16_1mke5")]
 
 [node name="Items" type="Node2D" parent="Objects"]
+
+[node name="Potion" parent="Objects/Items" instance=ExtResource("17_3wkjj")]
+script = ExtResource("18_2kt11")
 
 [connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]
 [connection signal="game_over" from="Battle" to="ui" method="_on_battle_game_over"]

@@ -72,6 +72,10 @@ func handle_collision():
 					if !is_colliding:
 						collider.handle_collision()
 						is_colliding = true
+				elif collider.name.contains("Potion") and !battle_started:
+					if !is_colliding:
+						collider.handle_collision()
+						is_colliding = true
 	if is_colliding and get_slide_collision_count() == 0:
 		is_colliding = false
 

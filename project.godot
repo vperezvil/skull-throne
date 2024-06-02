@@ -19,6 +19,7 @@ config/windows_native_icon="res://assets/logo.ico"
 [autoload]
 
 Global="*res://scripts/global.gd"
+Inventory="*res://scripts/InventoryManager.gd"
 
 [display]
 

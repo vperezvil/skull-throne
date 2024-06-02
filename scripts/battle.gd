@@ -261,3 +261,7 @@ func clear_characters_and_enemies():
 func remove_focus():
 	for child in enemy_container.get_children():
 		child.focus.visible = false
+
+
+func _on_inventory_pressed():
+	pass # Replace with function body.

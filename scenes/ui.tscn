@@ -1,4 +1,4 @@
-[gd_scene load_steps=54 format=3 uid="uid://cpq13kxejjodc"]
+[gd_scene load_steps=60 format=3 uid="uid://cpq13kxejjodc"]
 
 [ext_resource type="Script" path="res://scripts/UI.gd" id="1_1ysiq"]
 [ext_resource type="AudioStream" uid="uid://ddd6be4vrlx03" path="res://assets/music/win music 1.wav" id="2_dl3am"]
@@ -271,6 +271,24 @@ fill_to = Vector2(0.017094, 0.014245)
 gradient = SubResource("Gradient_d2xh0")
 fill_to = Vector2(0.002849, 0.00569801)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5tbw5"]
+bg_color = Color(0.862745, 0.541176, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_72v8n"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ydajt"]
+bg_color = Color(0.862745, 0.541176, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ir73f"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1otje"]
+bg_color = Color(0.862745, 0.541176, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mi6h4"]
+bg_color = Color(0, 0, 0, 1)
+
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_1ysiq")
 
@@ -498,6 +516,40 @@ offset_right = 59.0
 offset_bottom = 85.0
 scroll_active = false
 script = ExtResource("11_2oxo3")
+
+[node name="Game-menu" type="Node2D" parent="."]
+visible = false
+
+[node name="ItemGrid" type="GridContainer" parent="Game-menu"]
+offset_left = 1028.0
+offset_top = 223.0
+offset_right = 1529.0
+offset_bottom = 700.0
+
+[node name="Options" type="VBoxContainer" parent="Game-menu"]
+offset_left = 819.0
+offset_top = 417.0
+offset_right = 988.0
+offset_bottom = 518.0
+
+[node name="Inventory" type="Button" parent="Game-menu/Options"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_5tbw5")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_72v8n")
+text = "Inventory
+"
+
+[node name="Options" type="Button" parent="Game-menu/Options"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ydajt")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ir73f")
+text = "Options"
+
+[node name="Run" type="Button" parent="Game-menu/Options"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_1otje")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_mi6h4")
+text = "Exit"
 
 [connection signal="pressed" from="Game-Over/Retry" to="." method="_on_retry_pressed"]
 [connection signal="pressed" from="Level-Ended/Retry" to="." method="_on_retry_pressed"]
