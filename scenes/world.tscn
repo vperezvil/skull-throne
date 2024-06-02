@@ -183,6 +183,8 @@ stream = ExtResource("15_the6d")
 
 [node name="Healing Fountain" parent="Objects" instance=ExtResource("16_1mke5")]
 
+[node name="Items" type="Node2D" parent="Objects"]
+
 [connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]
 [connection signal="game_over" from="Battle" to="ui" method="_on_battle_game_over"]
 [connection signal="level_ended" from="Battle" to="ui" method="_on_battle_level_ended"]
