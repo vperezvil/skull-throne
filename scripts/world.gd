@@ -22,6 +22,7 @@ var boss_room
 var boss
 var enemy1
 var enemy2
+var fountain
 @onready var map_music = $"Map Theme"
 @onready var character_dict = {
 	0: $Characters/TinyBones,
@@ -35,6 +36,7 @@ func _ready():
 	boss = $"Enemies/Evil Geanie Boss"
 	enemy1 = $"Enemies/Rock Troll Enemy"
 	enemy2 = $"Enemies/Rock Troll Enemy Variant"
+	fountain = $"Objects/Healing Fountain"
 	ui.game_started.connect(game_started)
 	ui.character_added.connect(add_character)
 	ui.character_removed.connect(remove_character)
@@ -62,6 +64,7 @@ func game_started():
 	spawn_boss()
 	collect_walkable_tiles()
 	spawn_enemies()
+	spawn_fountain()
 	map_generated.emit()
 	map_music.play()
 
@@ -142,6 +145,14 @@ func spawn_enemies():
 		enemy.enemy_battle_start.connect(start_battle)
 		enemies.append(enemy)
 
+func spawn_fountain():
+	# Randomly select a room
+	var fountain_room = rooms[randi() % rooms.size()]
+	if fountain_room != starting_room and fountain_room.get_center() != boss_room_position:
+		fountain.spawn(fountain_room, tilemap, characters)
+	else:
+		spawn_fountain()
+
 func generate_room(map_size):
 	var room_size = Vector2(randi_range(room_min_size, room_max_size), randi_range(room_min_size, room_max_size))
 	var room_position = Vector2(randi_range(1, map_size.x - room_size.x - 1), randi_range(1, map_size.y - room_size.y - 1))
@@ -204,6 +215,7 @@ func start_boss_battle():
 	boss.battle_started = true
 	for character in characters:
 		character.battle_started = true
+	fountain.visible = false
 	battle_scene.start_battle(characters,[boss])
 	battle_scene.visible = true
 	tilemap.visible = false
@@ -212,6 +224,7 @@ func start_battle(enemy):
 	map_music.stop()
 	boss.visible = false
 	enemy.battle_started = true
+	fountain.visible = false
 	var enemies_to_battle = [enemy]
 	var num_enemies = randi() % 2 + 1
 	for i in range(num_enemies):
@@ -243,6 +256,8 @@ func end_battle(remaining_characters):
 		character.progress_bar.visible = false
 	var main_character = characters[0]
 	main_character.visible = true
+	fountain.players = characters
+	fountain.visible = true
 	if boss.battle_started:
 		boss.visible = false
 		boss.battle_started = false
@@ -251,6 +266,7 @@ func end_battle(remaining_characters):
 	for e in enemies:
 		if !e.battle_started:
 			e.visible = true
+			e.player = main_character
 	if main_character.has_node("Camera2D"):
 		var camera = main_character.get_node("Camera2D")
 		camera.enabled = true

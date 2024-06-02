@@ -6,6 +6,8 @@ const SPEED = 300.0
 @onready var progress_bar = $ProgressBar
 @onready var focus = $Focus
 @onready var damage_text = $DamageReceived
+@onready var damage_sound = $DamageSound
+@onready var death_sound = $DeathSound
 signal boss_battle_start
 signal enemy_battle_start
 signal character_defeated
@@ -65,6 +67,8 @@ func handle_collision():
 				if collider.name.contains("Enemy") and !battle_started:
 					collided_with_enemy()
 					enemy_battle_start.emit(collider)
+				if collider.name.contains("Fountain") and !battle_started:
+					collider.handle_collision()
 			
 func collided_with_enemy():
 	battle_started = true
@@ -77,8 +81,10 @@ func update_progress_bar():
 	progress_bar.value = current_hp
 	if current_hp == 0:
 		ap.play("death")
+		death_sound.play()
 		await get_tree().create_timer(1.0).timeout
 		progress_bar.visible = false
+		death_sound.stop()
 		Global.increment_death_count()
 		character_defeated.emit()
 
@@ -90,14 +96,22 @@ func receive_damage(damage):
 	damage_text.text = "-"+str(damage_received)
 	damage_text.visible = true
 	ap.play("hurt")
+	damage_sound.play()
 	is_defending = false
 	# Ensure health doesn't go below 0
 	current_hp = max(current_hp, 0)
 	update_progress_bar()
 	await get_tree().create_timer(1.0).timeout
 	damage_text.visible = false
+	damage_sound.stop()
 	
 
 func defend():
 	is_defending = true
 	ap.play("defend")
+	
+func heal():
+	current_hp = max_hp
+
+func heal_item(item):
+	current_hp += item.healing_power

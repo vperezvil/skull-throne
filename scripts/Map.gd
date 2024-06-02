@@ -60,13 +60,13 @@ func draw_corridor(start, end):
 	var main_coord = start.x if is_vertical else start.y
 	var range_start = min(start.y, end.y) if is_vertical else min(start.x, end.x)
 	var range_end = max(start.y, end.y) if is_vertical else max(start.x, end.x)
-	range_end += border_width
+	range_end += border_width + 1
 	# Calculate total width including borders
 	var total_width = corridor_width + 2 * border_width
 	# Loop over the corridor width (including borders)
 	for offset in range(-border_width,total_width - border_width):  
 		# Loop over the length of the corridor
-		for i in range(range_start, range_end + 1):
+		for i in range(range_start, range_end):
 			# Calculate the current tile coordinate
 			var coord = Vector2i(main_coord + offset, i) if is_vertical else Vector2i(i, main_coord + offset)
 			var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
@@ -74,7 +74,7 @@ func draw_corridor(start, end):
 			# Determine if this is a border tile
 			var is_border_tile = offset < 0 or offset >= corridor_width
 			
-			if (i == range_start or i == range_end) and (offset == -border_width or offset == corridor_width - border_width - 1):
+			if (i == range_start or i == range_end) and (offset == -border_width or offset == total_width):
 				# Calculate the edges
 				var top_left_corner = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i-1, main_coord + offset)
 				var top_right_corner = Vector2i(main_coord + offset, i-1) if is_vertical else Vector2i(i+1, main_coord + offset)
