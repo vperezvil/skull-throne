@@ -25,21 +25,22 @@ This work is licensed under a Creative Commons Attribution-NonCommercial-NoDeriv
 ## Acknowledgements
 
 Thanks to the following opengameart users for their contributions used for this project, here you'll find the links to said resources:
-	- Sprites:
-		- [andreyin](https://opengameart.org/content/hand-cursor)
-		- [Antifarea](https://opengameart.org/content/antifareas-rpg-sprite-set-1-enlarged-w-transparent-background)
-		- [bleutailfly](https://opengameart.org/content/wizards )
-		- [Chris Hamons](http://opengameart.org/content/dungeon-crawl-32x32-tiles)
-		- [Nidhoggn](https://opengameart.org/content/backgrounds-3)
-		- [Reemax](https://opengameart.org/content/lpc-rat-cat-and-dog)
-		- [wulax](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites)
+	
+- Sprites:
+	- [andreyin](https://opengameart.org/content/hand-cursor)
+	- [Antifarea](https://opengameart.org/content/antifareas-rpg-sprite-set-1-enlarged-w-transparent-background)
+	- [bleutailfly](https://opengameart.org/content/wizards )
+	- [Chris Hamons](http://opengameart.org/content/dungeon-crawl-32x32-tiles)
+	- [Nidhoggn](https://opengameart.org/content/backgrounds-3)
+	- [Reemax](https://opengameart.org/content/lpc-rat-cat-and-dog)
+	- [wulax](https://opengameart.org/content/lpc-medieval-fantasy-character-sprites)
 
-	- Music / Sounds:
-		- [Baŝto](https://opengameart.org/content/nes-sounds)
-		- [Marcus Rasseli](https://opengameart.org/content/the-battle)
-		- [Miguel Herrero](https://opengameart.org/content/medieval)
-		- [pheonton](https://opengameart.org/content/maintheme)
-		- [remaxim](https://opengameart.org/content/win-music-1)
-		- [remaxim](https://opengameart.org/content/win-music-2)
-		- [remaxim](https://opengameart.org/content/boss-theme) 
-		- [Telaron](https://opengameart.org/content/the-roads-end)
+- Music / Sounds:
+	- [Baŝto](https://opengameart.org/content/nes-sounds)
+	- [Marcus Rasseli](https://opengameart.org/content/the-battle)
+	- [Miguel Herrero](https://opengameart.org/content/medieval)
+	- [pheonton](https://opengameart.org/content/maintheme)
+	- [remaxim](https://opengameart.org/content/win-music-1)
+	- [remaxim](https://opengameart.org/content/win-music-2)
+	- [remaxim](https://opengameart.org/content/boss-theme) 
+	- [Telaron](https://opengameart.org/content/the-roads-end)
