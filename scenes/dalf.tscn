@@ -1,9 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://b2fgy51m2848s"]
+[gd_scene load_steps=17 format=3 uid="uid://b2fgy51m2848s"]
 
 [ext_resource type="Script" path="res://scripts/dalf.gd" id="1_o8wq7"]
 [ext_resource type="Texture2D" uid="uid://cccsqjr0mtjkm" path="res://assets/players/dalf/wizard.png" id="1_o026e"]
 [ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="3_3skdx"]
 [ext_resource type="Texture2D" uid="uid://c7mmy81n0morr" path="res://assets/hand_cursor0000.png" id="4_7ku01"]
+[ext_resource type="AudioStream" uid="uid://dvj7v2caadhru" path="res://assets/music/hit.ogg" id="4_iu0b1"]
+[ext_resource type="AudioStream" uid="uid://5f2a6wtfmgsy" path="res://assets/music/hurt.ogg" id="5_vej2s"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_485r8"]
 size = Vector2(23, 52)
@@ -221,6 +223,13 @@ offset_top = -56.0
 offset_right = 12.0
 offset_bottom = -33.0
 scroll_active = false
+
+[node name="DamageSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_iu0b1")
+volume_db = -5.0
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_vej2s")
 
 [node name="Focus" type="Sprite2D" parent="."]
 visible = false

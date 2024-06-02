@@ -1,9 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://cy5t48r5pe16n"]
+[gd_scene load_steps=17 format=3 uid="uid://cy5t48r5pe16n"]
 
 [ext_resource type="Script" path="res://scripts/beth.gd" id="1_ukkhl"]
 [ext_resource type="Texture2D" uid="uid://bh4tc5sw485ej" path="res://assets/players/beth/mage_f.png" id="2_1jt2o"]
 [ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="3_joxat"]
 [ext_resource type="Texture2D" uid="uid://c7mmy81n0morr" path="res://assets/hand_cursor0000.png" id="4_0i06t"]
+[ext_resource type="AudioStream" uid="uid://dvj7v2caadhru" path="res://assets/music/hit.ogg" id="4_uu6bh"]
+[ext_resource type="AudioStream" uid="uid://5f2a6wtfmgsy" path="res://assets/music/hurt.ogg" id="5_wigt6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h003h"]
 size = Vector2(28, 36)
@@ -219,6 +221,13 @@ offset_top = -46.0
 offset_right = 14.0
 offset_bottom = -23.0
 scroll_active = false
+
+[node name="DamageSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_uu6bh")
+volume_db = -5.0
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_wigt6")
 
 [node name="Focus" type="Sprite2D" parent="."]
 visible = false

@@ -1,9 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://cxi5qs6i5uu08"]
+[gd_scene load_steps=12 format=3 uid="uid://cxi5qs6i5uu08"]
 
 [ext_resource type="Script" path="res://scripts/rock_troll.gd" id="1_revc0"]
 [ext_resource type="Texture2D" uid="uid://cp8t24oa11alr" path="res://assets/monsters/rock_troll.png" id="2_61u08"]
 [ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="3_3q0nt"]
 [ext_resource type="Texture2D" uid="uid://c7mmy81n0morr" path="res://assets/hand_cursor0000.png" id="4_54uu0"]
+[ext_resource type="AudioStream" uid="uid://dvj7v2caadhru" path="res://assets/music/hit.ogg" id="4_ok6cd"]
+[ext_resource type="AudioStream" uid="uid://5f2a6wtfmgsy" path="res://assets/music/hurt.ogg" id="5_e2ov8"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jnkec"]
 size = Vector2(40, 37)
@@ -102,6 +104,13 @@ offset_right = 12.0
 offset_bottom = -26.0
 text = "-15"
 scroll_active = false
+
+[node name="DamageSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_ok6cd")
+volume_db = -5.0
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_e2ov8")
 
 [node name="Focus" type="TextureButton" parent="."]
 visible = false
