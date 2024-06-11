@@ -419,6 +419,7 @@ offset_bottom = 593.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_qeu2o")
 text = "Play"
+metadata/_edit_use_anchors_ = true
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Main-menu"]
 offset_left = 778.0
@@ -428,6 +429,7 @@ offset_bottom = 460.0
 theme_override_font_sizes/normal_font_size = 50
 text = "Skull Throne"
 scroll_active = false
+metadata/_edit_use_anchors_ = true
 
 [node name="Main Theme" type="AudioStreamPlayer" parent="Main-menu"]
 stream = ExtResource("2_sflr1")
@@ -575,6 +577,7 @@ script = ExtResource("11_2oxo3")
 visible = false
 
 [node name="ItemGrid" type="GridContainer" parent="Game-menu"]
+visible = false
 offset_left = 1028.0
 offset_top = 223.0
 offset_right = 1529.0

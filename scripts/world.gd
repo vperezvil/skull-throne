@@ -11,6 +11,7 @@ enum GameState {IDLE, RUNNING, ENDED}
 @onready var ui = $ui
 @onready var battle_scene = $Battle
 @onready var enemy_node = $Enemies
+@onready var items_node = $Objects/Items
 signal map_generated
 signal paused_game
 var rooms = []
@@ -20,6 +21,7 @@ var walkable_tiles = []
 var path #AStar2D
 var starting_room
 var boss_room
+var fountain_room
 var boss
 var enemy1
 var enemy2
@@ -30,6 +32,9 @@ var fountain
 	1: $Characters/Beth,
 	2: $Characters/Dalf,
 	3: $Characters/Trece
+}
+@onready var items_dict = {
+	0: $Objects/Items/Potion
 }
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -80,9 +85,10 @@ func game_started():
 	# Generate player spawn position
 	spawn_player()
 	spawn_boss()
+	spawn_fountain()
 	collect_walkable_tiles()
 	spawn_enemies()
-	spawn_fountain()
+	spawn_items()
 	map_generated.emit()
 	map_music.play()
 
@@ -128,9 +134,14 @@ func spawn_boss():
 
 func collect_walkable_tiles():
 	walkable_tiles = tilemap.get_used_cells_by_id(0, tilemap.level)
-	# Remove tiles in the starting room and boss room
+	# Remove tiles in the starting room, fountain room and boss room
 	for x in range(starting_room.position.x, starting_room.position.x + starting_room.size.x):
 		for y in range(starting_room.position.y, starting_room.position.y + starting_room.size.y):
+			var tile = Vector2i(x, y)
+			walkable_tiles.erase(tile)
+			
+	for x in range(fountain_room.position.x, fountain_room.position.x + fountain_room.size.x):
+		for y in range(fountain_room.position.y, fountain_room.position.y + fountain_room.size.y):
 			var tile = Vector2i(x, y)
 			walkable_tiles.erase(tile)
 	
@@ -165,12 +176,31 @@ func spawn_enemies():
 
 func spawn_fountain():
 	# Randomly select a room
-	var fountain_room = rooms[randi() % rooms.size()]
+	fountain_room = rooms[randi() % rooms.size()]
 	if fountain_room != starting_room and fountain_room.get_center() != boss_room_position:
 		fountain.spawn(fountain_room, tilemap, characters)
 	else:
 		spawn_fountain()
 
+func spawn_items():
+	# Randomly select how many items are spawned, we want at least 3
+	var total_items = randi_range(3,items_dict.size())
+	for i in range(total_items):
+		if walkable_tiles.size() == 0:
+			break  # No more walkable tiles available to spawn enemies
+
+		var index = randi() % (walkable_tiles.size() - 1)
+		var spawn_position = walkable_tiles[index]
+		walkable_tiles.erase(index)  # Remove the tile to avoid multiple enemies in the same spot
+
+		# Randomly select an item
+		var random_num = randi() % items_dict.size()
+		var item = items_dict[random_num].duplicate()
+		item.name = items_dict[random_num].name + " " + str(i)
+		items_node.add_child(item)
+		item.request_ready()
+		item.spawn(spawn_position, tilemap)
+		
 func generate_room(map_size):
 	var room_size = Vector2(randi_range(room_min_size, room_max_size), randi_range(room_min_size, room_max_size))
 	var room_position = Vector2(randi_range(1, map_size.x - room_size.x - 1), randi_range(1, map_size.y - room_size.y - 1))

@@ -9,5 +9,5 @@ func _ready():
 	type = "healing"
 	
 func spawn(spawn_position, tilemap):
-	position = tilemap.map_to_local(spawn_position.get_center())
+	position = tilemap.map_to_local(spawn_position)
 	visible = true

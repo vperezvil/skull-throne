@@ -17,6 +17,7 @@ signal restart_game
 @onready var game_won_music = $"Level-Ended/Game Won Theme"
 @onready var game_over_music = $"Game-Over/Game Over Theme"
 @onready var exit_dialog = $"Game-menu/ConfirmationDialog"
+@onready var item_grid = $ItemGrid
 var character_ids_toggled = []
 # Called when the node enters the scene tree for the first time.
 
@@ -85,11 +86,22 @@ func _on_battle_level_ended(remaining_characters):
 	game_won_music.play()
 
 func _on_inventory_pressed():
-	pass
+	for item in Inventory.items.keys():
+		var icon = item.icon
+		var item_button = Button.new()
+		item_button.icon = icon
+		item_button.text = str(Inventory.items[item])
+		item_button.pressed.connect(_on_item_pressed)
+		item_grid.add_child(item_button)
+
+	if item_grid.get_child_count() > 0:
+		item_grid.visible = true
 
 func _on_world_paused_game(is_paused):
 	game_menu.visible = is_paused
 
+func _on_item_pressed():
+	pass
 
 func _on_exit_pressed():
 	exit_dialog.visible = true
