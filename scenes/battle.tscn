@@ -9,25 +9,25 @@
 [ext_resource type="AudioStream" uid="uid://u62qep3qmb1p" path="res://assets/music/win music 1-2.mp3" id="6_qajjw"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a5vok"]
-bg_color = Color(0.862745, 0.541176, 0, 1)
+bg_color = Color(1, 0.552941, 0.301961, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0rhnp"]
 bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f4g5b"]
-bg_color = Color(0.862745, 0.541176, 0, 1)
+bg_color = Color(1, 0.552941, 0.301961, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u62lx"]
 bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2f72l"]
-bg_color = Color(0.862745, 0.541176, 0, 1)
+bg_color = Color(1, 0.552941, 0.301961, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_omgep"]
 bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_atdy4"]
-bg_color = Color(0.862745, 0.541176, 0, 1)
+bg_color = Color(1, 0.552941, 0.301961, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nr0db"]
 bg_color = Color(0, 0, 0, 1)

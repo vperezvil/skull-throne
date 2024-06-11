@@ -12,6 +12,7 @@ enum GameState {IDLE, RUNNING, ENDED}
 @onready var battle_scene = $Battle
 @onready var enemy_node = $Enemies
 signal map_generated
+signal paused_game
 var rooms = []
 var characters = []
 var enemies = []
@@ -42,7 +43,24 @@ func _ready():
 	ui.character_removed.connect(remove_character)
 	ui.restart_game.connect(restart_game)
 	battle_scene.battle_ended.connect(end_battle)
-	
+
+
+func _process(delta):
+	read_input()
+		
+func read_input():
+	var map_is_rendered =  map_music.playing
+	var game_is_paused = ui.game_menu.visible == true
+	var esc_pressed = Input.is_action_just_pressed("ui_cancel")
+	if esc_pressed and map_is_rendered and !game_is_paused:
+		tilemap.get_tree().paused = true
+		characters[0].get_tree().paused = true
+		paused_game.emit(true)
+	elif esc_pressed and game_is_paused:
+		paused_game.emit(false)
+		tilemap.get_tree().paused = false
+		characters[0].get_tree().paused = false
+
 func add_character(id):
 	#Add characters
 	var character = character_dict[id]
@@ -274,3 +292,5 @@ func end_battle(remaining_characters):
 
 func restart_game():
 	get_tree().reload_current_scene()
+	
+	

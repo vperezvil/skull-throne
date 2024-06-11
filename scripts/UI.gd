@@ -16,16 +16,12 @@ signal restart_game
 @onready var main_theme = $"Main-menu/Main Theme"
 @onready var game_won_music = $"Level-Ended/Game Won Theme"
 @onready var game_over_music = $"Game-Over/Game Over Theme"
+@onready var exit_dialog = $"Game-menu/ConfirmationDialog"
 var character_ids_toggled = []
 # Called when the node enters the scene tree for the first time.
 
 func _ready():
 	main_theme.play()
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass
 
 
 func _on_play_pressed():
@@ -87,9 +83,18 @@ func _on_battle_level_ended(remaining_characters):
 	end_message.text = end_message.text.replace("{PARTY_MEMBERS}",",".join(character_names))
 	end_game_menu.visible = true
 	game_won_music.play()
-	
-func _on_escape_pressed():
-	game_menu.visible = true
 
 func _on_inventory_pressed():
 	pass
+
+func _on_world_paused_game(is_paused):
+	game_menu.visible = is_paused
+
+
+func _on_exit_pressed():
+	exit_dialog.visible = true
+
+
+func _on_confirmation_dialog_confirmed():
+	get_tree().quit()
+

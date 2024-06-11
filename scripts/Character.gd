@@ -123,4 +123,4 @@ func heal():
 	current_hp = max_hp
 
 func heal_item(item):
-	current_hp += item.healing_power
+	current_hp += item.healing_amount

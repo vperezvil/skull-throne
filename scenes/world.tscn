@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://bo28putf8abx6"]
+[gd_scene load_steps=22 format=3 uid="uid://bo28putf8abx6"]
 
 [ext_resource type="Script" path="res://scripts/world.gd" id="1_6dbgp"]
 [ext_resource type="Texture2D" uid="uid://daoantq6uxnc7" path="res://assets/map/floor/grass/grass_atlas_1.png" id="1_j8ert"]
@@ -16,8 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://4y4cmx343lgm" path="res://scenes/rock_troll_b.tscn" id="14_52fy1"]
 [ext_resource type="AudioStream" uid="uid://rhsr76xvfsmb" path="res://assets/music/medieval.ogg" id="15_the6d"]
 [ext_resource type="PackedScene" uid="uid://df62qslhjtvf8" path="res://scenes/healing_fountain.tscn" id="16_1mke5"]
-[ext_resource type="PackedScene" uid="uid://bmd684oqlrkjg" path="res://scenes/potion.tscn" id="17_3wkjj"]
-[ext_resource type="Script" path="res://scripts/potion.gd" id="18_2kt11"]
+[ext_resource type="PackedScene" uid="uid://vmomc8i58ghx" path="res://scenes/potion.tscn" id="17_3wkjj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o0l37"]
 texture = ExtResource("1_j8ert")
@@ -140,11 +139,13 @@ sources/6 = SubResource("TileSetAtlasSource_mhuem")
 tile_proxies/coords_level = [[0, Vector2i(0, 0)], [24, Vector2i(0, 0)], [1, Vector2i(0, 0)], [24, Vector2i(1, 0)], [2, Vector2i(0, 0)], [6, Vector2i(0, 0)], [3, Vector2i(0, 0)], [6, Vector2i(1, 0)], [4, Vector2i(0, 0)], [6, Vector2i(2, 0)], [5, Vector2i(0, 0)], [6, Vector2i(3, 0)], [6, Vector2i(0, 0)], [24, Vector2i(6, 0)], [7, Vector2i(0, 0)], [24, Vector2i(7, 0)], [8, Vector2i(0, 0)], [24, Vector2i(8, 0)], [9, Vector2i(0, 0)], [24, Vector2i(9, 0)], [10, Vector2i(0, 0)], [24, Vector2i(10, 0)], [11, Vector2i(0, 0)], [24, Vector2i(11, 0)], [12, Vector2i(0, 0)], [24, Vector2i(12, 0)], [13, Vector2i(0, 0)], [24, Vector2i(13, 0)], [14, Vector2i(0, 0)], [24, Vector2i(14, 0)], [15, Vector2i(0, 0)], [24, Vector2i(15, 0)], [16, Vector2i(0, 0)], [24, Vector2i(16, 0)], [17, Vector2i(0, 0)], [24, Vector2i(17, 0)], [18, Vector2i(0, 0)], [24, Vector2i(18, 0)], [19, Vector2i(0, 0)], [24, Vector2i(19, 0)], [20, Vector2i(0, 0)], [24, Vector2i(20, 0)], [21, Vector2i(0, 0)], [24, Vector2i(21, 0)], [22, Vector2i(0, 0)], [24, Vector2i(22, 0)], [23, Vector2i(0, 0)], [24, Vector2i(23, 0)], [25, Vector2i(0, 0)], [40, Vector2i(0, 0)], [26, Vector2i(0, 0)], [40, Vector2i(1, 0)], [27, Vector2i(0, 0)], [40, Vector2i(2, 0)], [28, Vector2i(0, 0)], [40, Vector2i(3, 0)], [29, Vector2i(0, 0)], [40, Vector2i(4, 0)], [30, Vector2i(0, 0)], [40, Vector2i(5, 0)], [31, Vector2i(0, 0)], [40, Vector2i(6, 0)], [32, Vector2i(0, 0)], [40, Vector2i(7, 0)], [33, Vector2i(0, 0)], [40, Vector2i(8, 0)], [34, Vector2i(0, 0)], [40, Vector2i(9, 0)], [35, Vector2i(0, 0)], [40, Vector2i(10, 0)], [36, Vector2i(0, 0)], [40, Vector2i(11, 0)], [37, Vector2i(0, 0)], [40, Vector2i(12, 0)], [38, Vector2i(0, 0)], [40, Vector2i(13, 0)], [39, Vector2i(0, 0)], [40, Vector2i(14, 0)], [41, Vector2i(0, 0)], [53, Vector2i(0, 0)], [42, Vector2i(0, 0)], [53, Vector2i(1, 0)], [43, Vector2i(0, 0)], [53, Vector2i(2, 0)], [44, Vector2i(0, 0)], [53, Vector2i(3, 0)], [45, Vector2i(0, 0)], [53, Vector2i(4, 0)], [46, Vector2i(0, 0)], [53, Vector2i(5, 0)], [47, Vector2i(0, 0)], [53, Vector2i(6, 0)], [48, Vector2i(0, 0)], [53, Vector2i(7, 0)], [49, Vector2i(0, 0)], [53, Vector2i(8, 0)], [50, Vector2i(0, 0)], [53, Vector2i(9, 0)], [51, Vector2i(0, 0)], [53, Vector2i(10, 0)], [52, Vector2i(0, 0)], [53, Vector2i(11, 0)]]
 
 [node name="World" type="Node2D"]
+process_mode = 3
 script = ExtResource("1_6dbgp")
 
 [node name="Battle" parent="." instance=ExtResource("2_mlip8")]
 
 [node name="Map" type="TileMap" parent="."]
+process_mode = 1
 tile_set = SubResource("TileSet_tk8u3")
 rendering_quadrant_size = 24
 format = 2
@@ -153,6 +154,7 @@ script = ExtResource("3_wvnbh")
 [node name="ui" parent="." instance=ExtResource("7_16ak5")]
 
 [node name="Characters" type="Node2D" parent="."]
+process_mode = 1
 
 [node name="TinyBones" parent="Characters" instance=ExtResource("2_b0oxb")]
 visible = false
@@ -168,6 +170,7 @@ visible = false
 visible = false
 
 [node name="Enemies" type="Node2D" parent="."]
+process_mode = 1
 
 [node name="Evil Geanie Boss" parent="Enemies" instance=ExtResource("8_7hej8")]
 visible = false
@@ -179,17 +182,19 @@ visible = false
 visible = false
 
 [node name="Map Theme" type="AudioStreamPlayer" parent="."]
+process_mode = 1
 stream = ExtResource("15_the6d")
 
 [node name="Objects" type="Node2D" parent="."]
+process_mode = 1
 
 [node name="Healing Fountain" parent="Objects" instance=ExtResource("16_1mke5")]
 
 [node name="Items" type="Node2D" parent="Objects"]
 
 [node name="Potion" parent="Objects/Items" instance=ExtResource("17_3wkjj")]
-script = ExtResource("18_2kt11")
 
 [connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]
+[connection signal="paused_game" from="." to="ui" method="_on_world_paused_game"]
 [connection signal="game_over" from="Battle" to="ui" method="_on_battle_game_over"]
 [connection signal="level_ended" from="Battle" to="ui" method="_on_battle_level_ended"]

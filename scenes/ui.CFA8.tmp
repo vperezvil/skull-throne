@@ -1,4 +1,4 @@
-[gd_scene load_steps=65 format=3 uid="uid://cpq13kxejjodc"]
+[gd_scene load_steps=60 format=3 uid="uid://cpq13kxejjodc"]
 
 [ext_resource type="Script" path="res://scripts/UI.gd" id="1_1ysiq"]
 [ext_resource type="AudioStream" uid="uid://ddd6be4vrlx03" path="res://assets/music/win music 1.wav" id="2_dl3am"]
@@ -272,74 +272,22 @@ gradient = SubResource("Gradient_d2xh0")
 fill_to = Vector2(0.002849, 0.00569801)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5tbw5"]
-bg_color = Color(1, 0.552941, 0.301961, 1)
+bg_color = Color(0.862745, 0.541176, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_72v8n"]
 bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ydajt"]
-bg_color = Color(1, 0.552941, 0.301961, 1)
+bg_color = Color(0.862745, 0.541176, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ir73f"]
 bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1otje"]
-bg_color = Color(1, 0.552941, 0.301961, 1)
+bg_color = Color(0.862745, 0.541176, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mi6h4"]
 bg_color = Color(0, 0, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bvggh"]
-content_margin_left = 8.0
-content_margin_top = 8.0
-content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0.00784314, 0.00784314, 0.00784314, 1)
-border_color = Color(0, 0, 0, 1)
-corner_detail = 1
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_61x6o"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(1, 1, 1, 0.75)
-draw_center = false
-expand_margin_left = 2.0
-expand_margin_top = 2.0
-expand_margin_right = 2.0
-expand_margin_bottom = 2.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2qahu"]
-bg_color = Color(1, 0.552941, 0.301961, 1)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(1, 0.552941, 0.301961, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_msncs"]
-content_margin_left = 10.0
-content_margin_top = 28.0
-content_margin_right = 10.0
-content_margin_bottom = 8.0
-bg_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 5
-expand_margin_left = 8.0
-expand_margin_top = 32.0
-expand_margin_right = 8.0
-expand_margin_bottom = 6.0
-
-[sub_resource type="Theme" id="Theme_5japi"]
-AcceptDialog/constants/buttons_separation = 10
-AcceptDialog/styles/panel = SubResource("StyleBoxFlat_bvggh")
-Button/styles/focus = SubResource("StyleBoxFlat_61x6o")
-Button/styles/normal = SubResource("StyleBoxFlat_2qahu")
-Window/styles/embedded_border = SubResource("StyleBoxFlat_msncs")
 
 [node name="UI" type="CanvasLayer"]
 script = ExtResource("1_1ysiq")
@@ -348,27 +296,26 @@ script = ExtResource("1_1ysiq")
 visible = false
 
 [node name="GameOverLabel" type="RichTextLabel" parent="Game-Over"]
-offset_left = 792.0
-offset_top = 305.0
-offset_right = 1090.0
-offset_bottom = 387.0
+offset_left = 763.0
+offset_top = 256.0
+offset_right = 1061.0
+offset_bottom = 338.0
 theme_override_font_sizes/normal_font_size = 50
 text = "GAME OVER"
 
 [node name="InfoDeathsLabel" type="RichTextLabel" parent="Game-Over"]
-offset_left = 773.0
-offset_top = 406.0
-offset_right = 1211.0
-offset_bottom = 455.0
+offset_left = 744.0
+offset_top = 357.0
+offset_right = 1082.0
+offset_bottom = 405.0
 text = "{COUNT} skulls added to the Skull Throne. 
 There's currently {TOTAL_COUNT} skulls on the throne."
-scroll_active = false
 
 [node name="Retry" type="Button" parent="Game-Over"]
-offset_left = 872.0
-offset_top = 539.0
-offset_right = 992.0
-offset_bottom = 593.0
+offset_left = 843.0
+offset_top = 490.0
+offset_right = 963.0
+offset_bottom = 544.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ny071")
 text = "Retry"
@@ -380,28 +327,28 @@ stream = ExtResource("2_qsy3c")
 visible = false
 
 [node name="EndLabel" type="RichTextLabel" parent="Level-Ended"]
-offset_left = 798.0
-offset_top = 255.0
-offset_right = 1063.0
-offset_bottom = 387.0
+offset_left = 768.0
+offset_top = 206.0
+offset_right = 1033.0
+offset_bottom = 338.0
 theme_override_font_sizes/normal_font_size = 50
 text = "YOU WON!
 For now..."
 scroll_active = false
 
 [node name="ExplanationLabel" type="RichTextLabel" parent="Level-Ended"]
-offset_left = 707.0
-offset_top = 406.0
-offset_right = 1211.0
-offset_bottom = 494.0
+offset_left = 677.0
+offset_top = 357.0
+offset_right = 1181.0
+offset_bottom = 445.0
 text = "You have overcome the first of many levels with: {PARTY_MEMBERS} . For now this is as far as you can go. You can keep replaying."
 scroll_active = false
 
 [node name="Retry" type="Button" parent="Level-Ended"]
-offset_left = 873.0
-offset_top = 539.0
-offset_right = 993.0
-offset_bottom = 593.0
+offset_left = 843.0
+offset_top = 490.0
+offset_right = 963.0
+offset_bottom = 544.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_pudy4")
 text = "Retry"
@@ -412,19 +359,19 @@ stream = ExtResource("2_dl3am")
 [node name="Main-menu" type="Node2D" parent="."]
 
 [node name="Play" type="Button" parent="Main-menu"]
-offset_left = 873.0
-offset_top = 539.0
-offset_right = 993.0
-offset_bottom = 593.0
+offset_left = 843.0
+offset_top = 490.0
+offset_right = 963.0
+offset_bottom = 544.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_jcbd3")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_qeu2o")
 text = "Play"
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Main-menu"]
-offset_left = 778.0
-offset_top = 388.0
-offset_right = 1093.0
-offset_bottom = 460.0
+offset_left = 748.0
+offset_top = 339.0
+offset_right = 1063.0
+offset_bottom = 411.0
 theme_override_font_sizes/normal_font_size = 50
 text = "Skull Throne"
 scroll_active = false
@@ -433,22 +380,21 @@ scroll_active = false
 stream = ExtResource("2_sflr1")
 
 [node name="Character-menu" type="Node2D" parent="."]
-visible = false
 script = ExtResource("2_xgiog")
 
 [node name="Start run" type="Button" parent="Character-menu"]
-offset_left = 876.0
-offset_top = 540.0
-offset_right = 995.0
-offset_bottom = 592.0
+offset_left = 848.0
+offset_top = 494.0
+offset_right = 963.0
+offset_bottom = 538.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_f4t1p")
 text = "Start run"
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Character-menu"]
-offset_left = 672.0
-offset_top = 186.0
-offset_right = 1255.0
-offset_bottom = 286.0
+offset_left = 640.0
+offset_top = 137.0
+offset_right = 1223.0
+offset_bottom = 237.0
 theme_override_font_sizes/normal_font_size = 22
 text = "Your objective is to defeat the Evil Geanie
 Select the characters you want for your party (max 4) 
@@ -467,10 +413,10 @@ text = "You need to select at least one character"
 [node name="CharacterSelection" type="Node2D" parent="Character-menu"]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Character-menu/CharacterSelection"]
-offset_left = 799.0
-offset_top = 391.0
-offset_right = 1067.0
-offset_bottom = 455.0
+offset_left = 767.0
+offset_top = 342.0
+offset_right = 1035.0
+offset_bottom = 406.0
 alignment = 1
 
 [node name="TinyBones" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
@@ -581,10 +527,10 @@ offset_right = 1529.0
 offset_bottom = 700.0
 
 [node name="Options" type="VBoxContainer" parent="Game-menu"]
-offset_left = 852.0
-offset_top = 517.0
-offset_right = 1021.0
-offset_bottom = 618.0
+offset_left = 819.0
+offset_top = 417.0
+offset_right = 988.0
+offset_bottom = 518.0
 
 [node name="Inventory" type="Button" parent="Game-menu/Options"]
 layout_mode = 2
@@ -605,13 +551,6 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_1otje")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_mi6h4")
 text = "Exit"
 
-[node name="ConfirmationDialog" type="ConfirmationDialog" parent="Game-menu"]
-initial_position = 2
-size = Vector2i(448, 100)
-theme = SubResource("Theme_5japi")
-dialog_text = "You're exiting the game, are you sure you want to exit??"
-dialog_hide_on_ok = false
-
 [connection signal="pressed" from="Game-Over/Retry" to="." method="_on_retry_pressed"]
 [connection signal="pressed" from="Level-Ended/Retry" to="." method="_on_retry_pressed"]
 [connection signal="pressed" from="Main-menu/Play" to="." method="_on_play_pressed"]
@@ -620,5 +559,3 @@ dialog_hide_on_ok = false
 [connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Beth" to="." method="_on_player_1_select_toggled"]
 [connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Dalf" to="." method="_on_player_2_select_toggled"]
 [connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Trece" to="." method="_on_player_3_select_toggled"]
-[connection signal="pressed" from="Game-menu/Options/Exit" to="." method="_on_exit_pressed"]
-[connection signal="confirmed" from="Game-menu/ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]
