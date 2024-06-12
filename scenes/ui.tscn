@@ -1,4 +1,4 @@
-[gd_scene load_steps=65 format=3 uid="uid://cpq13kxejjodc"]
+[gd_scene load_steps=66 format=3 uid="uid://cpq13kxejjodc"]
 
 [ext_resource type="Script" path="res://scripts/UI.gd" id="1_1ysiq"]
 [ext_resource type="AudioStream" uid="uid://ddd6be4vrlx03" path="res://assets/music/win music 1.wav" id="2_dl3am"]
@@ -270,6 +270,9 @@ fill_to = Vector2(0.017094, 0.014245)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_kw5gs"]
 gradient = SubResource("Gradient_d2xh0")
 fill_to = Vector2(0.002849, 0.00569801)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o15v5"]
+bg_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5tbw5"]
 bg_color = Color(1, 0.552941, 0.301961, 1)
@@ -576,14 +579,53 @@ script = ExtResource("11_2oxo3")
 [node name="Game-menu" type="Node2D" parent="."]
 visible = false
 
-[node name="ItemGrid" type="GridContainer" parent="Game-menu"]
+[node name="CharacterPanel" type="Panel" parent="Game-menu"]
 visible = false
+custom_minimum_size = Vector2(20, 30)
+offset_left = 1516.0
+offset_top = 226.0
+offset_right = 1679.0
+offset_bottom = 741.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_o15v5")
+
+[node name="CharacterGrid" type="VBoxContainer" parent="Game-menu/CharacterPanel"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 2.0
+offset_right = 156.0
+offset_bottom = 517.0
+
+[node name="Label" type="Label" parent="Game-menu/CharacterPanel/CharacterGrid"]
+layout_mode = 2
+text = "Select a character 
+to use the item on:"
+
+[node name="ItemPanel" type="Panel" parent="Game-menu"]
+visible = false
+custom_minimum_size = Vector2(20, 30)
 offset_left = 1028.0
 offset_top = 223.0
-offset_right = 1529.0
-offset_bottom = 700.0
+offset_right = 1497.0
+offset_bottom = 738.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_o15v5")
+
+[node name="Label" type="Label" parent="Game-menu/ItemPanel"]
+layout_mode = 2
+offset_left = 170.0
+offset_top = 8.0
+offset_right = 245.0
+offset_bottom = 31.0
+text = "Inventory"
+
+[node name="ItemGrid" type="GridContainer" parent="Game-menu/ItemPanel"]
+offset_left = 10.0
+offset_top = 8.0
+offset_right = 461.0
+offset_bottom = 506.0
+columns = 3
 
 [node name="Options" type="VBoxContainer" parent="Game-menu"]
+visible = false
 offset_left = 852.0
 offset_top = 517.0
 offset_right = 1021.0
@@ -623,5 +665,6 @@ dialog_hide_on_ok = false
 [connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Beth" to="." method="_on_player_1_select_toggled"]
 [connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Dalf" to="." method="_on_player_2_select_toggled"]
 [connection signal="toggled" from="Character-menu/CharacterSelection/HBoxContainer/Trece" to="." method="_on_player_3_select_toggled"]
+[connection signal="pressed" from="Game-menu/Options/Inventory" to="." method="_on_inventory_pressed"]
 [connection signal="pressed" from="Game-menu/Options/Exit" to="." method="_on_exit_pressed"]
 [connection signal="confirmed" from="Game-menu/ConfirmationDialog" to="." method="_on_confirmation_dialog_confirmed"]

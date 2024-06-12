@@ -18,6 +18,7 @@ var rooms = []
 var characters = []
 var enemies = []
 var walkable_tiles = []
+var items = []
 var path #AStar2D
 var starting_room
 var boss_room
@@ -48,6 +49,7 @@ func _ready():
 	ui.character_removed.connect(remove_character)
 	ui.restart_game.connect(restart_game)
 	battle_scene.battle_ended.connect(end_battle)
+	battle_scene.inventory_pressed.connect(battle_inventory_pressed)
 
 
 func _process(delta):
@@ -60,11 +62,11 @@ func read_input():
 	if esc_pressed and map_is_rendered and !game_is_paused:
 		tilemap.get_tree().paused = true
 		characters[0].get_tree().paused = true
-		paused_game.emit(true)
+		paused_game.emit(true, characters)
 	elif esc_pressed and game_is_paused:
-		paused_game.emit(false)
-		tilemap.get_tree().paused = false
-		characters[0].get_tree().paused = false
+		resume_paused_game()
+	elif esc_pressed and ui.in_battle and game_is_paused:
+		resume_paused_game()
 
 func add_character(id):
 	#Add characters
@@ -126,6 +128,7 @@ func spawn_player():
 	characters[0].spawn(starting_room, tilemap)
 	characters[0].boss_battle_start.connect(start_boss_battle)
 	characters[0].enemy_battle_start.connect(start_battle)
+	characters[0].item_picked.connect(item_picked)
 	characters[0].get_node("Camera2D").make_current()
 		
 func spawn_boss():
@@ -200,6 +203,7 @@ func spawn_items():
 		items_node.add_child(item)
 		item.request_ready()
 		item.spawn(spawn_position, tilemap)
+		items.append(item)
 		
 func generate_room(map_size):
 	var room_size = Vector2(randi_range(room_min_size, room_max_size), randi_range(room_min_size, room_max_size))
@@ -259,16 +263,20 @@ func find_boss_room():
 	return max_p
 
 func start_boss_battle():
+	ui.in_battle = true
 	map_music.stop()
 	boss.battle_started = true
 	for character in characters:
 		character.battle_started = true
+	for item in items:
+		item.visible = false
 	fountain.visible = false
 	battle_scene.start_battle(characters,[boss])
 	battle_scene.visible = true
 	tilemap.visible = false
 
 func start_battle(enemy):
+	ui.in_battle = true
 	map_music.stop()
 	boss.visible = false
 	enemy.battle_started = true
@@ -285,6 +293,8 @@ func start_battle(enemy):
 		enemies_to_battle.append(dup_enemy)
 	for character in characters:
 		character.battle_started = true
+	for item in items:
+		item.visible = false
 	for e in enemies:
 		if !e.battle_started:
 			e.visible = false
@@ -294,6 +304,7 @@ func start_battle(enemy):
 	tilemap.visible = false
 
 func end_battle(remaining_characters):
+	ui.in_battle = false
 	map_music.play()
 	battle_scene.visible = false
 	tilemap.visible = true
@@ -315,12 +326,31 @@ func end_battle(remaining_characters):
 		if !e.battle_started:
 			e.visible = true
 			e.player = main_character
+	for item in items:
+		item.visible = true
 	if main_character.has_node("Camera2D"):
 		var camera = main_character.get_node("Camera2D")
 		camera.enabled = true
 		camera.make_current()
+	resume_paused_game()
 
 func restart_game():
 	get_tree().reload_current_scene()
-	
-	
+
+func item_picked(item):
+	Inventory.add_item(item)
+	item.visible = false
+	item.collider.disabled = true
+	items.erase(item)
+
+
+func resume_paused_game():
+	paused_game.emit(false)
+	tilemap.get_tree().paused = false
+	characters[0].get_tree().paused = false
+	battle_scene.get_tree().paused = false
+
+func battle_inventory_pressed():
+	ui.characters = characters
+	battle_scene.get_tree().paused = true
+	ui._on_inventory_pressed()	

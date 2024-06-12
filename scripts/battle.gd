@@ -11,6 +11,7 @@ extends Node2D
 @onready var boss_music = $"Boss Battle"
 @onready var enemy_music = $"Enemy Battle"
 @onready var win_music = $"Win Battle"
+@onready var inventory_button = $UI/Options/Inventory
 var original_positions = {}
 var original_scales = {}
 var original_parents = {}
@@ -30,13 +31,14 @@ var is_run_pressed = false
 signal battle_ended
 signal level_ended
 signal game_over
+signal inventory_pressed
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	battle_camera.enabled = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
-	pass
+	inventory_button.disabled = Inventory.items.keys().size() == 0
 
 func start_battle(characters, enemies):
 	fill_characters(characters)
@@ -46,6 +48,7 @@ func start_battle(characters, enemies):
 	sort_combatants_by_initiative()
 	combat_dialog.visible = true
 	combat_dialog.text = BATTLE_STARTED
+	inventory_button.disabled = Inventory.items.keys().size() == 0
 	start_turn()
 	
 func fill_characters(characters):
@@ -257,11 +260,13 @@ func clear_characters_and_enemies():
 		character_container.remove_child(child)
 	for child in enemy_container.get_children():
 		enemy_container.remove_child(child)
+	combatants.clear()
 
 func remove_focus():
 	for child in enemy_container.get_children():
 		child.focus.visible = false
 
 
+
 func _on_inventory_pressed():
-	pass # Replace with function body.
+	inventory_pressed.emit()

@@ -143,6 +143,7 @@ process_mode = 3
 script = ExtResource("1_6dbgp")
 
 [node name="Battle" parent="." instance=ExtResource("2_mlip8")]
+process_mode = 1
 
 [node name="Map" type="TileMap" parent="."]
 process_mode = 1

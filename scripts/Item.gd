@@ -7,3 +7,4 @@ var max_stack_size = 99
 var icon
 var usable_outside_battle = false
 var type
+@onready var collider = $CollisionShape2D
