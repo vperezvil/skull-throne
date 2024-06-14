@@ -640,6 +640,7 @@ text = "Inventory
 "
 
 [node name="Options" type="Button" parent="Game-menu/Options"]
+visible = false
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_ydajt")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ir73f")
