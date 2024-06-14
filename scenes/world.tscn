@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bo28putf8abx6"]
+[gd_scene load_steps=23 format=3 uid="uid://bo28putf8abx6"]
 
 [ext_resource type="Script" path="res://scripts/world.gd" id="1_6dbgp"]
 [ext_resource type="Texture2D" uid="uid://daoantq6uxnc7" path="res://assets/map/floor/grass/grass_atlas_1.png" id="1_j8ert"]
@@ -17,6 +17,7 @@
 [ext_resource type="AudioStream" uid="uid://rhsr76xvfsmb" path="res://assets/music/medieval.ogg" id="15_the6d"]
 [ext_resource type="PackedScene" uid="uid://df62qslhjtvf8" path="res://scenes/healing_fountain.tscn" id="16_1mke5"]
 [ext_resource type="PackedScene" uid="uid://vmomc8i58ghx" path="res://scenes/potion.tscn" id="17_3wkjj"]
+[ext_resource type="PackedScene" uid="uid://bpovbayyuyae4" path="res://scenes/sword.tscn" id="18_4m5s2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o0l37"]
 texture = ExtResource("1_j8ert")
@@ -194,6 +195,9 @@ process_mode = 1
 [node name="Items" type="Node2D" parent="Objects"]
 
 [node name="Potion" parent="Objects/Items" instance=ExtResource("17_3wkjj")]
+
+[node name="Sword" parent="Objects/Items" instance=ExtResource("18_4m5s2")]
+visible = false
 
 [connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]
 [connection signal="paused_game" from="." to="ui" method="_on_world_paused_game"]

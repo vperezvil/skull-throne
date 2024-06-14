@@ -35,7 +35,8 @@ var fountain
 	3: $Characters/Trece
 }
 @onready var items_dict = {
-	0: $Objects/Items/Potion
+	0: $Objects/Items/Potion,
+	1: $Objects/Items/Sword
 }
 # Called when the node enters the scene tree for the first time.
 func _ready():

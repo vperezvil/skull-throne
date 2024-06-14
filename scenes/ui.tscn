@@ -618,6 +618,7 @@ offset_bottom = 31.0
 text = "Inventory"
 
 [node name="ItemGrid" type="GridContainer" parent="Game-menu/ItemPanel"]
+layout_mode = 0
 offset_left = 10.0
 offset_top = 8.0
 offset_right = 461.0

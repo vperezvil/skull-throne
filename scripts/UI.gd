@@ -117,7 +117,8 @@ func _on_character_pressed(item, character):
 	if item.type == "healing":
 		character.current_hp += item.healing_amount
 		character.update_progress_bar()
-	#TODO: handle other item types
+	elif item.type == "weapon":
+		character.attack += item.attack_amount
 	clear_character_grid()
 	Inventory.remove_item(item)
 	if Inventory.get_item_count(item) == 0:
