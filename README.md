@@ -15,7 +15,54 @@ The game engine used is Godot, a free and open source game engine perfect for de
 
 ## Usage
 
-TODO: guide
+### Installation
+	
+1. **Download the Latest Release**
+	- You can download the latest release from the [Releases](https://github.com/vperezvil/skull-throne/releases) page.
+	- Place the downloaded exe file to your desired location.
+
+2. **Clone the Repository**
+	- Open your terminal and run the following command to clone the repository:
+	  ```bash
+	  git clone https://github.com/vperezvil/skull-throne.git
+	  ```
+	
+### Running the Game
+
+#### From Source
+
+1. **Prerequisites**
+	- Ensure you have [Godot Engine](https://godotengine.org/) installed. The game is developed using Godot version 4.2.1.
+
+2. **Open the Project**
+	- Launch Godot Engine.
+	- Click on the "Import" button and navigate to the folder where you cloned the repository.
+	- Select the `project.godot` file and open it.
+
+3. **Run the Game**
+	- Click on the "Play" button (the one with the play icon) to run the game.
+
+#### From Release
+
+1. **Download and Run the Executable**
+	- Navigate to the [Releases](https://github.com/vperezvil/skull-throne/releases) page.
+	- Download the latest `.exe` file.
+	- Run the downloaded `.exe` file to start the game.
+
+### Controls
+
+- **Movement:** Use the arrow keys to move your character.
+- **Pause:** Press `Escape` to pause the game and open the menu.
+
+### Additional Information
+
+- **Open Inventory:** From the pause menu or the battle menu you can access the Inventory.
+- **Items:** There's currently a small amount of items:
+	1. **Healing fountain:** will heal completely the party and is interacted via the overworld
+	2. **Potion:** will heal the selected character from the inventory menu
+	3. **Sword:** will increase the attack power of the selected character from the inventory menu
+- **Combat:** During combat you can select clicking the target you want to attack
+- **Run:** During combat you can escape all the encounters except the boss
 
 ## License
 
