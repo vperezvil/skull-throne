@@ -11,6 +11,7 @@ const SPEED = 300.0
 signal boss_battle_start
 signal enemy_battle_start
 signal character_defeated
+signal item_picked
 var battle_started = false
 var max_hp = 150
 var current_hp
@@ -72,6 +73,10 @@ func handle_collision():
 					if !is_colliding:
 						collider.handle_collision()
 						is_colliding = true
+				elif collider is Item and !battle_started:
+					if !is_colliding:
+						is_colliding = true
+						item_picked.emit(collider)
 	if is_colliding and get_slide_collision_count() == 0:
 		is_colliding = false
 
@@ -119,4 +124,4 @@ func heal():
 	current_hp = max_hp
 
 func heal_item(item):
-	current_hp += item.healing_power
+	current_hp += item.healing_amount

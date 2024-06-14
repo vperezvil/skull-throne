@@ -11,14 +11,18 @@ enum GameState {IDLE, RUNNING, ENDED}
 @onready var ui = $ui
 @onready var battle_scene = $Battle
 @onready var enemy_node = $Enemies
+@onready var items_node = $Objects/Items
 signal map_generated
+signal paused_game
 var rooms = []
 var characters = []
 var enemies = []
 var walkable_tiles = []
+var items = []
 var path #AStar2D
 var starting_room
 var boss_room
+var fountain_room
 var boss
 var enemy1
 var enemy2
@@ -29,6 +33,10 @@ var fountain
 	1: $Characters/Beth,
 	2: $Characters/Dalf,
 	3: $Characters/Trece
+}
+@onready var items_dict = {
+	0: $Objects/Items/Potion,
+	1: $Objects/Items/Sword
 }
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -42,7 +50,25 @@ func _ready():
 	ui.character_removed.connect(remove_character)
 	ui.restart_game.connect(restart_game)
 	battle_scene.battle_ended.connect(end_battle)
-	
+	battle_scene.inventory_pressed.connect(battle_inventory_pressed)
+
+
+func _process(delta):
+	read_input()
+		
+func read_input():
+	var map_is_rendered =  map_music.playing
+	var game_is_paused = ui.game_menu.visible == true
+	var esc_pressed = Input.is_action_just_pressed("ui_cancel")
+	if esc_pressed and map_is_rendered and !game_is_paused:
+		tilemap.get_tree().paused = true
+		characters[0].get_tree().paused = true
+		paused_game.emit(true, characters)
+	elif esc_pressed and game_is_paused:
+		resume_paused_game()
+	elif esc_pressed and ui.in_battle and game_is_paused:
+		resume_paused_game()
+
 func add_character(id):
 	#Add characters
 	var character = character_dict[id]
@@ -62,9 +88,10 @@ func game_started():
 	# Generate player spawn position
 	spawn_player()
 	spawn_boss()
+	spawn_fountain()
 	collect_walkable_tiles()
 	spawn_enemies()
-	spawn_fountain()
+	spawn_items()
 	map_generated.emit()
 	map_music.play()
 
@@ -102,6 +129,7 @@ func spawn_player():
 	characters[0].spawn(starting_room, tilemap)
 	characters[0].boss_battle_start.connect(start_boss_battle)
 	characters[0].enemy_battle_start.connect(start_battle)
+	characters[0].item_picked.connect(item_picked)
 	characters[0].get_node("Camera2D").make_current()
 		
 func spawn_boss():
@@ -110,9 +138,14 @@ func spawn_boss():
 
 func collect_walkable_tiles():
 	walkable_tiles = tilemap.get_used_cells_by_id(0, tilemap.level)
-	# Remove tiles in the starting room and boss room
+	# Remove tiles in the starting room, fountain room and boss room
 	for x in range(starting_room.position.x, starting_room.position.x + starting_room.size.x):
 		for y in range(starting_room.position.y, starting_room.position.y + starting_room.size.y):
+			var tile = Vector2i(x, y)
+			walkable_tiles.erase(tile)
+			
+	for x in range(fountain_room.position.x, fountain_room.position.x + fountain_room.size.x):
+		for y in range(fountain_room.position.y, fountain_room.position.y + fountain_room.size.y):
 			var tile = Vector2i(x, y)
 			walkable_tiles.erase(tile)
 	
@@ -147,12 +180,32 @@ func spawn_enemies():
 
 func spawn_fountain():
 	# Randomly select a room
-	var fountain_room = rooms[randi() % rooms.size()]
+	fountain_room = rooms[randi() % rooms.size()]
 	if fountain_room != starting_room and fountain_room.get_center() != boss_room_position:
 		fountain.spawn(fountain_room, tilemap, characters)
 	else:
 		spawn_fountain()
 
+func spawn_items():
+	# Randomly select how many items are spawned, we want at least 3
+	var total_items = randi_range(3,items_dict.size())
+	for i in range(total_items):
+		if walkable_tiles.size() == 0:
+			break  # No more walkable tiles available to spawn enemies
+
+		var index = randi() % (walkable_tiles.size() - 1)
+		var spawn_position = walkable_tiles[index]
+		walkable_tiles.erase(index)  # Remove the tile to avoid multiple enemies in the same spot
+
+		# Randomly select an item
+		var random_num = randi() % items_dict.size()
+		var item = items_dict[random_num].duplicate()
+		item.name = items_dict[random_num].name + " " + str(i)
+		items_node.add_child(item)
+		item.request_ready()
+		item.spawn(spawn_position, tilemap)
+		items.append(item)
+		
 func generate_room(map_size):
 	var room_size = Vector2(randi_range(room_min_size, room_max_size), randi_range(room_min_size, room_max_size))
 	var room_position = Vector2(randi_range(1, map_size.x - room_size.x - 1), randi_range(1, map_size.y - room_size.y - 1))
@@ -211,16 +264,20 @@ func find_boss_room():
 	return max_p
 
 func start_boss_battle():
+	ui.in_battle = true
 	map_music.stop()
 	boss.battle_started = true
 	for character in characters:
 		character.battle_started = true
+	for item in items:
+		item.visible = false
 	fountain.visible = false
 	battle_scene.start_battle(characters,[boss])
 	battle_scene.visible = true
 	tilemap.visible = false
 
 func start_battle(enemy):
+	ui.in_battle = true
 	map_music.stop()
 	boss.visible = false
 	enemy.battle_started = true
@@ -237,6 +294,8 @@ func start_battle(enemy):
 		enemies_to_battle.append(dup_enemy)
 	for character in characters:
 		character.battle_started = true
+	for item in items:
+		item.visible = false
 	for e in enemies:
 		if !e.battle_started:
 			e.visible = false
@@ -246,6 +305,7 @@ func start_battle(enemy):
 	tilemap.visible = false
 
 func end_battle(remaining_characters):
+	ui.in_battle = false
 	map_music.play()
 	battle_scene.visible = false
 	tilemap.visible = true
@@ -267,10 +327,31 @@ func end_battle(remaining_characters):
 		if !e.battle_started:
 			e.visible = true
 			e.player = main_character
+	for item in items:
+		item.visible = true
 	if main_character.has_node("Camera2D"):
 		var camera = main_character.get_node("Camera2D")
 		camera.enabled = true
 		camera.make_current()
+	resume_paused_game()
 
 func restart_game():
 	get_tree().reload_current_scene()
+
+func item_picked(item):
+	Inventory.add_item(item)
+	item.visible = false
+	item.collider.disabled = true
+	items.erase(item)
+
+
+func resume_paused_game():
+	paused_game.emit(false)
+	tilemap.get_tree().paused = false
+	characters[0].get_tree().paused = false
+	battle_scene.get_tree().paused = false
+
+func battle_inventory_pressed():
+	ui.characters = characters
+	battle_scene.get_tree().paused = true
+	ui._on_inventory_pressed()	
