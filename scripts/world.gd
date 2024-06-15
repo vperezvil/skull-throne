@@ -340,6 +340,7 @@ func end_battle(remaining_characters):
 	resume_paused_game()
 
 func restart_game():
+	Inventory.items.clear()
 	get_tree().reload_current_scene()
 
 func item_picked(item):
