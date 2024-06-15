@@ -270,7 +270,11 @@ func start_boss_battle():
 	for character in characters:
 		character.battle_started = true
 	for item in items:
-		item.visible = false
+		item.visible = false	
+	for e in enemies:
+		if !e.battle_started:
+			e.visible = false
+			e.is_chasing = false
 	fountain.visible = false
 	battle_scene.start_battle(characters,[boss])
 	battle_scene.visible = true
