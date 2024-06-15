@@ -49,6 +49,7 @@ func start_battle(characters, enemies):
 	combat_dialog.visible = true
 	combat_dialog.text = BATTLE_STARTED
 	inventory_button.disabled = Inventory.items.keys().size() == 0
+	current_turn = 0
 	start_turn()
 	
 func fill_characters(characters):
