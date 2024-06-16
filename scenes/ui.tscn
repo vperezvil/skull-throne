@@ -461,10 +461,10 @@ The first character selected will represent your party"
 
 [node name="Error" type="RichTextLabel" parent="Character-menu"]
 visible = false
-offset_left = 645.0
-offset_top = 257.0
-offset_right = 1222.0
-offset_bottom = 305.0
+offset_left = 673.0
+offset_top = 287.0
+offset_right = 1250.0
+offset_bottom = 335.0
 theme_override_colors/default_color = Color(1, 0, 0, 1)
 theme_override_font_sizes/normal_font_size = 22
 text = "You need to select at least one character"
