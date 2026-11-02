@@ -15,6 +15,7 @@ extends Node2D
 var original_positions = {}
 var original_scales = {}
 var original_parents = {}
+var enemy_original_state = {}
 var combatants = []
 var current_turn = 0
 var BATTLE_STARTED = "Battle started"
@@ -29,6 +30,7 @@ var dead_players = 0
 var is_boss_battle = false
 var is_run_pressed = false
 signal battle_ended
+signal battle_fled
 signal level_ended
 signal game_over
 signal inventory_pressed
@@ -41,6 +43,15 @@ func _process(delta):
 	inventory_button.disabled = Inventory.items.keys().size() == 0
 
 func start_battle(characters, enemies):
+	is_boss_battle = false
+	is_run_pressed = false
+	dead_players = 0
+	background_boss.visible = false
+	background_enemy.visible = false
+	original_parents.clear()
+	original_positions.clear()
+	original_scales.clear()
+	enemy_original_state.clear()
 	fill_characters(characters)
 	fill_enemies(enemies)
 	battle_camera.make_current()
@@ -93,8 +104,13 @@ func fill_enemies(enemies):
 	var offset = 30
 	var spacing_between_enemies = 250
 	for enemy in enemies:
-		if enemy.get_parent() != character_container:
+		if enemy.get_parent() != enemy_container:
 			if enemy.get_parent() != null:
+				enemy_original_state[enemy] = {
+					"parent": enemy.get_parent(),
+					"position": enemy.position,
+					"scale": enemy.scale,
+				}
 				enemy.get_parent().remove_child(enemy)
 			if is_lonely_enemy:
 				var min_size = enemy_container.get_custom_minimum_size()
@@ -118,41 +134,83 @@ func end_battle():
 	if original_parents.size() == 0:
 		game_over.emit(dead_players)
 		visible = false
-	else:
+		return
+
+	var fled := is_run_pressed
+	if !fled:
 		win_music.play()
-		if !is_run_pressed:
-			combat_dialog.text += WIN_BATTLE
+		combat_dialog.text += WIN_BATTLE
+	else:
+		combat_dialog.text += RUN
+		is_run_pressed = false
+
+	for enemy in enemy_container.get_children():
+		enemy.focus.visible = false
+	for character in character_container.get_children():
+		character.focus.visible = false
+
+	await get_tree().create_timer(2.0 if fled else 5.0).timeout
+	var remaining_characters := _restore_party_members()
+	_restore_enemies_after_battle(fled)
+	clear_battle_containers(fled)
+	combat_dialog.visible = false
+	win_music.stop()
+	if fled:
+		battle_fled.emit(remaining_characters)
+	elif is_boss_battle:
+		level_ended.emit(remaining_characters)
+	else:
+		battle_ended.emit(remaining_characters)
+
+func _restore_party_members() -> Array:
+	var remaining_characters: Array = []
+	for character in original_parents.keys():
+		var parent = original_parents[character]
+		if character.get_parent() == character_container:
+			character_container.remove_child(character)
+		character.position = original_positions[character]
+		character.scale = original_scales[character]
+		character.visible = is_party_member_visible(character)
+		character.ap.play("RESET")
+		parent.add_child(character)
+		remaining_characters.append(character)
+	return remaining_characters
+
+func is_party_member_visible(_character: Character) -> bool:
+	return true
+
+func _is_persistent_world_enemy(enemy) -> bool:
+	return enemy is Boss
+
+func _restore_enemies_after_battle(fled: bool) -> void:
+	for enemy in enemy_original_state.keys():
+		if !is_instance_valid(enemy):
+			continue
+		if enemy.get_parent() == enemy_container:
+			enemy_container.remove_child(enemy)
+		var state: Dictionary = enemy_original_state[enemy]
+		enemy.position = state["position"]
+		enemy.scale = state["scale"]
+		enemy.battle_started = false
+		enemy.progress_bar.visible = false
+		if fled or _is_persistent_world_enemy(enemy):
+			state["parent"].add_child(enemy)
+			if _is_persistent_world_enemy(enemy) and !fled:
+				enemy.visible = false
 		else:
-			is_run_pressed = false
-		
-		var enemies = enemy_container.get_children()
-		for enemy in enemies:
-			enemy.focus.visible = false
-		
-		var characters = character_container.get_children()
-		for character in characters:
-			character.focus.visible = false
-			
-		var remaining_characters = []
-		await get_tree().create_timer(5.0).timeout
-		# Restore original parents and positions
-		for character in original_parents.keys():
-			var parent = original_parents[character]
-			if character.get_parent() == character_container:
-				character_container.remove_child(character)
-			character.position = original_positions[character]
-			character.scale = original_scales[character]
-			character.visible = false
-			character.ap.play("RESET")
-			parent.add_child(character)
-			remaining_characters.append(character)
-		clear_characters_and_enemies()
-		combat_dialog.visible = false
-		win_music.stop()
-		if is_boss_battle:
-			level_ended.emit(remaining_characters)
-		else:
-			battle_ended.emit(remaining_characters)
+			enemy.queue_free()
+	enemy_original_state.clear()
+
+func clear_battle_containers(fled: bool) -> void:
+	for child in character_container.get_children():
+		character_container.remove_child(child)
+	for child in enemy_container.get_children():
+		enemy_container.remove_child(child)
+		if child.get_meta("battle_spawn", false):
+			child.queue_free()
+		elif !fled and not _is_persistent_world_enemy(child):
+			child.queue_free()
+	combatants.clear()
 
 func _on_attack_pressed():
 	battle_menu.visible = false
@@ -160,13 +218,16 @@ func _on_attack_pressed():
 
 func show_enemy_options():
 	combat_dialog.text += SELECT_ENEMY
-	var enemies = enemy_container.get_children()
-	for enemy in enemies:
+	for enemy in enemy_container.get_children():
 		enemy.focus.visible = true
+		for connected in enemy.enemy_selected.get_connections():
+			enemy.enemy_selected.disconnect(connected["callable"])
 		enemy.enemy_selected.connect(_on_enemy_selected.bind(enemy))
 
 func _on_enemy_selected(enemy):
 	var current_combatant = combatants[current_turn]
+	for connected in enemy.enemy_selected.get_connections():
+		enemy.enemy_selected.disconnect(connected["callable"])
 	combat_dialog.text += ATTACK_MSG.replace("{player1}", current_combatant.name).replace("{player2}", enemy.name)
 	if check_if_container_has_child(character_container,current_combatant):
 		enemy.receive_damage(current_combatant.attack)
@@ -186,12 +247,11 @@ func _on_defend_pressed():
 
 
 func _on_run_pressed():
-	if enemy_container.has_node("Evil Geanie Boss"):
+	if is_boss_battle or enemy_container.has_node("Evil Geanie Boss"):
 		combat_dialog.text += RUN_BOSS
 	else:
-		combat_dialog.text += RUN
 		is_run_pressed = true
-		end_battle() # Replace with function body.
+		end_battle()
 	
 func initialize_combatants(characters, enemies):
 	combatants = characters + enemies
@@ -243,8 +303,19 @@ func remove_highlight(character):
 	character.focus.visible = false
 
 func _on_enemy_defeated(enemy):
-	enemy_container.remove_child(enemy)
+	if enemy.get_parent() == enemy_container:
+		enemy_container.remove_child(enemy)
+	if _is_persistent_world_enemy(enemy):
+		var state: Dictionary = enemy_original_state.get(enemy, {})
+		if state.has("parent"):
+			state["parent"].add_child(enemy)
+		enemy.visible = false
+		enemy.battle_started = false
+		enemy.progress_bar.visible = false
+	else:
+		enemy.queue_free()
 	combatants.erase(enemy)
+	enemy_original_state.erase(enemy)
 	if enemy_container.get_child_count() == 0:
 		end_battle()
 
@@ -256,18 +327,9 @@ func _on_character_defeated(character):
 	if character_container.get_child_count() == 0:
 		end_battle()
 
-func clear_characters_and_enemies():
-	for child in character_container.get_children():
-		character_container.remove_child(child)
-	for child in enemy_container.get_children():
-		enemy_container.remove_child(child)
-	combatants.clear()
-
 func remove_focus():
 	for child in enemy_container.get_children():
 		child.focus.visible = false
-
-
 
 func _on_inventory_pressed():
 	inventory_pressed.emit()

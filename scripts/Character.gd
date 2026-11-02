@@ -19,23 +19,77 @@ var initiative:int
 var attack = 10
 var is_defending = false
 var is_colliding = false
+var is_party_leader := true
+var follow_target: Character = null
+var follow_offset := Vector2.ZERO
+
+const PARTY_FOLLOW_SPEED := 8.0
+
+var _spawn_collision_layer: int
+var _spawn_collision_mask: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	_spawn_collision_layer = collision_layer
+	_spawn_collision_mask = collision_mask
 	visible = false
 	progress_bar.max_value = max_hp
 	current_hp = max_hp
 	
+func apply_definition(definition: CharacterDefinition) -> void:
+	if definition == null:
+		return
+	max_hp = definition.max_hp
+	attack = definition.attack
+	initiative = definition.initiative
+	if progress_bar:
+		progress_bar.max_value = max_hp
+	current_hp = max_hp
+
 func spawn(starting_room, tilemap):
 	var center = tilemap.map_to_local(starting_room.get_center())
-	position = center
-	initiative = clamp(initiative, 1, 100)
+	if is_party_leader:
+		position = center
+	else:
+		position = center + follow_offset
+	initiative = clampi(initiative, 1, 100)
 	visible = true
+	_configure_party_collision()
+
+func spawn_as_follower(starting_room, tilemap, leader: Character, offset: Vector2) -> void:
+	is_party_leader = false
+	follow_target = leader
+	follow_offset = offset
+	spawn(starting_room, tilemap)
+
+func _configure_party_collision() -> void:
+	if is_party_leader:
+		collision_layer = _spawn_collision_layer
+		collision_mask = _spawn_collision_mask
+	else:
+		collision_layer = 0
+		collision_mask = _spawn_collision_mask
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	if visible and !battle_started:
-		read_input()
+		if is_party_leader:
+			read_input()
+		elif follow_target != null:
+			_follow_leader(delta)
+
+func _follow_leader(delta: float) -> void:
+	var to_target := (follow_target.position + follow_offset) - position
+	if to_target.length() < 8.0:
+		ap.stop()
+		return
+	var direction := to_target.normalized()
+	if abs(direction.x) > abs(direction.y):
+		ap.play("walk_right" if direction.x > 0 else "walk_left")
+	else:
+		ap.play("walk_down" if direction.y > 0 else "walk_up")
+	velocity = direction * SPEED
+	move_and_slide()
 		
 func read_input():
 	velocity = Vector2.ZERO
@@ -58,6 +112,8 @@ func read_input():
 	handle_collision()
 
 func handle_collision():
+	if !is_party_leader:
+		return
 	for i in get_slide_collision_count():
 		var collision = get_slide_collision(i)
 		if collision != null:
@@ -99,9 +155,9 @@ func update_progress_bar():
 		character_defeated.emit()
 
 func receive_damage(damage):
-	var damage_received = damage
+	var damage_received := damage
 	if is_defending:
-		damage_received = damage/2
+		damage_received = damage / 2
 	current_hp -= damage_received
 	damage_text.text = "-"+str(damage_received)
 	damage_text.visible = true
@@ -122,6 +178,8 @@ func defend():
 	
 func heal():
 	current_hp = max_hp
+	update_progress_bar()
 
-func heal_item(item):
-	current_hp += item.healing_amount
+func apply_healing(amount: int) -> void:
+	current_hp = mini(current_hp + amount, max_hp)
+	update_progress_bar()

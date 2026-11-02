@@ -12,6 +12,16 @@ var corridor_width = 2
 func _ready():
 	map.seed = randi()
 
+func apply_zone(zone: ZoneDefinition) -> void:
+	if zone == null:
+		return
+	level = zone.floor_source_id
+	wall_level = zone.wall_source_id
+	map.seed = randi() + zone.noise_seed_offset
+
+func clear_map() -> void:
+	clear()
+
 func generate_chunk(room_position, room_size):
 	var tile_pos = local_to_map(room_position)
 	for x in range(room_size.x):

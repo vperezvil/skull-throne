@@ -8,3 +8,6 @@ func increment_death_count():
 
 func reset_deaths():
 	total_deaths = 0
+
+func get_skull_count() -> int:
+	return total_deaths

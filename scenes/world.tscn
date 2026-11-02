@@ -200,6 +200,7 @@ process_mode = 1
 visible = false
 
 [connection signal="map_generated" from="." to="ui" method="_on_world_map_generated"]
+[connection signal="continue_adventure" from="ui" to="." method="advance_to_next_zone"]
 [connection signal="paused_game" from="." to="ui" method="_on_world_paused_game"]
 [connection signal="game_over" from="Battle" to="ui" method="_on_battle_game_over"]
-[connection signal="level_ended" from="Battle" to="ui" method="_on_battle_level_ended"]
+[connection signal="level_ended" from="Battle" to="." method="on_zone_cleared"]
