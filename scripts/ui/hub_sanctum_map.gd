@@ -1,12 +1,12 @@
 extends Control
 class_name HubSanctumMap
 
-class _WalkerPhysicsDriver extends Node:
-	var map: HubSanctumMap
+class WalkerPhysicsDriver extends Node:
+	var sanctum_map: HubSanctumMap
 
-	func _physics_process(delta: float) -> void:
-		if map != null:
-			map._drive_player_physics(delta)
+	func _physics_process(_delta: float) -> void:
+		if sanctum_map != null:
+			sanctum_map._drive_player_physics(_delta)
 
 signal service_picked(tab_index: int)
 
@@ -34,7 +34,25 @@ var _has_party: bool = false
 var _near_service_tab: int = -1
 var _floor_source: int = 0
 var _wall_source: int = 6
-var _physics_driver: _WalkerPhysicsDriver
+var _physics_driver: WalkerPhysicsDriver
+var _template_tile_set: TileSet
+
+## Call before add_child when the hub map is built (UI _ready runs before Map may be easy to reach).
+func set_template_tile_set(source: TileSet) -> void:
+	_template_tile_set = source
+
+func _find_live_world_tile_set() -> TileSet:
+	if _template_tile_set != null:
+		return _template_tile_set
+	var node: Node = self
+	while node != null:
+		var parent: Node = node.get_parent()
+		if parent != null:
+			var map_layer := parent.get_node_or_null("Map") as TileMapLayer
+			if map_layer != null and map_layer.tile_set != null:
+				return map_layer.tile_set
+		node = parent
+	return null
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(720, 520)
@@ -45,8 +63,8 @@ func _ready() -> void:
 	_build_town_map()
 	_build_player()
 	_build_npcs()
-	var driver := _WalkerPhysicsDriver.new()
-	driver.map = self
+	var driver := WalkerPhysicsDriver.new()
+	driver.sanctum_map = self
 	_physics_driver = driver
 	_world_root.add_child(driver)
 	_prompt = Label.new()
@@ -73,11 +91,12 @@ func _build_viewport() -> void:
 func _build_town_map() -> void:
 	_tilemap = TileMapLayer.new()
 	_tilemap.name = "SanctumTownMap"
-	var world_packed: PackedScene = preload("res://scenes/main/world.tscn")
-	var world_temp: Node = world_packed.instantiate()
-	var src_map: TileMapLayer = world_temp.get_node("Map") as TileMapLayer
-	_tilemap.tile_set = src_map.tile_set.duplicate(true)
-	world_temp.queue_free()
+	var src_tile_set: TileSet = _find_live_world_tile_set()
+	if src_tile_set == null:
+		push_error("HubSanctumMap: could not resolve TileSet from World/Map.")
+		_world_root.add_child(_tilemap)
+		return
+	_tilemap.tile_set = src_tile_set.duplicate(true)
 	_world_root.add_child(_tilemap)
 	var zone: ZoneDefinition = ContentRegistry.get_zone_by_id("blood_cathedral")
 	if zone == null:
@@ -136,6 +155,8 @@ func _build_player() -> void:
 	_reset_player_spawn()
 
 func _build_npcs() -> void:
+	if _tilemap == null or _tilemap.tile_set == null:
+		return
 	for def in NPC_DEFS:
 		var tile: Vector2i = def["tile"]
 		var world_pos := _tilemap.map_to_local(tile + Vector2i(0, 0)) + Vector2(TILE_SIZE * 0.5, TILE_SIZE * 0.5)
@@ -173,6 +194,8 @@ func _build_npcs() -> void:
 		_world_root.add_child(npc_root)
 
 func _reset_player_spawn() -> void:
+	if _tilemap == null or _player == null or _tilemap.tile_set == null:
+		return
 	var spawn := Vector2i(TOWN_TILES_W / 2, TOWN_TILES_H / 2 + 1)
 	_player.position = _tilemap.map_to_local(spawn) + Vector2(TILE_SIZE * 0.5, TILE_SIZE * 0.5)
 

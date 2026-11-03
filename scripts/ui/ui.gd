@@ -182,6 +182,11 @@ func _setup_hub_menu() -> void:
 	hub_sanctum_map.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	hub_sanctum_map.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hub_sanctum_map.service_picked.connect(_on_hub_service_picked)
+	var world_node: Node = get_parent()
+	if world_node != null:
+		var map_layer := world_node.get_node_or_null("Map") as TileMapLayer
+		if map_layer != null and map_layer.tile_set != null:
+			hub_sanctum_map.set_template_tile_set(map_layer.tile_set)
 	root.add_child(hub_sanctum_map)
 	var dock := HBoxContainer.new()
 	dock.alignment = BoxContainer.ALIGNMENT_CENTER
