@@ -156,17 +156,25 @@ static func _register_strip(tile_set: TileSet, path: String, cache_key: String, 
 		return SOURCE_GRASS_WALL
 	return _register_atlas_texture(tile_set, tex, cache_key, with_physics)
 
+static func _set_wall_collision(source: TileSetAtlasSource, atlas_coords: Vector2i) -> void:
+	var tile_data: TileData = source.get_tile_data(atlas_coords, 0)
+	if tile_data == null:
+		return
+	tile_data.set_collision_polygons_count(0, 1)
+	tile_data.set_collision_polygon_points(0, 0, PackedVector2Array([
+		Vector2(-16, -16), Vector2(16, -16), Vector2(16, 16), Vector2(-16, 16),
+	]))
+
 static func _register_atlas_texture(tile_set: TileSet, texture: Texture2D, _cache_key: String, with_physics: bool) -> int:
 	var source := TileSetAtlasSource.new()
 	source.texture = texture
 	source.texture_region_size = Vector2i(32, 32)
 	var cols: int = maxi(1, int(texture.get_width()) / 32)
 	for x in range(cols):
-		source.create_tile(Vector2i(x, 0))
+		var coords := Vector2i(x, 0)
+		source.create_tile(coords)
 		if with_physics:
-			source.set_tile_physics_layer_collision_polygon(0, Vector2i(x, 0), 0, PackedVector2Array([
-				Vector2(-16, -16), Vector2(16, -16), Vector2(16, 16), Vector2(-16, 16),
-			]))
+			_set_wall_collision(source, coords)
 	var source_id: int = tile_set.add_source(source)
 	return source_id
 
@@ -176,9 +184,7 @@ static func _add_wall_physics(tile_set: TileSet, source_id: int) -> void:
 		return
 	var cols: int = maxi(1, int(source.texture.get_width()) / 32)
 	for x in range(cols):
-		source.set_tile_physics_layer_collision_polygon(0, Vector2i(x, 0), 0, PackedVector2Array([
-			Vector2(-16, -16), Vector2(16, -16), Vector2(16, 16), Vector2(-16, 16),
-		]))
+		_set_wall_collision(source, Vector2i(x, 0))
 
 static func _merge_horizontal(paths: PackedStringArray) -> Texture2D:
 	if paths.is_empty():

@@ -209,7 +209,7 @@ func _register_characters() -> void:
 	characters.append(_make_character("tinybones", "TinyBones", 100, 15, 55, 0, 20, 0.35, 300.0, 2))
 	characters.append(_make_character("beth", "Beth", 130, 8, 45, 0, 80, 0.05, 280.0, 7))
 	characters.append(_make_character("dalf", "Dalf", 85, 18, 20, 0, 60, 0.08, 270.0, 6))
-	characters.append(_make_character("trece", "Trece", 110, 12, 95, 1, 25, 0.12, 380.0, 3))
+	characters.append(_make_character("trece", "Trece", 110, 12, 95, 0, 25, 0.12, 380.0, 3))
 
 func _make_character(
 	id: String,

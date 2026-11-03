@@ -59,6 +59,7 @@ var map_toast: Label
 var ascended_toggle: CheckButton
 var hub_mirror_select: OptionButton
 var _shrine_campaign_complete: bool = false
+var _menu_backdrop: ColorRect
 
 var character_ids_toggled = []
 var characters = []
@@ -79,6 +80,8 @@ func _ready():
 	_setup_credits_panel()
 	_setup_shrine_panel()
 	_setup_map_toast()
+	_setup_menu_backdrop()
+	_setup_character_select_buttons()
 	zone_title_label = RichTextLabel.new()
 	zone_title_label.name = "ZoneTitle"
 	zone_title_label.offset_left = 32
@@ -109,6 +112,7 @@ func _ready():
 	end_game_menu.add_child(sanctum_button)
 	_refresh_character_select_locks()
 	_rebuild_hub_trainers_and_stash()
+	_sync_menu_backdrop()
 
 func _setup_early_return_dialog() -> void:
 	early_return_dialog = ConfirmationDialog.new()
@@ -507,6 +511,7 @@ func _on_hub_change_party() -> void:
 	hub_panel.visible = false
 	character_menu.visible = true
 	_refresh_character_select_locks()
+	_sync_menu_backdrop()
 
 func _on_hub_main_menu() -> void:
 	hub_panel.visible = false
@@ -514,6 +519,7 @@ func _on_hub_main_menu() -> void:
 	main_menu.visible = true
 	main_theme.stream = ZoneMusic.get_hub_music()
 	main_theme.play()
+	_sync_menu_backdrop()
 
 func _on_return_to_sanctum_pressed() -> void:
 	return_to_hub.emit(true)
@@ -1006,6 +1012,7 @@ func _on_play_pressed():
 	main_menu.visible = false
 	character_menu.visible = true
 	_refresh_character_select_locks()
+	_sync_menu_backdrop()
 
 func _on_world_map_generated():
 	main_theme.stop()
@@ -1071,6 +1078,7 @@ func _on_start_run_pressed():
 		character_menu.visible = false
 		show_hub()
 		_rebuild_hub_trainers_and_stash()
+		_sync_menu_backdrop()
 	else:
 		error_message.visible = true
 
@@ -1106,6 +1114,48 @@ func _on_game_over_return_pressed():
 	game_won_music.stop()
 	game_over_music.stop()
 	return_to_hub.emit(false)
+
+func _setup_menu_backdrop() -> void:
+	_menu_backdrop = ColorRect.new()
+	_menu_backdrop.name = "MenuBackdrop"
+	_menu_backdrop.color = Color(0.06, 0.04, 0.05, 1.0)
+	_menu_backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_menu_backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_menu_backdrop)
+	move_child(_menu_backdrop, 0)
+	_sync_menu_backdrop()
+
+func _sync_menu_backdrop() -> void:
+	if _menu_backdrop == null:
+		return
+	_menu_backdrop.visible = main_menu.visible or character_menu.visible
+
+func _setup_character_select_buttons() -> void:
+	var intro: RichTextLabel = character_menu.get_node("RichTextLabel")
+	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	intro.custom_minimum_size = Vector2(900, 0)
+	intro.scroll_active = false
+	intro.fit_content = true
+	var row: HBoxContainer = character_menu.get_node("CharacterSelection/HBoxContainer")
+	row.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	row.offset_left = -360
+	row.offset_top = 320
+	row.offset_right = 360
+	row.offset_bottom = 440
+	row.add_theme_constant_override("separation", 28)
+	var button_paths := [
+		"Character-menu/CharacterSelection/HBoxContainer/TinyBones",
+		"Character-menu/CharacterSelection/HBoxContainer/Beth",
+		"Character-menu/CharacterSelection/HBoxContainer/Dalf",
+		"Character-menu/CharacterSelection/HBoxContainer/Trece",
+	]
+	for path in button_paths:
+		var button: TextureButton = get_node(path)
+		button.custom_minimum_size = Vector2(88, 88)
+		button.ignore_texture_size = true
+		for child in button.get_children():
+			if child is Control:
+				child.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _refresh_character_select_locks() -> void:
 	var button_paths := [
