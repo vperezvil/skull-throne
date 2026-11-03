@@ -12,6 +12,8 @@ const BASE_SPEED := 300.0
 
 var mp_bar: ProgressBar
 var xp_bar: ProgressBar
+var _bar_value_label: Label
+var _battle_hud_active: bool = false
 
 signal boss_battle_start
 signal enemy_battle_start
@@ -85,8 +87,8 @@ func apply_battle_presentation_scale(factor: float) -> void:
 	progress_bar.scale = Vector2(inv, inv)
 	progress_bar.offset_left = -50.0
 	progress_bar.offset_right = 50.0
-	progress_bar.offset_top = -78.0
-	progress_bar.offset_bottom = -64.0
+	progress_bar.offset_top = -92.0
+	progress_bar.offset_bottom = -74.0
 	if mp_bar:
 		mp_bar.scale = Vector2(inv, inv)
 		mp_bar.offset_left = progress_bar.offset_left
@@ -99,6 +101,37 @@ func apply_battle_presentation_scale(factor: float) -> void:
 		xp_bar.offset_right = progress_bar.offset_right
 		xp_bar.offset_top = progress_bar.offset_top + 28.0
 		xp_bar.offset_bottom = progress_bar.offset_bottom + 28.0
+
+func prepare_battle_hud() -> void:
+	_battle_hud_active = true
+	_ensure_bar_value_label()
+	_bar_value_label.visible = true
+	progress_bar.show_percentage = false
+	if mp_bar:
+		mp_bar.visible = false
+	if xp_bar:
+		xp_bar.visible = false
+	_sync_bar_value_label()
+
+func _ensure_bar_value_label() -> void:
+	if _bar_value_label != null:
+		return
+	_bar_value_label = Label.new()
+	_bar_value_label.name = "BarValue"
+	_bar_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_bar_value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_bar_value_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_bar_value_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(11))
+	_bar_value_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
+	progress_bar.add_child(_bar_value_label)
+
+func _sync_bar_value_label() -> void:
+	if _bar_value_label == null or !_battle_hud_active:
+		return
+	var text := "%d/%d" % [current_hp, max_hp]
+	if max_mp > 0:
+		text += "  MP %d/%d" % [current_mp, max_mp]
+	_bar_value_label.text = text
 
 func _setup_resource_bars() -> void:
 	var theme: Theme = progress_bar.theme
@@ -278,10 +311,11 @@ func collided_with_enemy():
 	battle_started = true
 	update_progress_bar()
 	progress_bar.visible = true
-	if mp_bar:
-		mp_bar.visible = max_mp > 0
-	if xp_bar:
-		xp_bar.visible = true
+	if !_battle_hud_active:
+		if mp_bar:
+			mp_bar.visible = max_mp > 0
+		if xp_bar:
+			xp_bar.visible = true
 	ap.play("walk_left")
 	ap.stop()
 	
@@ -292,6 +326,7 @@ func update_progress_bar():
 		progress_bar.modulate = Color.WHITE
 	progress_bar.value = current_hp
 	_update_resource_bars()
+	_sync_bar_value_label()
 	if current_hp == 0:
 		ap.play("death")
 		death_sound.play()
@@ -354,6 +389,9 @@ func heal():
 	update_progress_bar()
 
 func hide_battle_bars() -> void:
+	_battle_hud_active = false
+	if _bar_value_label:
+		_bar_value_label.visible = false
 	progress_bar.visible = false
 	if mp_bar:
 		mp_bar.visible = false
@@ -361,6 +399,9 @@ func hide_battle_bars() -> void:
 		xp_bar.visible = false
 
 func reset_presentation_bars() -> void:
+	_battle_hud_active = false
+	if _bar_value_label:
+		_bar_value_label.visible = false
 	progress_bar.scale = Vector2.ONE
 	progress_bar.offset_left = -65.0
 	progress_bar.offset_right = 71.0
@@ -580,3 +621,4 @@ func _update_resource_bars() -> void:
 	if xp_bar:
 		xp_bar.max_value = maxi(xp_to_next_level(), 1)
 		xp_bar.value = xp
+	_sync_bar_value_label()

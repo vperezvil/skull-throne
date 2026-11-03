@@ -65,6 +65,8 @@ var hub_details_panel: PanelContainer
 var hub_details_toggle: CheckButton
 var _shrine_campaign_complete: bool = false
 var _menu_backdrop: ColorRect
+var main_menu_settings_panel: Panel
+var main_menu_settings_open: bool = false
 
 var character_ids_toggled = []
 var characters = []
@@ -86,6 +88,7 @@ func _ready():
 	_setup_shrine_panel()
 	_setup_map_toast()
 	_setup_menu_backdrop()
+	_setup_main_menu_options()
 	_setup_character_select_buttons()
 	zone_title_label = RichTextLabel.new()
 	zone_title_label.name = "ZoneTitle"
@@ -1164,6 +1167,57 @@ func _on_settings_back_pressed() -> void:
 	settings_panel.visible = false
 	if game_menu.visible:
 		options_menu.visible = true
+
+func _setup_main_menu_options() -> void:
+	var options_btn := Button.new()
+	options_btn.name = "Options"
+	options_btn.text = "Options"
+	options_btn.offset_left = 873.0
+	options_btn.offset_top = 600.0
+	options_btn.offset_right = 993.0
+	options_btn.offset_bottom = 654.0
+	options_btn.pressed.connect(_on_main_menu_options_pressed)
+	main_menu.add_child(options_btn)
+	main_menu_settings_panel = Panel.new()
+	main_menu_settings_panel.name = "MainMenuAudioPanel"
+	main_menu_settings_panel.visible = false
+	main_menu_settings_panel.offset_left = 640.0
+	main_menu_settings_panel.offset_top = 320.0
+	main_menu_settings_panel.offset_right = 1220.0
+	main_menu_settings_panel.offset_bottom = 520.0
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.08, 0.08, 0.08, 0.92)
+	panel_style.border_color = Color("#FF8D4D")
+	panel_style.set_border_width_all(2)
+	panel_style.content_margin_left = 16
+	panel_style.content_margin_top = 12
+	panel_style.content_margin_right = 16
+	panel_style.content_margin_bottom = 12
+	main_menu_settings_panel.add_theme_stylebox_override("panel", panel_style)
+	main_menu.add_child(main_menu_settings_panel)
+	var vbox := VBoxContainer.new()
+	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	main_menu_settings_panel.add_child(vbox)
+	var title := Label.new()
+	title.text = "Sound & music"
+	title.add_theme_font_size_override("font_size", 28)
+	vbox.add_child(title)
+	_add_volume_row(vbox, "Master", Global.master_volume, Global.set_master_volume)
+	_add_volume_row(vbox, "Music", Global.music_volume, Global.set_music_volume)
+	_add_volume_row(vbox, "SFX", Global.sfx_volume, Global.set_sfx_volume)
+	var back := Button.new()
+	back.text = "Back"
+	back.pressed.connect(_on_main_menu_settings_back)
+	vbox.add_child(back)
+
+func _on_main_menu_options_pressed() -> void:
+	main_menu_settings_open = true
+	main_menu_settings_panel.visible = true
+
+func _on_main_menu_settings_back() -> void:
+	main_menu_settings_open = false
+	main_menu_settings_panel.visible = false
+
 func _on_play_pressed():
 	main_menu.visible = false
 	character_menu.visible = true

@@ -36,13 +36,7 @@ func _in_encounter_grace() -> bool:
 	return Time.get_ticks_msec() < _encounter_grace_until_msec
 
 func apply_battle_presentation_scale(factor: float) -> void:
-	scale *= factor
-	var inv := 1.0 / factor
-	progress_bar.scale = Vector2(inv, inv)
-	progress_bar.offset_left = -40.0
-	progress_bar.offset_right = 40.0
-	progress_bar.offset_top = -72.0
-	progress_bar.offset_bottom = -58.0
+	super.apply_battle_presentation_scale(factor)
 
 func set_chase_target(target: Character) -> void:
 	player = target

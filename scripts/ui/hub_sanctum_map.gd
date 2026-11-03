@@ -37,6 +37,8 @@ const SERVICE_DEFS: Array[Dictionary] = [
 var _hint_label: Label
 var _descent_nodes: HBoxContainer
 var _service_layer: Control
+var _sanctum_title: Label
+var _sanctum_hint: Label
 var _descent_plan: Array[String] = []
 var _has_party: bool = false
 
@@ -54,6 +56,29 @@ func _ready() -> void:
 	_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	HubUiHelpers.style_body_label(_hint_label, 16)
 	add_child(_hint_label)
+	var sanctum_box := PanelContainer.new()
+	sanctum_box.name = "SanctumFrame"
+	sanctum_box.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	sanctum_box.offset_left = 8.0
+	sanctum_box.offset_top = 44.0
+	sanctum_box.offset_right = -8.0
+	sanctum_box.offset_bottom = 244.0
+	sanctum_box.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.12, 0.06, 0.07, 0.55), HubUiHelpers.COLOR_ACCENT))
+	add_child(sanctum_box)
+	var sanctum_v := VBoxContainer.new()
+	sanctum_v.set_anchors_preset(Control.PRESET_FULL_RECT)
+	sanctum_v.alignment = BoxContainer.ALIGNMENT_CENTER
+	sanctum_box.add_child(sanctum_v)
+	_sanctum_title = Label.new()
+	_sanctum_title.text = "Blood Sanctum"
+	_sanctum_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	HubUiHelpers.style_section_title(_sanctum_title, 20)
+	sanctum_v.add_child(_sanctum_title)
+	_sanctum_hint = Label.new()
+	_sanctum_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_sanctum_hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	HubUiHelpers.style_body_label(_sanctum_hint, 14)
+	sanctum_v.add_child(_sanctum_hint)
 	var descent_title := Label.new()
 	descent_title.text = "Descent route (this run)"
 	descent_title.set_anchors_preset(Control.PRESET_TOP_WIDE)
@@ -81,7 +106,8 @@ func _build_service_buttons() -> void:
 	for def in SERVICE_DEFS:
 		var btn := Button.new()
 		btn.name = "Service_%s" % def["label"]
-		btn.text = "%s\n(%s)" % [def["label"], def["hint"]]
+		btn.text = def["label"]
+		btn.tooltip_text = String(def["hint"])
 		btn.add_theme_font_size_override("font_size", Global.get_ui_font_size(14))
 		HubUiHelpers.style_secondary_button(btn)
 		btn.custom_minimum_size = Vector2(108, 72)
@@ -106,45 +132,14 @@ func _layout_services() -> void:
 				clampf(anchor.y * _service_layer.size.y - btn_size.y * 0.5, 48.0, _service_layer.size.y - btn_size.y - 4.0)
 			)
 
-func _draw() -> void:
-	var sanctum_rect := Rect2(Vector2(8, 44), Vector2(size.x - 16, 200))
-	draw_rect(sanctum_rect, Color(0.1, 0.05, 0.06, 0.85), false, 2.0)
-	draw_rect(sanctum_rect, Color(0.12, 0.06, 0.07, 0.55))
-	var center := sanctum_rect.get_center()
-	draw_string(
-		ThemeDB.fallback_font,
-		center + Vector2(-52, -6),
-		"Sanctum",
-		HORIZONTAL_ALIGNMENT_LEFT,
-		-1,
-		Global.get_ui_font_size(18),
-		HubUiHelpers.COLOR_ACCENT
-	)
-	if !_has_party:
-		draw_string(
-			ThemeDB.fallback_font,
-			center + Vector2(-110, 18),
-			"Tap Change party, then visit a marker",
-			HORIZONTAL_ALIGNMENT_LEFT,
-			-1,
-			Global.get_ui_font_size(13),
-			HubUiHelpers.COLOR_MUTED
-		)
-	else:
-		draw_string(
-			ThemeDB.fallback_font,
-			center + Vector2(-96, 18),
-			"Markers open shops · Begin when ready",
-			HORIZONTAL_ALIGNMENT_LEFT,
-			-1,
-			Global.get_ui_font_size(13),
-			HubUiHelpers.COLOR_MUTED
-		)
-
 func set_hub_state(has_party: bool, hint_text: String) -> void:
 	_has_party = has_party
 	_hint_label.text = hint_text
-	queue_redraw()
+	if _sanctum_hint != null:
+		if !has_party:
+			_sanctum_hint.text = "Choose your party, then tap Shop, Train, Boons, or Stash."
+		else:
+			_sanctum_hint.text = "Visit a marker on the map, then Begin descent when ready."
 
 func set_descent_plan(zone_ids: Array[String]) -> void:
 	_descent_plan = zone_ids.duplicate()
@@ -185,8 +180,7 @@ func _make_route_node(title: String, is_finale: bool, floor_num: int) -> PanelCo
 	num_lbl.modulate = HubUiHelpers.COLOR_MUTED
 	v.add_child(num_lbl)
 	var name_lbl := Label.new()
-	var short := title.split(" ")[0] if title.contains(" ") else title
-	name_lbl.text = short
+	name_lbl.text = title if title.length() <= 12 else title.substr(0, 11) + "..."
 	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	name_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	name_lbl.custom_minimum_size = Vector2(88, 0)

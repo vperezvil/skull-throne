@@ -25,7 +25,8 @@ var DEFEND_MSG = "\n{player1} is defending, will receive half damage on next att
 var SELECT_ENEMY = "\nSelect Enemy to attack"
 var DAMAGE_DEALT = "\n{player1} dealt {damage} damage to {player2}"
 var RUN_BOSS = "\nCan't run from the boss!!!"
-var RUN = "\nRun successfully"
+var RUN = "\nYou escaped!"
+var RUN_FAIL = "\nCouldn't escape — fight on!"
 var WIN_BATTLE = "\nBattle won!"
 var SKILL_MSG = "\n{player1} uses {skill} on {player2}"
 var CRIT_MSG = " Critical hit!"
@@ -39,7 +40,6 @@ var is_run_pressed = false
 var pending_skill: SkillDefinition = null
 var battle_xp_reward: int = 0
 var _boss_turn_counter: int = 0
-var party_status_label: Label
 signal battle_ended
 signal battle_fled
 signal level_ended
@@ -51,70 +51,35 @@ func _ready():
 	Global.assign_music_bus(boss_music)
 	Global.assign_music_bus(enemy_music)
 	Global.assign_music_bus(win_music)
-	party_status_label = Label.new()
-	party_status_label.name = "PartyStatus"
-	party_status_label.visible = false
-	party_status_label.offset_left = 353.0
-	party_status_label.offset_top = 908.0
-	party_status_label.offset_right = 1640.0
-	party_status_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(14))
-	party_status_label.modulate = Color(0.95, 0.9, 0.85)
-	$UI.add_child(party_status_label)
 	_configure_battle_ui_layout()
 	inventory_button.text = "Inventory"
 
 func _configure_battle_ui_layout() -> void:
 	const MARGIN := 24.0
 	const PANEL_W := 210.0
-	const OPTIONS_H := 280.0
+	const LOG_BOTTOM := 24.0
+	const LOG_HEIGHT := 148.0
 	battle_menu.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	battle_menu.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	battle_menu.offset_left = -PANEL_W - MARGIN
-	battle_menu.offset_top = -OPTIONS_H - MARGIN
+	battle_menu.offset_top = -LOG_BOTTOM - LOG_HEIGHT
 	battle_menu.offset_right = -MARGIN
-	battle_menu.offset_bottom = -MARGIN
+	battle_menu.offset_bottom = -LOG_BOTTOM
 	skill_panel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	skill_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	skill_panel.offset_left = -PANEL_W - MARGIN
-	skill_panel.offset_top = -OPTIONS_H - MARGIN - 240.0
+	skill_panel.offset_top = -LOG_BOTTOM - LOG_HEIGHT - 232.0
 	skill_panel.offset_right = -MARGIN
-	skill_panel.offset_bottom = -OPTIONS_H - MARGIN - 8.0
+	skill_panel.offset_bottom = -LOG_BOTTOM - LOG_HEIGHT - 8.0
 	combat_dialog.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
 	combat_dialog.offset_left = MARGIN
-	combat_dialog.offset_top = -172.0
+	combat_dialog.offset_top = -LOG_BOTTOM - LOG_HEIGHT
 	combat_dialog.offset_right = -PANEL_W - MARGIN * 2.0
-	combat_dialog.offset_bottom = -MARGIN
-	party_status_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
-	party_status_label.offset_left = MARGIN
-	party_status_label.offset_top = -196.0
-	party_status_label.offset_right = -PANEL_W - MARGIN * 2.0
-	party_status_label.offset_bottom = -176.0
+	combat_dialog.offset_bottom = -LOG_BOTTOM
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	inventory_button.disabled = Inventory.items.keys().size() == 0
-	_update_battle_party_status()
-
-func _update_battle_party_status() -> void:
-	if party_status_label == null:
-		return
-	if !visible or character_container.get_child_count() == 0:
-		party_status_label.visible = false
-		return
-	party_status_label.visible = true
-	var parts: PackedStringArray = []
-	for ch in character_container.get_children():
-		if !(ch is Character) or ch.current_hp <= 0:
-			continue
-		var tags: String = ""
-		if ch.stress > 0:
-			tags += " Str %d/%d" % [ch.stress, StressSystem.STRESS_MAX]
-		if ch.bleed_stacks > 0:
-			tags += " Bl%d" % ch.bleed_stacks
-		if ch.poison_stacks > 0:
-			tags += " Po%d" % ch.poison_stacks
-		parts.append("%s%s" % [ch.name, tags])
-	party_status_label.text = "Party: " + " | ".join(parts) if parts.size() > 0 else ""
 
 func start_battle(characters, enemies):
 	is_boss_battle = false
@@ -181,11 +146,14 @@ func fill_characters(characters):
 			offset += spacing_between_characters
 			character.collided_with_enemy()
 			character.reset_battle_cooldowns()
+			if character.has_method("prepare_battle_hud"):
+				character.prepare_battle_hud()
 			character.character_defeated.connect(_on_character_defeated.bind(character))
 			character_container.add_child(character)
 		character.visible = true
 		
 func fill_enemies(enemies):
+	_assign_battle_enemy_names(enemies)
 	var is_lonely_enemy = enemies.size() == 1
 	for enemy in enemies:
 		if enemy is Boss:
@@ -223,6 +191,8 @@ func fill_enemies(enemies):
 				enemy.apply_battle_presentation_scale(3.0)
 			else:
 				enemy.scale *= 3.0
+			if enemy.has_method("prepare_battle_hud"):
+				enemy.prepare_battle_hud()
 			enemy.progress_bar.visible = true
 			enemy.enemy_defeated.connect(_on_enemy_defeated.bind(enemy))
 			enemy_container.add_child(enemy)
@@ -300,6 +270,28 @@ func is_party_member_visible(_character: Character) -> bool:
 func _is_persistent_world_enemy(enemy) -> bool:
 	return enemy is Boss
 
+func _enemy_battle_base_name(enemy) -> String:
+	if enemy is Boss:
+		return String(enemy.name)
+	var raw := String(enemy.name)
+	if raw.begins_with("Elite "):
+		raw = raw.substr(6)
+	if raw.ends_with(" Enemy"):
+		raw = raw.substr(0, raw.length() - 6)
+	return raw.strip_edges()
+
+func _assign_battle_enemy_names(enemies: Array) -> void:
+	var tallies: Dictionary = {}
+	for enemy in enemies:
+		if enemy is Boss:
+			continue
+		var base: String = _enemy_battle_base_name(enemy)
+		if base.is_empty():
+			base = "Enemy"
+		var idx: int = int(tallies.get(base, 0)) + 1
+		tallies[base] = idx
+		enemy.name = "%s enemy %d" % [base, idx]
+
 func _restore_enemies_after_battle(fled: bool) -> void:
 	for enemy in enemy_original_state.keys():
 		if !is_instance_valid(enemy):
@@ -313,10 +305,14 @@ func _restore_enemies_after_battle(fled: bool) -> void:
 			enemy.reset_presentation_bars()
 		enemy.battle_started = false
 		enemy.progress_bar.visible = false
-		if fled or _is_persistent_world_enemy(enemy):
+		if fled:
+			if _is_persistent_world_enemy(enemy):
+				state["parent"].add_child(enemy)
+			else:
+				enemy.queue_free()
+		elif _is_persistent_world_enemy(enemy):
 			state["parent"].add_child(enemy)
-			if _is_persistent_world_enemy(enemy) and !fled:
-				enemy.visible = false
+			enemy.visible = false
 		else:
 			enemy.queue_free()
 	enemy_original_state.clear()
@@ -534,9 +530,13 @@ func _on_defend_pressed():
 func _on_run_pressed():
 	if is_boss_battle:
 		combat_dialog.text += RUN_BOSS
-	else:
-		is_run_pressed = true
-		end_battle()
+		return
+	if randf() > GameConstants.FLEE_SUCCESS_CHANCE:
+		combat_dialog.text += RUN_FAIL
+		battle_menu.visible = true
+		return
+	is_run_pressed = true
+	end_battle()
 	
 func initialize_combatants(characters, enemies):
 	combatants = characters + enemies

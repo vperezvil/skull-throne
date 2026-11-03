@@ -18,6 +18,8 @@ var max_hp: int = 100
 var current_hp: int
 var initiative: int = 50
 var attack: int = 10
+var _bar_value_label: Label
+var _battle_hud_active: bool = false
 
 func _ready_combatant() -> void:
 	progress_bar.max_value = max_hp
@@ -42,12 +44,39 @@ func apply_battle_presentation_scale(factor: float) -> void:
 	scale *= factor
 	var inv := 1.0 / factor
 	progress_bar.scale = Vector2(inv, inv)
-	progress_bar.offset_left = -40.0
-	progress_bar.offset_right = 40.0
-	progress_bar.offset_top = -72.0
-	progress_bar.offset_bottom = -58.0
+	progress_bar.offset_left = -48.0
+	progress_bar.offset_right = 48.0
+	progress_bar.offset_top = -88.0
+	progress_bar.offset_bottom = -70.0
+
+func prepare_battle_hud() -> void:
+	_battle_hud_active = true
+	_ensure_bar_value_label()
+	_bar_value_label.visible = true
+	progress_bar.show_percentage = false
+	_sync_bar_value_label()
+
+func _ensure_bar_value_label() -> void:
+	if _bar_value_label != null:
+		return
+	_bar_value_label = Label.new()
+	_bar_value_label.name = "BarValue"
+	_bar_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_bar_value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_bar_value_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_bar_value_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(11))
+	_bar_value_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
+	progress_bar.add_child(_bar_value_label)
+
+func _sync_bar_value_label() -> void:
+	if _bar_value_label == null or !_battle_hud_active:
+		return
+	_bar_value_label.text = "%d/%d" % [current_hp, max_hp]
 
 func reset_presentation_bars() -> void:
+	_battle_hud_active = false
+	if _bar_value_label:
+		_bar_value_label.visible = false
 	progress_bar.scale = Vector2.ONE
 	progress_bar.offset_left = -52.0
 	progress_bar.offset_right = 53.0
@@ -56,6 +85,7 @@ func reset_presentation_bars() -> void:
 
 func update_progress_bar() -> void:
 	progress_bar.value = current_hp
+	_sync_bar_value_label()
 	if current_hp <= 0:
 		ap.play("death")
 		death_sound.play()
