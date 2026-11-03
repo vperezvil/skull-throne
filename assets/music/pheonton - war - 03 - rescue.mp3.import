@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://ccm6jojgv0d0h"
+path="res://.godot/imported/pheonton - war - 03 - rescue.mp3-763b25d34385f9dab70a64d69d8d63fd.mp3str"
+
+[deps]
+
+source_file="res://assets/music/pheonton - war - 03 - rescue.mp3"
+dest_files=["res://.godot/imported/pheonton - war - 03 - rescue.mp3-763b25d34385f9dab70a64d69d8d63fd.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

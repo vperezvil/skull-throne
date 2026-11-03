@@ -8,13 +8,17 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Skull Throne"
-config/version="0.4.0"
 config/description="Skull Throne roguelike dungeon crawl."
+config/version="0.4.0"
 run/main_scene="res://scenes/main/world.tscn"
-config/features=PackedStringArray("4.2", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://assets/logo.png"
 config/windows_native_icon="res://assets/logo.ico"
 

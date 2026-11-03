@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://qq3v41no0up1"
+path="res://.godot/imported/pheonton - war - 02 - dark.mp3-e41ee3b9731d0b4af3889f9323f8ce70.mp3str"
+
+[deps]
+
+source_file="res://assets/music/pheonton - war - 02 - dark.mp3"
+dest_files=["res://.godot/imported/pheonton - war - 02 - dark.mp3-e41ee3b9731d0b4af3889f9323f8ce70.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
