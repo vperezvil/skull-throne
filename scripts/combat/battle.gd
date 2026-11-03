@@ -60,6 +60,35 @@ func _ready():
 	party_status_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(14))
 	party_status_label.modulate = Color(0.95, 0.9, 0.85)
 	$UI.add_child(party_status_label)
+	_configure_battle_ui_layout()
+	inventory_button.text = "Inventory"
+
+func _configure_battle_ui_layout() -> void:
+	const MARGIN := 24.0
+	const PANEL_W := 210.0
+	const OPTIONS_H := 280.0
+	battle_menu.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	battle_menu.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	battle_menu.offset_left = -PANEL_W - MARGIN
+	battle_menu.offset_top = -OPTIONS_H - MARGIN
+	battle_menu.offset_right = -MARGIN
+	battle_menu.offset_bottom = -MARGIN
+	skill_panel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	skill_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	skill_panel.offset_left = -PANEL_W - MARGIN
+	skill_panel.offset_top = -OPTIONS_H - MARGIN - 240.0
+	skill_panel.offset_right = -MARGIN
+	skill_panel.offset_bottom = -OPTIONS_H - MARGIN - 8.0
+	combat_dialog.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	combat_dialog.offset_left = MARGIN
+	combat_dialog.offset_top = -172.0
+	combat_dialog.offset_right = -PANEL_W - MARGIN * 2.0
+	combat_dialog.offset_bottom = -MARGIN
+	party_status_label.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
+	party_status_label.offset_left = MARGIN
+	party_status_label.offset_top = -196.0
+	party_status_label.offset_right = -PANEL_W - MARGIN * 2.0
+	party_status_label.offset_bottom = -176.0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -143,7 +172,7 @@ func fill_characters(characters):
 			if character.has_node("Camera2D"):
 				var camera = character.get_node("Camera2D")
 				camera.enabled = false
-			character.scale *= 2
+			character.apply_battle_presentation_scale(2.0)
 			if is_lonely_character:
 				var min_size = character_container.get_custom_minimum_size()
 				character.position = Vector2(min_size.x,min_size.y/2)
@@ -190,7 +219,10 @@ func fill_enemies(enemies):
 			else:
 				enemy.position = Vector2(0,offset)
 				offset += spacing_between_enemies
-			enemy.scale *= 3
+			if enemy.has_method("apply_battle_presentation_scale"):
+				enemy.apply_battle_presentation_scale(3.0)
+			else:
+				enemy.scale *= 3.0
 			enemy.progress_bar.visible = true
 			enemy.enemy_defeated.connect(_on_enemy_defeated.bind(enemy))
 			enemy_container.add_child(enemy)
@@ -254,6 +286,8 @@ func _restore_party_members() -> Array:
 			character_container.remove_child(character)
 		character.position = original_positions[character]
 		character.scale = original_scales[character]
+		if character.has_method("reset_presentation_bars"):
+			character.reset_presentation_bars()
 		character.visible = is_party_member_visible(character)
 		character.ap.play("RESET")
 		parent.add_child(character)
@@ -275,6 +309,8 @@ func _restore_enemies_after_battle(fled: bool) -> void:
 		var state: Dictionary = enemy_original_state[enemy]
 		enemy.position = state["position"]
 		enemy.scale = state["scale"]
+		if enemy.has_method("reset_presentation_bars"):
+			enemy.reset_presentation_bars()
 		enemy.battle_started = false
 		enemy.progress_bar.visible = false
 		if fled or _is_persistent_world_enemy(enemy):

@@ -38,6 +38,22 @@ func apply_combat_stats(hp: int, atk: int, init: int) -> void:
 func spawn_initiative_clamp() -> void:
 	initiative = clampi(initiative, 1, 100)
 
+func apply_battle_presentation_scale(factor: float) -> void:
+	scale *= factor
+	var inv := 1.0 / factor
+	progress_bar.scale = Vector2(inv, inv)
+	progress_bar.offset_left = -40.0
+	progress_bar.offset_right = 40.0
+	progress_bar.offset_top = -72.0
+	progress_bar.offset_bottom = -58.0
+
+func reset_presentation_bars() -> void:
+	progress_bar.scale = Vector2.ONE
+	progress_bar.offset_left = -52.0
+	progress_bar.offset_right = 53.0
+	progress_bar.offset_top = -42.0
+	progress_bar.offset_bottom = -24.0
+
 func update_progress_bar() -> void:
 	progress_bar.value = current_hp
 	if current_hp <= 0:

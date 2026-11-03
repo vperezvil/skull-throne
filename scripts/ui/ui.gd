@@ -58,6 +58,9 @@ var shrine_option_box: VBoxContainer
 var map_toast: Label
 var ascended_toggle: CheckButton
 var hub_mirror_select: OptionButton
+var hub_begin_btn: Button
+var hub_steps_label: Label
+var hub_party_chip_row: HBoxContainer
 var _shrine_campaign_complete: bool = false
 var _menu_backdrop: ColorRect
 
@@ -137,129 +140,204 @@ func _setup_hub_menu() -> void:
 	hub_panel.name = "BloodSanctumHub"
 	hub_panel.visible = false
 	hub_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
-	var hub_bg := StyleBoxFlat.new()
-	hub_bg.bg_color = Color(0.05, 0.02, 0.02, 0.94)
-	hub_panel.add_theme_stylebox_override("panel", hub_bg)
+	hub_panel.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.04, 0.02, 0.03, 0.97), Color(0.25, 0.08, 0.06)))
 	add_child(hub_panel)
 	var margin := MarginContainer.new()
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 48)
-	margin.add_theme_constant_override("margin_top", 40)
-	margin.add_theme_constant_override("margin_right", 48)
-	margin.add_theme_constant_override("margin_bottom", 40)
+	margin.add_theme_constant_override("margin_left", 40)
+	margin.add_theme_constant_override("margin_top", 32)
+	margin.add_theme_constant_override("margin_right", 40)
+	margin.add_theme_constant_override("margin_bottom", 32)
 	hub_panel.add_child(margin)
-	var root := HBoxContainer.new()
+	var root := VBoxContainer.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	root.add_theme_constant_override("separation", 20)
 	margin.add_child(root)
-	var left := VBoxContainer.new()
-	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	root.add_child(left)
+	var header := HBoxContainer.new()
+	header.add_theme_constant_override("separation", 16)
+	root.add_child(header)
+	var title_col := VBoxContainer.new()
+	title_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(title_col)
 	var title := Label.new()
 	title.text = "Blood Sanctum"
-	title.add_theme_font_size_override("font_size", 48)
-	left.add_child(title)
+	title.add_theme_font_size_override("font_size", Global.get_ui_font_size(44))
+	title_col.add_child(title)
 	var subtitle := Label.new()
-	subtitle.text = "Refuge before the Skull Throne - spend Blood Tithe, then descend."
+	subtitle.text = "Rest, upgrade, and prepare your party before the descent."
 	subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	subtitle.add_theme_font_size_override("font_size", 20)
-	left.add_child(subtitle)
+	HubUiHelpers.style_body_label(subtitle, 18)
+	title_col.add_child(subtitle)
 	hub_tithe_label = Label.new()
-	hub_tithe_label.add_theme_font_size_override("font_size", 22)
-	left.add_child(hub_tithe_label)
-	hub_stats_label = RichTextLabel.new()
-	hub_stats_label.custom_minimum_size = Vector2(0, 120)
-	hub_stats_label.scroll_active = false
-	left.add_child(hub_stats_label)
+	hub_tithe_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	hub_tithe_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(20))
+	hub_tithe_label.modulate = HubUiHelpers.COLOR_ACCENT
+	header.add_child(hub_tithe_label)
+	var main_row := HBoxContainer.new()
+	main_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	main_row.add_theme_constant_override("separation", 28)
+	root.add_child(main_row)
+	var left_scroll := ScrollContainer.new()
+	left_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	left_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	main_row.add_child(left_scroll)
+	var left := VBoxContainer.new()
+	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	left.add_theme_constant_override("separation", 14)
+	left_scroll.add_child(left)
+	hub_steps_label = Label.new()
+	hub_steps_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	HubUiHelpers.style_body_label(hub_steps_label, 17)
+	left.add_child(HubUiHelpers.make_card("What to do", hub_steps_label))
+	hub_party_chip_row = HBoxContainer.new()
+	hub_party_chip_row.add_theme_constant_override("separation", 10)
+	left.add_child(HubUiHelpers.make_card("Your party", hub_party_chip_row))
 	hub_party_label = Label.new()
 	hub_party_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	left.add_child(hub_party_label)
+	HubUiHelpers.style_body_label(hub_party_label, 15)
+	left.add_child(HubUiHelpers.make_card("Descent stat preview", hub_party_label))
 	hub_run_hint_label = Label.new()
 	hub_run_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	left.add_child(hub_run_hint_label)
+	HubUiHelpers.style_body_label(hub_run_hint_label, 15)
+	left.add_child(HubUiHelpers.make_card("Campaign progress", hub_run_hint_label))
+	hub_stats_label = RichTextLabel.new()
+	hub_stats_label.custom_minimum_size = Vector2(0, 100)
+	hub_stats_label.scroll_active = false
+	hub_stats_label.fit_content = true
+	hub_stats_label.add_theme_font_size_override("normal_font_size", Global.get_ui_font_size(14))
+	left.add_child(HubUiHelpers.make_card("Sanctum ledger", hub_stats_label))
 	hub_message_label = Label.new()
-	hub_message_label.modulate = Color(1.0, 0.75, 0.45)
+	hub_message_label.modulate = Color(1.0, 0.82, 0.55)
 	hub_message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	left.add_child(hub_message_label)
+	hub_message_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(16))
+	left.add_child(HubUiHelpers.make_card("Updates", hub_message_label))
 	var right := VBoxContainer.new()
-	right.custom_minimum_size.x = 480
-	root.add_child(right)
+	right.custom_minimum_size.x = 520
+	right.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	right.add_theme_constant_override("separation", 12)
+	main_row.add_child(right)
+	var services_title := Label.new()
+	services_title.text = "Sanctum services"
+	HubUiHelpers.style_section_title(services_title, 22)
+	right.add_child(services_title)
 	hub_tabs = TabContainer.new()
 	hub_tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	hub_tabs.add_theme_font_size_override("font_size", Global.get_ui_font_size(16))
 	right.add_child(hub_tabs)
 	hub_tab_grum = VBoxContainer.new()
 	hub_tab_grum.name = "Grum"
+	hub_tab_grum.add_theme_constant_override("separation", 8)
 	HubNpcUi.add_npc_header(
 		hub_tab_grum,
 		"res://assets/monsters/unique/grum.png",
-		"Grum - Quartermaster",
+		"Grum — Quartermaster",
 		"Weapons, trinkets, and potions for Blood Tithe."
 	)
 	HubNpcUi.add_potion_buy(hub_tab_grum, false, hub_message_label)
 	HubNpcUi.add_equipment_shop(hub_tab_grum, false, hub_message_label, _rebuild_hub_grum_commerce)
-	hub_tabs.add_child(hub_tab_grum)
+	hub_tabs.add_child(HubUiHelpers.wrap_scroll(hub_tab_grum, 340.0))
 	hub_tab_enchantress = VBoxContainer.new()
 	hub_tab_enchantress.name = "Enchantress"
+	hub_tab_enchantress.add_theme_constant_override("separation", 8)
 	HubNpcUi.add_npc_header(
 		hub_tab_enchantress,
 		"res://assets/monsters/unique/enchantress.png",
-		"Enchantress - Skill tutor",
-		"Improve skill tiers (tier 2 and 3 unlock new combat skills; veterans Beth & Trece keep XP between runs). Stains from early retreats can be purified here for Blood Tithe."
+		"Enchantress — Tutor",
+		"Train skills, purify stains, and spend tithe on lasting power."
 	)
-	hub_tabs.add_child(hub_tab_enchantress)
+	hub_tabs.add_child(HubUiHelpers.wrap_scroll(hub_tab_enchantress, 340.0))
 	var tab_boons := VBoxContainer.new()
 	tab_boons.name = "Sanctum boons"
-	var boons_title := Label.new()
-	boons_title.text = "Permanent sanctum investments"
-	boons_title.add_theme_font_size_override("font_size", 20)
-	tab_boons.add_child(boons_title)
+	tab_boons.add_theme_constant_override("separation", 8)
+	var boons_blurb := Label.new()
+	boons_blurb.text = "Permanent upgrades that apply to every future descent."
+	boons_blurb.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	HubUiHelpers.style_body_label(boons_blurb, 14)
+	tab_boons.add_child(boons_blurb)
 	_add_hub_button(tab_boons, "Vitality (+12 HP)", _on_hub_upgrade_vitality, true)
 	_add_hub_button(tab_boons, "Fury (+2 ATK)", _on_hub_upgrade_fury, true)
 	_add_hub_button(tab_boons, "Supplies (start items)", _on_hub_upgrade_supply, true)
-	hub_tabs.add_child(tab_boons)
+	hub_tabs.add_child(HubUiHelpers.wrap_scroll(tab_boons, 340.0))
 	var stash_box := VBoxContainer.new()
 	stash_box.name = "Equip stash"
+	stash_box.add_theme_constant_override("separation", 8)
 	var stash_title := Label.new()
-	stash_title.text = "Equip purchases"
-	tab_boons.add_child(stash_title)
-	hub_tabs.add_child(stash_box)
-	hub_tabs.set_tab_title(0, "Grum")
-	hub_tabs.set_tab_title(1, "Enchantress")
+	stash_title.text = "Assign gear you bought to party members."
+	stash_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	HubUiHelpers.style_body_label(stash_title, 14)
+	stash_box.add_child(stash_title)
+	hub_tabs.add_child(HubUiHelpers.wrap_scroll(stash_box, 340.0))
+	hub_tabs.set_tab_title(0, "Shop")
+	hub_tabs.set_tab_title(1, "Train")
 	hub_tabs.set_tab_title(2, "Boons")
-	hub_tabs.set_tab_title(3, "Equip")
-	var actions := VBoxContainer.new()
-	right.add_child(actions)
-	var rest_btn := Button.new()
-	rest_btn.text = "Rest - restore party HP"
-	rest_btn.pressed.connect(_on_hub_rest_pressed)
-	actions.add_child(rest_btn)
-	var begin_btn := Button.new()
-	begin_btn.text = "Begin descent"
-	begin_btn.pressed.connect(_on_hub_begin_descent)
-	actions.add_child(begin_btn)
+	hub_tabs.set_tab_title(3, "Stash")
+	var options_card := PanelContainer.new()
+	options_card.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.1, 0.05, 0.06, 0.9)))
+	var options := VBoxContainer.new()
+	options.add_theme_constant_override("separation", 8)
+	options_card.add_child(options)
+	right.add_child(options_card)
+	var options_heading := Label.new()
+	options_heading.text = "Run options"
+	HubUiHelpers.style_section_title(options_heading, 17)
+	options.add_child(options_heading)
+	var mirror_row := HBoxContainer.new()
+	mirror_row.add_theme_constant_override("separation", 8)
+	var mirror_lbl := Label.new()
+	mirror_lbl.text = "Lock stats for:"
+	mirror_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	HubUiHelpers.style_body_label(mirror_lbl, 14)
+	mirror_row.add_child(mirror_lbl)
+	hub_mirror_select = OptionButton.new()
+	hub_mirror_select.name = "MirrorHeroSelect"
+	hub_mirror_select.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	mirror_row.add_child(hub_mirror_select)
+	options.add_child(mirror_row)
 	var reroll_btn := Button.new()
 	reroll_btn.text = "Reroll stat preview"
 	reroll_btn.pressed.connect(_on_hub_reroll_stats)
-	actions.add_child(reroll_btn)
+	HubUiHelpers.style_secondary_button(reroll_btn)
+	options.add_child(reroll_btn)
 	var mirror_btn := Button.new()
-	mirror_btn.text = "Lock mirror for selected hero (60 tithe)"
+	mirror_btn.text = "Lock mirror (60 tithe)"
 	mirror_btn.pressed.connect(_on_hub_lock_mirror)
-	actions.add_child(mirror_btn)
-	hub_mirror_select = OptionButton.new()
-	hub_mirror_select.name = "MirrorHeroSelect"
-	actions.add_child(hub_mirror_select)
+	HubUiHelpers.style_secondary_button(mirror_btn)
+	options.add_child(mirror_btn)
 	ascended_toggle = CheckButton.new()
-	ascended_toggle.text = "Ascended descent (harder; unlocks after 1 victory)"
+	ascended_toggle.text = "Ascended descent (harder; after 1 victory)"
 	ascended_toggle.disabled = !MetaProgress.can_use_ascended()
 	ascended_toggle.button_pressed = MetaProgress.ascended_next_run
 	ascended_toggle.toggled.connect(_on_ascended_toggled)
-	actions.add_child(ascended_toggle)
+	options.add_child(ascended_toggle)
+	var actions := VBoxContainer.new()
+	actions.add_theme_constant_override("separation", 10)
+	right.add_child(actions)
+	hub_begin_btn = Button.new()
+	hub_begin_btn.text = "Begin descent"
+	hub_begin_btn.pressed.connect(_on_hub_begin_descent)
+	HubUiHelpers.style_primary_button(hub_begin_btn)
+	actions.add_child(hub_begin_btn)
+	var action_row := HBoxContainer.new()
+	action_row.add_theme_constant_override("separation", 10)
+	action_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var rest_btn := Button.new()
+	rest_btn.text = "Rest party"
+	rest_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rest_btn.pressed.connect(_on_hub_rest_pressed)
+	HubUiHelpers.style_secondary_button(rest_btn)
+	action_row.add_child(rest_btn)
 	var party_btn := Button.new()
 	party_btn.text = "Change party"
+	party_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	party_btn.pressed.connect(_on_hub_change_party)
-	actions.add_child(party_btn)
+	HubUiHelpers.style_secondary_button(party_btn)
+	action_row.add_child(party_btn)
+	actions.add_child(action_row)
 	var main_btn := Button.new()
-	main_btn.text = "Main menu"
+	main_btn.text = "Back to main menu"
 	main_btn.pressed.connect(_on_hub_main_menu)
+	HubUiHelpers.style_ghost_button(main_btn)
 	actions.add_child(main_btn)
 	_refresh_hub_ui()
 
@@ -269,6 +347,7 @@ func _add_hub_button(parent: VBoxContainer, text: String, callback: Callable, dy
 	if dynamic_cost:
 		btn.set_meta("dynamic_cost", true)
 	btn.pressed.connect(callback.bind(btn))
+	HubUiHelpers.style_secondary_button(btn)
 	parent.add_child(btn)
 
 func show_hub() -> void:
@@ -285,12 +364,14 @@ func show_hub() -> void:
 	main_menu.visible = false
 	if zone_title_label:
 		zone_title_label.visible = false
+	_sync_menu_backdrop()
 	_rebuild_hub_trainers_and_stash()
 	_refresh_hub_ui()
 
 func show_hub_after_run(payload: RunEndPayload) -> void:
 	hide_run_overlays()
 	hub_panel.visible = true
+	_sync_menu_backdrop()
 	var tithe_earned: int = payload.tithe_earned
 	var victory: bool = payload.victory
 	var penalty: float = payload.penalty_fraction
@@ -349,14 +430,14 @@ func hide_run_overlays() -> void:
 func _refresh_hub_ui() -> void:
 	if hub_tithe_label == null:
 		return
-	hub_tithe_label.text = "Blood Tithe: %d | Skulls on throne: %d" % [
+	hub_tithe_label.text = "Blood Tithe: %d\nSkulls on throne: %d" % [
 		MetaProgress.blood_tithe,
 		Global.get_skull_count(),
 	]
 	hub_stats_label.text = (
-		"Runs: %d attempted, %d victories | Lifetime floors cleared: %d\n"
+		"Runs: %d attempted · %d victories · %d lifetime floors\n"
 		% [MetaProgress.runs_attempted, MetaProgress.runs_won, MetaProgress.get_lifetime_floors_cleared()]
-		+ "Upgrades - Vitality %d/%d, Fury %d/%d, Supplies %d/%d\nInventory items: %d\nWaystations every %d floors."
+		+ "Upgrades — Vitality %d/%d · Fury %d/%d · Supplies %d/%d\n"
 		% [
 			MetaProgress.vitality_level,
 			MetaProgress.VITALITY_MAX,
@@ -364,12 +445,13 @@ func _refresh_hub_ui() -> void:
 			MetaProgress.FURY_MAX,
 			MetaProgress.supply_level,
 			MetaProgress.SUPPLY_MAX,
-			Inventory.items.keys().size(),
-			GameConstants.FLOORS_BETWEEN_WAYSTATIONS,
 		]
+		+ "Inventory: %d items · Waystation every %d floors"
+		% [Inventory.items.keys().size(), GameConstants.FLOORS_BETWEEN_WAYSTATIONS]
 	)
 	hub_run_hint_label.text = RunState.get_progression_hint_text()
 	_refresh_hub_mirror_select()
+	_refresh_hub_party_chips()
 	var preview_party: Array = _get_hub_party_for_preview()
 	RunState.refresh_stat_preview(preview_party)
 	var roll_lines: PackedStringArray = []
@@ -377,9 +459,9 @@ func _refresh_hub_ui() -> void:
 		if member is Character:
 			roll_lines.append(RunState.format_stat_preview_line(member.character_id, member.name))
 	if roll_lines.is_empty():
-		hub_party_label.text = "Party: (select heroes, then preview rolls)"
+		hub_party_label.text = "Choose a party with Change party, then reroll preview if you want different stats."
 	else:
-		hub_party_label.text = "Descent stat preview:\n" + "\n".join(roll_lines)
+		hub_party_label.text = "\n".join(roll_lines)
 	var party_names: PackedStringArray = []
 	for id in character_ids_toggled:
 		var def: CharacterDefinition = ContentRegistry.get_character_for_menu_index(id)
@@ -387,10 +469,49 @@ func _refresh_hub_ui() -> void:
 			party_names.append(CharacterTraits.format_roster_line(def.character_id, def.display_name))
 	if party_names.size() > 0:
 		hub_party_label.text += "\n\n" + CharacterTraits.MARKS_LABEL + ":\n" + "\n".join(party_names)
+	var has_party: bool = character_ids_toggled.size() > 0
+	if hub_begin_btn:
+		hub_begin_btn.disabled = !has_party
+		hub_begin_btn.text = "Begin descent" if has_party else "Select a party first"
+	if hub_steps_label:
+		if !has_party:
+			hub_steps_label.text = (
+				"1. Tap Change party (below)\n"
+				+ "2. Select at least one hero\n"
+				+ "3. Return here and review stats\n"
+				+ "4. Begin descent when ready"
+			)
+		else:
+			hub_steps_label.text = (
+				"Party ready. Optional: shop or train on the right, reroll stats, then Begin descent."
+			)
 	if ascended_toggle:
 		ascended_toggle.disabled = !MetaProgress.can_use_ascended()
 		ascended_toggle.button_pressed = MetaProgress.ascended_next_run
 	_refresh_hub_upgrade_button_labels()
+
+func _refresh_hub_party_chips() -> void:
+	if hub_party_chip_row == null:
+		return
+	for child in hub_party_chip_row.get_children():
+		child.queue_free()
+	if character_ids_toggled.is_empty():
+		var empty := Label.new()
+		empty.text = "No heroes selected yet."
+		HubUiHelpers.style_body_label(empty, 15)
+		hub_party_chip_row.add_child(empty)
+		return
+	for id in character_ids_toggled:
+		var def: CharacterDefinition = ContentRegistry.get_character_for_menu_index(id)
+		if def == null:
+			continue
+		var chip := PanelContainer.new()
+		chip.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.14, 0.07, 0.08, 0.95)))
+		var lbl := Label.new()
+		lbl.text = def.display_name
+		lbl.add_theme_font_size_override("font_size", Global.get_ui_font_size(15))
+		chip.add_child(lbl)
+		hub_party_chip_row.add_child(chip)
 
 func _get_hub_party_for_preview() -> Array:
 	var party: Array = _get_hub_party()
@@ -502,9 +623,11 @@ func _on_hub_rest_pressed() -> void:
 
 func _on_hub_begin_descent() -> void:
 	if character_ids_toggled.is_empty():
-		hub_message_label.text = "Select a party first (Change party)."
+		hub_message_label.text = "Pick at least one hero with Change party, then try again."
+		_refresh_hub_ui()
 		return
 	hub_panel.visible = false
+	_sync_menu_backdrop()
 	game_started.emit()
 
 func _on_hub_change_party() -> void:
@@ -762,7 +885,10 @@ func _rebuild_hub_trainers_and_stash() -> void:
 	HubNpcUi.add_skill_trainer(hub_tab_enchantress, party, false, hub_message_label, _rebuild_hub_trainers_and_stash)
 	HubNpcUi.add_trait_treatment(hub_tab_enchantress, party, hub_message_label, _rebuild_hub_trainers_and_stash)
 	if hub_tabs.get_tab_count() >= 4:
-		var equip_tab := hub_tabs.get_tab_control(3) as VBoxContainer
+		var equip_scroll := hub_tabs.get_tab_control(3) as ScrollContainer
+		var equip_tab: VBoxContainer = null
+		if equip_scroll != null and equip_scroll.get_child_count() > 0:
+			equip_tab = equip_scroll.get_child(0) as VBoxContainer
 		if equip_tab != null:
 			for child in equip_tab.get_children():
 				if child is Button:
@@ -1128,7 +1254,7 @@ func _setup_menu_backdrop() -> void:
 func _sync_menu_backdrop() -> void:
 	if _menu_backdrop == null:
 		return
-	_menu_backdrop.visible = main_menu.visible or character_menu.visible
+	_menu_backdrop.visible = main_menu.visible or character_menu.visible or (hub_panel != null and hub_panel.visible)
 
 func _setup_character_select_buttons() -> void:
 	const VIEWPORT_W := 1920.0

@@ -44,6 +44,28 @@ func generate_chunk(room_position, room_size):
 				var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
 				set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
 
+func seal_room_corners(room: Rect2) -> void:
+	var left := int(room.position.x)
+	var top := int(room.position.y)
+	var right := int(room.position.x + room.size.x) - 1
+	var bottom := int(room.position.y + room.size.y) - 1
+	for corner in [Vector2i(left, top), Vector2i(right, top), Vector2i(left, bottom), Vector2i(right, bottom)]:
+		_force_wall(corner)
+
+func stamp_corridor_junction(center_a: Vector2, center_b: Vector2) -> void:
+	var junction := Vector2i(int(center_b.x), int(center_a.y))
+	var hx := signi(int(center_b.x) - int(center_a.x))
+	var vy := signi(int(center_b.y) - int(center_a.y))
+	if hx == 0 or vy == 0:
+		return
+	var outer := corridor_width + border_width
+	_force_wall(Vector2i(junction.x + hx * outer, junction.y - border_width))
+	_force_wall(Vector2i(junction.x - border_width, junction.y + vy * outer))
+
+func _force_wall(coord: Vector2i) -> void:
+	var floor_map := map.get_noise_2d(coord.x, coord.y) * 10.0
+	set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
+
 func print_room_border(room_position, room_size):
 	var room_right = int(room_position.x + room_size.x)
 	var room_bottom = int(room_position.y + room_size.y)

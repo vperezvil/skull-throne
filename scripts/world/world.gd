@@ -218,6 +218,8 @@ func generate_map():
 				if !connections_visited.has(c):
 					connect_rooms(pp, cp)
 			connections_visited.append(p)
+	for room in rooms:
+		tilemap.seal_room_corners(room)
 
 func spawn_player():
 	if characters.is_empty():
@@ -531,6 +533,7 @@ func connect_rooms(center_a, center_b):
 	var vertical_end = Vector2(center_b.x, center_b.y)
 	tilemap.draw_corridor(horizontal_start, horizontal_end)
 	tilemap.draw_corridor(vertical_start, vertical_end)
+	tilemap.stamp_corridor_junction(center_a, center_b)
 
 func find_boss_room() -> Rect2:
 	var start_position: Vector2 = starting_room.get_center()
@@ -622,6 +625,8 @@ func end_battle(remaining_characters):
 		character.ap.stop()
 		character.battle_started = false
 		character.hide_battle_bars()
+		if character is Character:
+			character.begin_encounter_grace()
 	_reassign_party_leadership()
 	var main_character: Character = _get_party_leader()
 	if main_character == null:
@@ -639,6 +644,7 @@ func end_battle(remaining_characters):
 			e.visible = true
 			e.is_chasing = false
 			if e is Enemy:
+				e.begin_encounter_grace()
 				e.set_chase_target(main_character)
 	for item in items:
 		item.visible = true

@@ -52,8 +52,10 @@ var is_colliding = false
 var is_party_leader: bool = true
 var follow_target: Character = null
 var follow_offset: Vector2 = Vector2.ZERO
+var _encounter_grace_until_msec: int = 0
 
 const PARTY_FOLLOW_SPEED := 8.0
+const ENCOUNTER_GRACE_SEC := 1.75
 
 var _spawn_collision_layer: int
 var _spawn_collision_mask: int
@@ -71,6 +73,33 @@ func _ready():
 	current_hp = max_hp
 	_setup_resource_bars()
 
+func begin_encounter_grace(seconds: float = ENCOUNTER_GRACE_SEC) -> void:
+	_encounter_grace_until_msec = Time.get_ticks_msec() + int(seconds * 1000.0)
+
+func _in_encounter_grace() -> bool:
+	return Time.get_ticks_msec() < _encounter_grace_until_msec
+
+func apply_battle_presentation_scale(factor: float) -> void:
+	scale *= factor
+	var inv := 1.0 / factor
+	progress_bar.scale = Vector2(inv, inv)
+	progress_bar.offset_left = -50.0
+	progress_bar.offset_right = 50.0
+	progress_bar.offset_top = -78.0
+	progress_bar.offset_bottom = -64.0
+	if mp_bar:
+		mp_bar.scale = Vector2(inv, inv)
+		mp_bar.offset_left = progress_bar.offset_left
+		mp_bar.offset_right = progress_bar.offset_right
+		mp_bar.offset_top = progress_bar.offset_top + 14.0
+		mp_bar.offset_bottom = progress_bar.offset_bottom + 14.0
+	if xp_bar:
+		xp_bar.scale = Vector2(inv, inv)
+		xp_bar.offset_left = progress_bar.offset_left
+		xp_bar.offset_right = progress_bar.offset_right
+		xp_bar.offset_top = progress_bar.offset_top + 28.0
+		xp_bar.offset_bottom = progress_bar.offset_bottom + 28.0
+
 func _setup_resource_bars() -> void:
 	var theme: Theme = progress_bar.theme
 	mp_bar = ProgressBar.new()
@@ -79,8 +108,8 @@ func _setup_resource_bars() -> void:
 	mp_bar.show_percentage = false
 	mp_bar.offset_left = progress_bar.offset_left
 	mp_bar.offset_right = progress_bar.offset_right
-	mp_bar.offset_top = progress_bar.offset_top + 18
-	mp_bar.offset_bottom = progress_bar.offset_bottom + 18
+	mp_bar.offset_top = progress_bar.offset_top + 14.0
+	mp_bar.offset_bottom = progress_bar.offset_bottom + 14.0
 	if theme:
 		mp_bar.theme = theme
 	mp_bar.modulate = Color(0.55, 0.75, 1.0)
@@ -91,8 +120,8 @@ func _setup_resource_bars() -> void:
 	xp_bar.show_percentage = false
 	xp_bar.offset_left = progress_bar.offset_left
 	xp_bar.offset_right = progress_bar.offset_right
-	xp_bar.offset_top = progress_bar.offset_top + 36
-	xp_bar.offset_bottom = progress_bar.offset_bottom + 36
+	xp_bar.offset_top = progress_bar.offset_top + 28.0
+	xp_bar.offset_bottom = progress_bar.offset_bottom + 28.0
 	if theme:
 		xp_bar.theme = theme
 	add_child(xp_bar)
@@ -209,10 +238,10 @@ func handle_collision():
 		if collision != null:
 			var collider = collision.get_collider()
 			if collider != null:
-				if collider.name.contains("Boss") and !battle_started:
+				if collider.name.contains("Boss") and !battle_started and !_in_encounter_grace():
 					collided_with_enemy()
 					boss_battle_start.emit()
-				elif collider.name.contains("Enemy") and !battle_started:
+				elif collider.name.contains("Enemy") and !battle_started and !_in_encounter_grace():
 					collided_with_enemy()
 					enemy_battle_start.emit(collider)
 				elif collider.name.contains("Fountain") and !battle_started:
@@ -311,6 +340,25 @@ func hide_battle_bars() -> void:
 		mp_bar.visible = false
 	if xp_bar:
 		xp_bar.visible = false
+
+func reset_presentation_bars() -> void:
+	progress_bar.scale = Vector2.ONE
+	progress_bar.offset_left = -65.0
+	progress_bar.offset_right = 71.0
+	progress_bar.offset_top = -58.0
+	progress_bar.offset_bottom = -31.0
+	if mp_bar:
+		mp_bar.scale = Vector2.ONE
+		mp_bar.offset_left = progress_bar.offset_left
+		mp_bar.offset_right = progress_bar.offset_right
+		mp_bar.offset_top = progress_bar.offset_top + 14.0
+		mp_bar.offset_bottom = progress_bar.offset_bottom + 14.0
+	if xp_bar:
+		xp_bar.scale = Vector2.ONE
+		xp_bar.offset_left = progress_bar.offset_left
+		xp_bar.offset_right = progress_bar.offset_right
+		xp_bar.offset_top = progress_bar.offset_top + 28.0
+		xp_bar.offset_bottom = progress_bar.offset_bottom + 28.0
 
 func apply_healing(amount: int) -> void:
 	var received: int = int(amount * CharacterTraits.get_healing_multiplier(character_id))

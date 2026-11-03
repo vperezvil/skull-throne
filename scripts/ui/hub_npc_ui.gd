@@ -45,6 +45,7 @@ static func add_equipment_shop(
 			price,
 			"gold" if use_run_gold else "tithe",
 		]
+		HubUiHelpers.style_secondary_button(btn)
 		btn.pressed.connect(_on_buy_equipment.bind(eq_id, use_run_gold, message_label, def.display_name, on_purchased))
 		parent.add_child(btn)
 
@@ -77,6 +78,7 @@ static func add_equip_stash(parent: VBoxContainer, party: Array, message_label: 
 				var ch: Character = member
 				var btn := Button.new()
 				btn.text = "Give %s → %s" % [def.display_name, ch.name]
+				HubUiHelpers.style_secondary_button(btn)
 				btn.pressed.connect(_on_equip.bind(ch, eq_id, message_label, def.display_name))
 				parent.add_child(btn)
 
@@ -107,6 +109,7 @@ static func add_skill_trainer(
 			"gold" if use_run_gold else "tithe",
 		]
 		btn.disabled = tier >= 3
+		HubUiHelpers.style_secondary_button(btn)
 		btn.pressed.connect(_on_train.bind(ch, use_run_gold, message_label, on_trained))
 		parent.add_child(btn)
 
@@ -146,6 +149,7 @@ static func add_trait_treatment(
 			var cost: int = CharacterTraits.treatment_cost(trait_id)
 			var cat: String = CharacterTraits.get_category_label(trait_id)
 			btn.text = "Purify %s: %s %s (%d tithe)" % [ch.name, cat, CharacterTraits.get_title(trait_id), cost]
+			HubUiHelpers.style_secondary_button(btn)
 			btn.pressed.connect(_on_treat_trait.bind(ch, trait_id, message_label, on_changed))
 			parent.add_child(btn)
 	if !any:
@@ -176,6 +180,7 @@ static func add_potion_buy(parent: VBoxContainer, use_run_gold: bool, message_la
 	var price: int = 18 if use_run_gold else 25
 	var btn := Button.new()
 	btn.text = "Potion (%d %s)" % [price, "gold" if use_run_gold else "tithe"]
+	HubUiHelpers.style_secondary_button(btn)
 	btn.pressed.connect(_on_buy_potion.bind(use_run_gold, message_label))
 	parent.add_child(btn)
 

@@ -94,8 +94,7 @@ text = "Skills"
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_2f72l")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_omgep")
-text = "Inventory
-"
+text = "Inventory"
 
 [node name="Run" type="Button" parent="UI/Options"]
 layout_mode = 2

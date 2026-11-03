@@ -18,6 +18,7 @@ var player: Character
 var xp_reward: int = 25
 var combat_trait: String = "standard"
 var is_elite: bool = false
+var _encounter_grace_until_msec: int = 0
 
 signal enemy_battle_start
 
@@ -27,6 +28,21 @@ func _ready():
 	timer.connect("timeout", _on_timer_timeout)
 	timer.start(RANDOM_MOVE_TIME)
 	random_direction = get_random_direction()
+
+func begin_encounter_grace(seconds: float = Character.ENCOUNTER_GRACE_SEC) -> void:
+	_encounter_grace_until_msec = Time.get_ticks_msec() + int(seconds * 1000.0)
+
+func _in_encounter_grace() -> bool:
+	return Time.get_ticks_msec() < _encounter_grace_until_msec
+
+func apply_battle_presentation_scale(factor: float) -> void:
+	scale *= factor
+	var inv := 1.0 / factor
+	progress_bar.scale = Vector2(inv, inv)
+	progress_bar.offset_left = -40.0
+	progress_bar.offset_right = 40.0
+	progress_bar.offset_top = -72.0
+	progress_bar.offset_bottom = -58.0
 
 func set_chase_target(target: Character) -> void:
 	player = target
@@ -123,6 +139,6 @@ func handle_collision():
 		if collider == null:
 			continue
 		var target: Character = _get_chase_target()
-		if collider == target and !battle_started and !target.battle_started:
+		if collider == target and !battle_started and !target.battle_started and !_in_encounter_grace() and !target._in_encounter_grace():
 			target.collided_with_enemy()
 			enemy_battle_start.emit(self)
