@@ -59,7 +59,7 @@ func refresh_stat_preview(party: Array) -> void:
 		if member is Character:
 			var def: CharacterDefinition = ContentRegistry.get_character_by_id(member.character_id)
 			if def != null:
-				var rolled := ContentRegistry.roll_stat_variant(def)
+				var rolled: Dictionary = ContentRegistry.roll_stat_variant(def)
 				if MetaProgress.get_locked_stat_character_id() == member.character_id:
 					var locked := MetaProgress.get_locked_stat_roll()
 					if !locked.is_empty():
@@ -220,7 +220,7 @@ func get_voluntary_abandon_warning_text() -> String:
 func get_progression_hint_text() -> String:
 	var lines: PackedStringArray = []
 	var floors := MetaProgress.get_lifetime_floors_cleared()
-	var next_unlock := ContentRegistry.get_next_character_unlock(floors)
+	var next_unlock: String = ContentRegistry.get_next_character_unlock(floors)
 	if next_unlock != "":
 		lines.append("Next unlock: %s (clear %d lifetime floors)." % [next_unlock, ContentRegistry.get_unlock_floor_for(next_unlock)])
 	if MetaProgress.can_use_ascended():

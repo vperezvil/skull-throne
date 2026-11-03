@@ -80,7 +80,7 @@ func _process(_delta):
 func _update_party_hud() -> void:
 	if ui == null:
 		return
-	var show_hud := (
+	var show_hud: bool = (
 		RunState.campaign_active
 		and !ui.hub_panel.visible
 		and !ui.waystation_panel.visible
@@ -233,7 +233,7 @@ func spawn_player():
 			member.spawn(starting_room, tilemap)
 			_wire_party_leader(member)
 		else:
-			var offset := PARTY_FOLLOW_OFFSETS[mini(i, PARTY_FOLLOW_OFFSETS.size() - 1)]
+			var offset: Vector2 = PARTY_FOLLOW_OFFSETS[mini(i, PARTY_FOLLOW_OFFSETS.size() - 1)]
 			member.spawn_as_follower(starting_room, tilemap, characters[0], offset)
 		member.battle_started = false
 		_update_overworld_visibility(member)
@@ -271,7 +271,7 @@ func _reassign_party_leadership() -> void:
 	characters.erase(leader)
 	characters.insert(0, leader)
 	for i in range(characters.size()):
-		var member := characters[i]
+		var member: Character = characters[i]
 		member.is_party_leader = member == leader
 		if member.is_party_leader:
 			member.follow_target = null
@@ -308,7 +308,7 @@ func _clear_zone_decor() -> void:
 
 func _build_skull_throne_arena(room: Rect2) -> void:
 	_clear_zone_decor()
-	var center := tilemap.map_to_local(room.get_center())
+	var center: Vector2 = tilemap.map_to_local(room.get_center())
 	var props := [
 		{"path": "res://assets/map/dngn_blood_fountain.png", "offset": Vector2(-96, -64), "scale": 2.0},
 		{"path": "res://assets/map/dngn_blood_fountain2.png", "offset": Vector2(96, -64), "scale": 2.0},
@@ -531,13 +531,13 @@ func connect_rooms(center_a, center_b):
 	tilemap.draw_corridor(vertical_start, vertical_end)
 
 func find_boss_room() -> Rect2:
-	var start_position := starting_room.get_center()
+	var start_position: Vector2 = starting_room.get_center()
 	var farthest_room: Rect2 = starting_room
 	var max_dist := 0.0
 	for room in rooms:
 		if room == starting_room:
 			continue
-		var dist := room.get_center().distance_to(start_position)
+		var dist: float = room.get_center().distance_to(start_position)
 		if dist > max_dist:
 			max_dist = dist
 			farthest_room = room

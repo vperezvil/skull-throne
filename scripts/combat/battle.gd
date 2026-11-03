@@ -208,7 +208,7 @@ func end_battle():
 		visible = false
 		return
 
-	var fled := is_run_pressed
+	var fled: bool = is_run_pressed
 	if !fled:
 		var zone := RunState.get_current_zone()
 		var finale := zone != null and zone.is_final_zone and is_boss_battle

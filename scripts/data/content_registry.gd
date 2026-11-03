@@ -119,7 +119,7 @@ func _register_enemy(
 	atk: int,
 	init: int,
 	xp: int,
-	trait: String = "standard"
+	combat_trait: String = "standard"
 ) -> void:
 	var def := EnemyDefinition.new()
 	def.enemy_id = id
@@ -129,7 +129,7 @@ func _register_enemy(
 	def.attack = atk
 	def.initiative = init
 	def.xp_reward = xp
-	def.combat_trait = trait
+	def.combat_trait = combat_trait
 	enemies[id] = def
 
 func _register_zones() -> void:

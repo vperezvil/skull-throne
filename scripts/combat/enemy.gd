@@ -58,7 +58,7 @@ func random_move(delta):
 	move_and_collide(random_direction * delta * SPEED)
 
 func check_aggro(target: Character) -> void:
-	var dist := position.distance_to(target.position)
+	var dist: float = position.distance_to(target.position)
 	if dist <= CLOSE_AGGRO_RANGE:
 		is_chasing = true
 		return

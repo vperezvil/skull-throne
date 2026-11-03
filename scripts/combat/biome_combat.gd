@@ -35,8 +35,8 @@ static func pick_target(theme_id: String, enemy, targets: Array) -> Character:
 			alive.append(t)
 	if alive.is_empty():
 		return null
-	var trait := _enemy_trait(enemy)
-	match trait:
+	var combat_trait: String = _enemy_trait(enemy)
+	match combat_trait:
 		"skirmisher":
 			return _lowest_hp(alive)
 		"bruiser":
@@ -57,10 +57,10 @@ static func pick_target(theme_id: String, enemy, targets: Array) -> Character:
 
 static func compute_enemy_damage(theme_id: String, enemy, _target: Character) -> int:
 	var damage := int(enemy.attack)
-	var trait := _enemy_trait(enemy)
-	if trait == "arcane":
+	var combat_trait: String = _enemy_trait(enemy)
+	if combat_trait == "arcane":
 		damage = int(damage * 1.12)
-	if trait == "bruiser":
+	if combat_trait == "bruiser":
 		damage = int(damage * 1.05)
 	if enemy.get("is_elite") == true:
 		damage = int(damage * 1.1)
@@ -68,7 +68,7 @@ static func compute_enemy_damage(theme_id: String, enemy, _target: Character) ->
 		"blood_cathedral", "throne_approach", "skull_throne":
 			damage = int(damage * 1.08)
 		"marble_halls":
-			if trait == "arcane":
+			if combat_trait == "arcane":
 				damage = int(damage * 1.12)
 		"sandstone_ruins":
 			damage = int(damage * 0.92)

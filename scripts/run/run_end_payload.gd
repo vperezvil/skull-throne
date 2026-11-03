@@ -9,7 +9,7 @@ var run_summary: Dictionary = {}
 var trait_events: Array = []
 var stress_events: Array = []
 
-func from_run(victory: bool, voluntary_abandon: bool, penalty: float, tithe: int, summary: Dictionary, traits: Array, stress: Array = []) -> RunEndPayload:
+static func from_run(victory: bool, voluntary_abandon: bool, penalty: float, tithe: int, summary: Dictionary, traits: Array, stress: Array = []) -> RunEndPayload:
 	var p := RunEndPayload.new()
 	p.victory = victory
 	p.voluntary_abandon = voluntary_abandon

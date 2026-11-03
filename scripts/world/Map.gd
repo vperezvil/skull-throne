@@ -30,7 +30,7 @@ func clear_map() -> void:
 	clear()
 
 func stamp_throne_arena(room: Rect2) -> void:
-	var center := room.get_center()
+	var center: Vector2 = room.get_center()
 	for offset in [Vector2i(-2, 0), Vector2i(2, 0), Vector2i(0, -2), Vector2i(0, 2)]:
 		var coord := Vector2i(int(center.x) + offset.x, int(center.y) + offset.y)
 		if get_used_cells().has(coord):

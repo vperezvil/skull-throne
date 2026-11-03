@@ -72,7 +72,7 @@ func _ready():
 	_setup_resource_bars()
 
 func _setup_resource_bars() -> void:
-	var theme := progress_bar.theme
+	var theme: Theme = progress_bar.theme
 	mp_bar = ProgressBar.new()
 	mp_bar.name = "MpBar"
 	mp_bar.visible = false
@@ -102,7 +102,7 @@ func apply_definition(definition: CharacterDefinition) -> void:
 	if definition == null:
 		return
 	character_id = definition.character_id
-	var rolled := RunState.get_stat_variant(character_id) if RunState.campaign_active else {}
+	var rolled: Dictionary = RunState.get_stat_variant(character_id) if RunState.campaign_active else {}
 	var hp_base: int = int(rolled.get("max_hp", definition.max_hp))
 	var atk_base: int = int(rolled.get("attack", definition.attack))
 	var init_base: int = int(rolled.get("initiative", definition.initiative))
@@ -253,10 +253,10 @@ func update_progress_bar():
 		Global.increment_death_count()
 		character_defeated.emit()
 
-func receive_damage(damage, is_crit: bool = false):
-	var damage_received := damage
+func receive_damage(damage: int, is_crit: bool = false):
+	var damage_received: int = damage
 	if is_defending:
-		damage_received = damage / 2
+		damage_received = int(damage / 2)
 	damage_received = int(damage_received * CharacterTraits.get_incoming_damage_multiplier(character_id))
 	current_hp -= damage_received
 	_show_damage_number(damage_received, is_crit, false)
@@ -501,7 +501,7 @@ func compute_skill_damage(skill: SkillDefinition, _target) -> int:
 	return maxi(damage, 1)
 
 func compute_basic_attack_damage() -> int:
-	var damage := attack
+	var damage: int = attack
 	if roll_crit():
 		damage *= 2
 	return damage
