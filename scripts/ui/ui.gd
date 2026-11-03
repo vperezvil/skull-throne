@@ -315,9 +315,9 @@ func show_hub_after_run(payload: RunEndPayload) -> void:
 			var trait_lines: PackedStringArray = []
 			for entry in traits:
 				if entry is Dictionary:
-					var who := String(entry.get("name", "Hero"))
-					var title := String(entry.get("title", ""))
-					var cat := String(entry.get("category", CharacterTraits.get_category_label(String(entry.get("trait_id", "")))))
+					var who: String = String(entry.get("name", "Hero"))
+					var title: String = String(entry.get("title", ""))
+					var cat: String = String(entry.get("category", CharacterTraits.get_category_label(String(entry.get("trait_id", "")))))
 					trait_lines.append("%s: %s %s" % [who, cat, title])
 			if trait_lines.size() > 0:
 				hub_message_label.text += "\n\nSoul marks gained:\n" + "\n".join(trait_lines)
@@ -366,7 +366,7 @@ func _refresh_hub_ui() -> void:
 	)
 	hub_run_hint_label.text = RunState.get_progression_hint_text()
 	_refresh_hub_mirror_select()
-	var preview_party := _get_hub_party_for_preview()
+	var preview_party: Array = _get_hub_party_for_preview()
 	RunState.refresh_stat_preview(preview_party)
 	var roll_lines: PackedStringArray = []
 	for member in preview_party:
@@ -389,10 +389,10 @@ func _refresh_hub_ui() -> void:
 	_refresh_hub_upgrade_button_labels()
 
 func _get_hub_party_for_preview() -> Array:
-	var party := _get_hub_party()
+	var party: Array = _get_hub_party()
 	if party.size() > 0:
 		return party
-	var world := get_parent()
+	var world: Node = get_parent()
 	if world == null:
 		return []
 	var fallback: Array = []
@@ -413,7 +413,7 @@ func _refresh_hub_mirror_select() -> void:
 	if hub_mirror_select == null:
 		return
 	hub_mirror_select.clear()
-	var party := _get_hub_party_for_preview()
+	var party: Array = _get_hub_party_for_preview()
 	for member in party:
 		if member is Character:
 			hub_mirror_select.add_item(member.name)
@@ -430,11 +430,11 @@ func _refresh_hub_mirror_select() -> void:
 					break
 
 func _on_hub_lock_mirror() -> void:
-	var party := _get_hub_party_for_preview()
+	var party: Array = _get_hub_party_for_preview()
 	if party.is_empty():
 		hub_message_label.text = "Select a party first."
 		return
-	var idx := hub_mirror_select.selected
+	var idx: int = hub_mirror_select.selected
 	if idx < 0 or idx >= party.size():
 		hub_message_label.text = "Choose which hero to lock in the dropdown above."
 		return
@@ -491,7 +491,7 @@ func _on_hub_upgrade_supply(_btn: Button) -> void:
 	_refresh_hub_ui()
 
 func _on_hub_rest_pressed() -> void:
-	var world := get_parent()
+	var world: Node = get_parent()
 	if world != null and world.has_method("_refresh_party_at_hub"):
 		world._refresh_party_at_hub()
 	hub_message_label.text = "The sanctum mends your wounds. Party restored."
@@ -641,7 +641,7 @@ func show_map_toast(message: String) -> void:
 		return
 	map_toast.text = message
 	map_toast.visible = true
-	var timer := get_tree().create_timer(4.5)
+	var timer: SceneTreeTimer = get_tree().create_timer(4.5)
 	timer.timeout.connect(func(): map_toast.visible = false)
 
 func show_shrine(party: Array, campaign_complete: bool) -> void:
@@ -748,7 +748,7 @@ func _clear_vbox_buttons(tab: VBoxContainer) -> void:
 			c.queue_free()
 
 func _rebuild_hub_trainers_and_stash() -> void:
-	var party := _get_hub_party()
+	var party: Array = _get_hub_party()
 	while hub_tab_enchantress.get_child_count() > 1:
 		var c = hub_tab_enchantress.get_child(1)
 		hub_tab_enchantress.remove_child(c)
@@ -765,7 +765,7 @@ func _rebuild_hub_trainers_and_stash() -> void:
 			HubNpcUi.add_equip_stash(equip_tab, party, hub_message_label)
 
 func _get_hub_party() -> Array:
-	var world := get_parent()
+	var world: Node = get_parent()
 	if world != null and world.get("characters") != null:
 		var party: Array = world.characters
 		if party.size() > 0:
@@ -1039,7 +1039,7 @@ func show_zone_cleared(remaining_characters: Array, campaign_complete: bool) -> 
 	for character in remaining_characters:
 		character_names.append(character.name)
 	var zone: ZoneDefinition = RunState.get_current_zone()
-	var zone_name := zone.display_name if zone != null else "the realm"
+	var zone_name: String = zone.display_name if zone != null else "the realm"
 	if end_title_label:
 		if campaign_complete:
 			end_title_label.text = "Victory"
@@ -1090,7 +1090,7 @@ func _on_world_paused_game(is_paused, characters_in_party: Array = []):
 			credits_panel.visible = false
 
 func _play_waystation_music() -> void:
-	var world := get_parent()
+	var world: Node = get_parent()
 	if world == null or !world.has_node("Map Theme"):
 		return
 	var player: AudioStreamPlayer = world.get_node("Map Theme")
@@ -1117,11 +1117,11 @@ func _refresh_character_select_locks() -> void:
 	for i in button_paths.size():
 		var button: TextureButton = get_node(button_paths[i])
 		var definition: CharacterDefinition = ContentRegistry.get_character_for_menu_index(i)
-		var unlocked := definition == null or RunState.is_character_unlocked(definition)
+		var unlocked: bool = definition == null or RunState.is_character_unlocked(definition)
 		button.disabled = !unlocked
 		button.modulate = Color.WHITE if unlocked else Color(0.45, 0.45, 0.45, 1.0)
 		if definition != null and !unlocked:
-			var need := definition.unlock_after_zones_cleared
+			var need: int = definition.unlock_after_zones_cleared
 			var have: int = MetaProgress.get_lifetime_floors_cleared()
 			button.tooltip_text = "Unlock after %d lifetime floor clears (%d/%d)." % [need, have, need]
 		else:
@@ -1153,7 +1153,7 @@ func _on_player_3_select_toggled(toggled_on):
 	character_toggle(toggled_on, 3)
 
 func _on_battle_game_over(dead_players):
-	var message := GAME_OVER_DEATHS_TEMPLATE
+	var message: String = GAME_OVER_DEATHS_TEMPLATE
 	if dead_players > 1:
 		message = message.replace("{COUNT}", str(dead_players))
 	else:

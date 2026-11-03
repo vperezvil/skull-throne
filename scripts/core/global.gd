@@ -65,8 +65,8 @@ func _setup_audio_buses() -> void:
 
 func apply_audio_volumes() -> void:
 	AudioServer.set_bus_volume_db(0, linear_to_db(master_volume))
-	var music_idx := AudioServer.get_bus_index("Music")
-	var sfx_idx := AudioServer.get_bus_index("SFX")
+	var music_idx: int = AudioServer.get_bus_index("Music")
+	var sfx_idx: int = AudioServer.get_bus_index("SFX")
 	if music_idx >= 0:
 		AudioServer.set_bus_volume_db(music_idx, linear_to_db(music_volume))
 	if sfx_idx >= 0:
@@ -109,7 +109,7 @@ func _load_settings() -> void:
 
 func _load_movement_bindings(cfg: ConfigFile) -> void:
 	for action in ["move_up", "move_down", "move_left", "move_right"]:
-		var code := int(cfg.get_value("input", action, 0))
+		var code: int = int(cfg.get_value("input", action, 0))
 		if code > 0:
 			_bind_single_key(action, code as Key)
 

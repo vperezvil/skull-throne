@@ -56,7 +56,7 @@ static func pick_target(theme_id: String, enemy, targets: Array) -> Character:
 			return alive[randi() % alive.size()]
 
 static func compute_enemy_damage(theme_id: String, enemy, _target: Character) -> int:
-	var damage := int(enemy.attack)
+	var damage: int = int(enemy.attack)
 	var combat_trait: String = _enemy_trait(enemy)
 	if combat_trait == "arcane":
 		damage = int(damage * 1.12)
@@ -104,7 +104,7 @@ static func _enemy_trait(enemy) -> String:
 	return "standard"
 
 static func modify_enemy_damage(base_damage: int) -> int:
-	var d := float(base_damage) * RunModifiers.enemy_damage_multiplier(RunState.run_modifier_id)
+	var d: int = float(base_damage) * RunModifiers.enemy_damage_multiplier(RunState.run_modifier_id)
 	d *= RunModifiers.ascended_enemy_damage_multiplier(RunState.ascended_run)
 	return maxi(1, int(d))
 

@@ -55,7 +55,7 @@ func _ready() -> void:
 	_sword_proto.visible = false
 
 func complete_run(floors_cleared: int, victory: bool, tithe_penalty_fraction: float = 0.0) -> int:
-	var earned := maxi(0, floors_cleared) * 12
+	var earned: int = maxi(0, floors_cleared) * 12
 	if victory:
 		earned += 100
 	earned = int(earned * (1.0 - clampf(tithe_penalty_fraction, 0.0, 1.0)))
@@ -111,7 +111,7 @@ func can_upgrade_supply() -> bool:
 func buy_upgrade_vitality() -> bool:
 	if vitality_level >= VITALITY_MAX:
 		return false
-	var cost := upgrade_vitality_cost()
+	var cost: int = upgrade_vitality_cost()
 	if !spend_tithe(cost):
 		return false
 	vitality_level += 1
@@ -121,7 +121,7 @@ func buy_upgrade_vitality() -> bool:
 func buy_upgrade_fury() -> bool:
 	if fury_level >= FURY_MAX:
 		return false
-	var cost := upgrade_fury_cost()
+	var cost: int = upgrade_fury_cost()
 	if !spend_tithe(cost):
 		return false
 	fury_level += 1
@@ -131,7 +131,7 @@ func buy_upgrade_fury() -> bool:
 func buy_upgrade_supply() -> bool:
 	if supply_level >= SUPPLY_MAX:
 		return false
-	var cost := upgrade_supply_cost()
+	var cost: int = upgrade_supply_cost()
 	if !spend_tithe(cost):
 		return false
 	supply_level += 1
@@ -206,7 +206,7 @@ func get_skill_tier(character_id: String) -> int:
 	return int(skill_tiers.get(character_id, 0))
 
 func upgrade_skill_tier(character_id: String) -> bool:
-	var tier := get_skill_tier(character_id)
+	var tier: int = get_skill_tier(character_id)
 	if tier >= 3:
 		return false
 	skill_tiers[character_id] = tier + 1

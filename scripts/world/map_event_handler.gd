@@ -17,7 +17,7 @@ static func resolve(event_id: String, world: Node2D, party: Array) -> String:
 		"healing_spring":
 			for member in party:
 				if member is Character:
-					var heal := maxi(8, int(member.max_hp * 0.28))
+					var heal: int = maxi(8, int(member.max_hp * 0.28))
 					member.apply_healing(heal)
 			return "A hidden spring mends the party."
 		"gamble":

@@ -78,12 +78,12 @@ static func _build_theme(tile_set: TileSet, theme_id: String) -> Dictionary:
 				"marble_halls"
 			)
 		"skull_throne":
-			var floor_id := _register_composite_floor(
+			var floor_id: int = _register_composite_floor(
 				tile_set,
 				_volcanic_floor_paths(),
 				"skull_throne_floor"
 			)
-			var wall_id := _register_composite_floor(
+			var wall_id: int = _register_composite_floor(
 				tile_set,
 				_volcanic_wall_paths(),
 				"skull_throne_wall"
@@ -94,8 +94,8 @@ static func _build_theme(tile_set: TileSet, theme_id: String) -> Dictionary:
 			return {"floor": SOURCE_GRASS_FLOOR, "wall": SOURCE_GRASS_WALL}
 
 static func _theme_composite_floor_dark_wall(tile_set: TileSet, floor_paths: PackedStringArray, cache_prefix: String) -> Dictionary:
-	var floor_id := _register_composite_floor(tile_set, floor_paths, cache_prefix + "_floor")
-	var wall_id := _register_strip(tile_set, "res://assets/map/wall/brick_dark0.png", cache_prefix + "_wall", true)
+	var floor_id: int = _register_composite_floor(tile_set, floor_paths, cache_prefix + "_floor")
+	var wall_id: int = _register_strip(tile_set, "res://assets/map/wall/brick_dark0.png", cache_prefix + "_wall", true)
 	return {"floor": floor_id, "wall": wall_id}
 
 static func _theme_composite_floor_wall_strip(
@@ -107,8 +107,8 @@ static func _theme_composite_floor_wall_strip(
 	var packed := PackedStringArray()
 	for p in floor_paths:
 		packed.append(p)
-	var floor_id := _register_composite_floor(tile_set, packed, cache_prefix + "_floor")
-	var wall_id := _register_strip(tile_set, wall_path, cache_prefix + "_wall", true)
+	var floor_id: int = _register_composite_floor(tile_set, packed, cache_prefix + "_floor")
+	var wall_id: int = _register_strip(tile_set, wall_path, cache_prefix + "_wall", true)
 	return {"floor": floor_id, "wall": wall_id}
 
 static func _blood_floor_paths() -> PackedStringArray:
@@ -160,21 +160,21 @@ static func _register_atlas_texture(tile_set: TileSet, texture: Texture2D, _cach
 	var source := TileSetAtlasSource.new()
 	source.texture = texture
 	source.texture_region_size = Vector2i(32, 32)
-	var cols := maxi(1, int(texture.get_width()) / 32)
+	var cols: int = maxi(1, int(texture.get_width()) / 32)
 	for x in range(cols):
 		source.create_tile(Vector2i(x, 0))
 		if with_physics:
 			source.set_tile_physics_layer_collision_polygon(0, Vector2i(x, 0), 0, PackedVector2Array([
 				Vector2(-16, -16), Vector2(16, -16), Vector2(16, 16), Vector2(-16, 16),
 			]))
-	var source_id := tile_set.add_source(source)
+	var source_id: int = tile_set.add_source(source)
 	return source_id
 
 static func _add_wall_physics(tile_set: TileSet, source_id: int) -> void:
 	var source := tile_set.get_source(source_id) as TileSetAtlasSource
 	if source == null:
 		return
-	var cols := maxi(1, int(source.texture.get_width()) / 32)
+	var cols: int = maxi(1, int(source.texture.get_width()) / 32)
 	for x in range(cols):
 		source.set_tile_physics_layer_collision_polygon(0, Vector2i(x, 0), 0, PackedVector2Array([
 			Vector2(-16, -16), Vector2(16, -16), Vector2(16, 16), Vector2(-16, 16),
@@ -190,7 +190,7 @@ static func _merge_horizontal(paths: PackedStringArray) -> Texture2D:
 			images.append(tex.get_image())
 	if images.is_empty():
 		return null
-	var tile := 32
+	var tile: int = 32
 	var atlas := Image.create(tile * images.size(), tile, false, Image.FORMAT_RGBA8)
 	for i in images.size():
 		atlas.blit_rect(images[i], Rect2i(0, 0, tile, tile), Vector2i(i * tile, 0))

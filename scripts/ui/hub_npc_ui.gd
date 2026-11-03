@@ -38,7 +38,7 @@ static func add_equipment_shop(
 		var def: EquipmentDefinition = EquipmentRegistry.get_definition(eq_id)
 		if def == null:
 			continue
-		var price := def.waystation_price if use_run_gold else def.sanctum_price
+		var price: int = def.waystation_price if use_run_gold else def.sanctum_price
 		var btn := Button.new()
 		btn.text = "%s (%d %s)" % [
 			def.display_name,
@@ -99,7 +99,7 @@ static func add_skill_trainer(
 		var ch: Character = member
 		var tier: int = MetaProgress.get_skill_tier(ch.character_id)
 		var btn := Button.new()
-		var price := 20 if use_run_gold else 35
+		var price: int = 20 if use_run_gold else 35
 		btn.text = "Train %s skills (tier %d/3) - %d %s" % [
 			ch.name,
 			tier,
@@ -173,7 +173,7 @@ static func _on_treat_trait(
 		message_label.text = "Cannot treat - need Blood Tithe."
 
 static func add_potion_buy(parent: VBoxContainer, use_run_gold: bool, message_label: Label) -> void:
-	var price := 18 if use_run_gold else 25
+	var price: int = 18 if use_run_gold else 25
 	var btn := Button.new()
 	btn.text = "Potion (%d %s)" % [price, "gold" if use_run_gold else "tithe"]
 	btn.pressed.connect(_on_buy_potion.bind(use_run_gold, message_label))

@@ -7,8 +7,8 @@ var level = 0
 var wall_level = 6
 var border_width = 1
 var corridor_width = 2
-var floor_noise_divisor := 1.3
-var wall_noise_divisor := 5.0
+var floor_noise_divisor: float = 1.3
+var wall_noise_divisor: float = 5.0
 var _theme_id := "grim_fields"
 
 func _ready() -> void:
@@ -82,6 +82,6 @@ func draw_corridor(start, end):
 				set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
 
 func _atlas_coord(noise_sample: float, divisor: float) -> Vector2i:
-	var atlas_index := int(round((noise_sample + 10.0) / divisor))
+	var atlas_index: int = int(round((noise_sample + 10.0) / divisor))
 	atlas_index = clampi(atlas_index, 0, 11)
 	return Vector2i(atlas_index, 0)
