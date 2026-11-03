@@ -47,29 +47,19 @@ func apply_battle_presentation_scale(factor: float) -> void:
 	progress_bar.scale = Vector2(inv, inv)
 
 func align_battle_hud_to_sprite() -> void:
-	var saved: Dictionary = BattleHudLayout.mount_bar(self, progress_bar)
-	if !saved.is_empty():
-		_battle_bar_mount = saved
+	BattleHudLayout.mount_bar(self, progress_bar)
 
 func prepare_battle_hud() -> void:
 	_battle_hud_active = true
-	_ensure_bar_value_label()
+	_bar_value_label = BattleHudLayout.ensure_bar_label(progress_bar)
 	_bar_value_label.visible = true
 	progress_bar.show_percentage = false
 	align_battle_hud_to_sprite()
 	_sync_bar_value_label()
 
 func _ensure_bar_value_label() -> void:
-	if _bar_value_label != null:
-		return
-	_bar_value_label = Label.new()
-	_bar_value_label.name = "BarValue"
-	_bar_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_bar_value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_bar_value_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_bar_value_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(11))
-	_bar_value_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
-	progress_bar.add_child(_bar_value_label)
+	if _bar_value_label == null:
+		_bar_value_label = BattleHudLayout.ensure_bar_label(progress_bar)
 
 func _sync_bar_value_label() -> void:
 	if _bar_value_label == null or !_battle_hud_active:

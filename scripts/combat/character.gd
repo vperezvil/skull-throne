@@ -13,6 +13,7 @@ const BASE_SPEED := 300.0
 var mp_bar: ProgressBar
 var xp_bar: ProgressBar
 var _bar_value_label: Label
+var _mp_bar_value_label: Label
 var _battle_hud_active: bool = false
 var _battle_bar_mount: Dictionary = {}
 
@@ -92,41 +93,33 @@ func apply_battle_presentation_scale(factor: float) -> void:
 		xp_bar.scale = Vector2(inv, inv)
 
 func align_battle_hud_to_sprite() -> void:
-	var saved: Dictionary = BattleHudLayout.mount_bar(self, progress_bar)
-	if !saved.is_empty():
-		_battle_bar_mount = saved
+	BattleHudLayout.mount_party_bars(self, progress_bar, mp_bar, max_mp > 0)
 
 func prepare_battle_hud() -> void:
 	_battle_hud_active = true
-	_ensure_bar_value_label()
+	_bar_value_label = BattleHudLayout.ensure_bar_label(progress_bar)
 	_bar_value_label.visible = true
 	progress_bar.show_percentage = false
-	if mp_bar:
-		mp_bar.visible = false
+	if max_mp > 0 and mp_bar != null:
+		_mp_bar_value_label = BattleHudLayout.ensure_bar_label(mp_bar)
+		_mp_bar_value_label.visible = true
+		mp_bar.show_percentage = false
 	if xp_bar:
 		xp_bar.visible = false
 	align_battle_hud_to_sprite()
 	_sync_bar_value_label()
 
 func _ensure_bar_value_label() -> void:
-	if _bar_value_label != null:
-		return
-	_bar_value_label = Label.new()
-	_bar_value_label.name = "BarValue"
-	_bar_value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_bar_value_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	_bar_value_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_bar_value_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(11))
-	_bar_value_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
-	progress_bar.add_child(_bar_value_label)
+	if _bar_value_label == null:
+		_bar_value_label = BattleHudLayout.ensure_bar_label(progress_bar)
 
 func _sync_bar_value_label() -> void:
-	if _bar_value_label == null or !_battle_hud_active:
+	if !_battle_hud_active:
 		return
-	var text := "%d/%d" % [current_hp, max_hp]
-	if max_mp > 0:
-		text += "  MP %d/%d" % [current_mp, max_mp]
-	_bar_value_label.text = text
+	if _bar_value_label != null:
+		_bar_value_label.text = "%d/%d" % [current_hp, max_hp]
+	if _mp_bar_value_label != null and max_mp > 0:
+		_mp_bar_value_label.text = "%d/%d" % [current_mp, max_mp]
 
 func _setup_resource_bars() -> void:
 	var theme: Theme = progress_bar.theme
@@ -387,6 +380,8 @@ func hide_battle_bars() -> void:
 	_battle_hud_active = false
 	if _bar_value_label:
 		_bar_value_label.visible = false
+	if _mp_bar_value_label:
+		_mp_bar_value_label.visible = false
 	progress_bar.visible = false
 	if mp_bar:
 		mp_bar.visible = false
@@ -397,9 +392,12 @@ func reset_presentation_bars() -> void:
 	_battle_hud_active = false
 	if _bar_value_label:
 		_bar_value_label.visible = false
-	BattleHudLayout.unmount_bar(progress_bar, _battle_bar_mount)
+	if _mp_bar_value_label:
+		_mp_bar_value_label.visible = false
 	_battle_bar_mount.clear()
 	progress_bar.scale = Vector2.ONE
+	if mp_bar:
+		mp_bar.scale = Vector2.ONE
 	progress_bar.position = Vector2.ZERO
 	progress_bar.offset_left = -65.0
 	progress_bar.offset_right = 71.0
@@ -407,6 +405,7 @@ func reset_presentation_bars() -> void:
 	progress_bar.offset_bottom = -31.0
 	if mp_bar:
 		mp_bar.scale = Vector2.ONE
+		mp_bar.position = Vector2.ZERO
 		mp_bar.offset_left = progress_bar.offset_left
 		mp_bar.offset_right = progress_bar.offset_right
 		mp_bar.offset_top = progress_bar.offset_top + 14.0

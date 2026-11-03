@@ -149,7 +149,7 @@ func fill_characters(characters):
 			character.character_defeated.connect(_on_character_defeated.bind(character))
 			character_container.add_child(character)
 			if character.has_method("prepare_battle_hud"):
-				character.call_deferred("prepare_battle_hud")
+				character.prepare_battle_hud()
 		character.visible = true
 		
 func fill_enemies(enemies):
@@ -194,7 +194,7 @@ func fill_enemies(enemies):
 			enemy.enemy_defeated.connect(_on_enemy_defeated.bind(enemy))
 			enemy_container.add_child(enemy)
 			if enemy.has_method("prepare_battle_hud"):
-				enemy.call_deferred("prepare_battle_hud")
+				enemy.prepare_battle_hud()
 			enemy.progress_bar.visible = true
 		enemy.visible = true
 
