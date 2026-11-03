@@ -1,0 +1,26 @@
+name: Godot CI
+
+# Manual playtest and exports: see docs/releasing.md
+
+on:
+  push:
+    branches: ["main", "master", "feature/**"]
+  pull_request:
+
+jobs:
+  godot:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.2.2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Import project (asset pipeline)
+        run: godot --headless --path . --import
+
+      - name: Validate game content
+        run: godot --headless --path . --script res://scripts/tools/content_validator.gd
+
+      - name: Smoke run (main scene loads)
+        run: godot --headless --path . --quit-after 2

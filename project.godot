@@ -11,17 +11,22 @@ config_version=5
 [application]
 
 config/name="Skull Throne"
-run/main_scene="res://scenes/world.tscn"
+config/version="0.4.0"
+config/description="Skull Throne roguelike dungeon crawl."
+run/main_scene="res://scenes/main/world.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://assets/logo.png"
 config/windows_native_icon="res://assets/logo.ico"
 
 [autoload]
 
-Global="*res://scripts/global.gd"
-Inventory="*res://scripts/InventoryManager.gd"
-ContentRegistry="*res://scripts/content_registry.gd"
-RunState="*res://scripts/run_state.gd"
+Global="*res://scripts/core/global.gd"
+Inventory="*res://scripts/items/InventoryManager.gd"
+ZoneMusic="*res://scripts/data/zone_music.gd"
+ContentRegistry="*res://scripts/data/content_registry.gd"
+RunState="*res://scripts/run/run_state.gd"
+MetaProgress="*res://scripts/run/meta_progress.gd"
+EquipmentRegistry="*res://scripts/data/equipment_registry.gd"
 
 [display]
 
