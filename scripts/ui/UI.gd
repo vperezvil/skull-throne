@@ -378,7 +378,7 @@ func _refresh_hub_ui() -> void:
 		hub_party_label.text = "Descent stat preview:\n" + "\n".join(roll_lines)
 	var party_names: PackedStringArray = []
 	for id in character_ids_toggled:
-		var def := ContentRegistry.get_character_for_menu_index(id)
+		var def: CharacterDefinition = ContentRegistry.get_character_for_menu_index(id)
 		if def != null:
 			party_names.append(CharacterTraits.format_roster_line(def.character_id, def.display_name))
 	if party_names.size() > 0:
@@ -1116,7 +1116,7 @@ func _refresh_character_select_locks() -> void:
 	]
 	for i in button_paths.size():
 		var button: TextureButton = get_node(button_paths[i])
-		var definition := ContentRegistry.get_character_for_menu_index(i)
+		var definition: CharacterDefinition = ContentRegistry.get_character_for_menu_index(i)
 		var unlocked := definition == null or RunState.is_character_unlocked(definition)
 		button.disabled = !unlocked
 		button.modulate = Color.WHITE if unlocked else Color(0.45, 0.45, 0.45, 1.0)
@@ -1128,7 +1128,7 @@ func _refresh_character_select_locks() -> void:
 			button.tooltip_text = definition.display_name if definition != null else ""
 
 func character_toggle(toggled_on, id):
-	var definition := ContentRegistry.get_character_for_menu_index(id)
+	var definition: CharacterDefinition = ContentRegistry.get_character_for_menu_index(id)
 	if definition != null and !RunState.is_character_unlocked(definition):
 		return
 	if toggled_on:

@@ -109,7 +109,7 @@ func read_input():
 
 func add_character(id: int) -> void:
 	var character: Character = character_dict[id]
-	var definition := ContentRegistry.get_character_for_menu_index(id)
+	var definition: CharacterDefinition = ContentRegistry.get_character_for_menu_index(id)
 	if definition != null:
 		character.apply_definition(definition)
 	if !characters.has(character):
@@ -126,7 +126,7 @@ func _on_game_started() -> void:
 	for member in characters:
 		if member is Character:
 			member.stress = 0
-			var def := ContentRegistry.get_character_by_id(member.character_id)
+			var def: CharacterDefinition = ContentRegistry.get_character_by_id(member.character_id)
 			if def != null:
 				member.apply_definition(def)
 			MetaProgress.apply_meta_to_character(member)
@@ -670,7 +670,7 @@ func abandon_run() -> void:
 func _refresh_party_at_hub() -> void:
 	for member in characters:
 		if member is Character:
-			var def := ContentRegistry.get_character_by_id(member.character_id)
+			var def: CharacterDefinition = ContentRegistry.get_character_by_id(member.character_id)
 			if def != null:
 				member.apply_definition(def)
 			MetaProgress.apply_meta_to_character(member)

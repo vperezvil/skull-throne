@@ -470,7 +470,7 @@ func apply_run_equipment() -> void:
 		var eq_id := RunState.get_equipped_id(character_id, slot)
 		if eq_id == "":
 			continue
-		var def := EquipmentRegistry.get_definition(eq_id)
+		var def: EquipmentDefinition = EquipmentRegistry.get_definition(eq_id)
 		if def == null:
 			continue
 		_equip_attack += def.attack_bonus

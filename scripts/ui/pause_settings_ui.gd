@@ -35,13 +35,13 @@ static func add_controls_section(parent: VBoxContainer) -> void:
 
 static func _on_rebind_pressed(action: String) -> void:
 	# Cycle common keys for quick rebind without a capture dialog.
-	var cycle := [Key.W, Key.A, Key.S, Key.D, Key.UP, Key.DOWN, Key.LEFT, Key.RIGHT]
+	var cycle := [KEY_W, KEY_A, KEY_S, KEY_D, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT]
 	var events := InputMap.action_get_events(action)
-	var current := Key.W
+	var current := KEY_W
 	if events.size() > 0 and events[0] is InputEventKey:
 		current = (events[0] as InputEventKey).physical_keycode
 	var idx := cycle.find(current)
-	var next_key: Key = cycle[(idx + 1) % cycle.size()] if idx >= 0 else Key.W
+	var next_key: Key = cycle[(idx + 1) % cycle.size()] if idx >= 0 else KEY_W
 	Global.save_movement_binding(action, next_key)
 
 static func _add_scale_row(parent: VBoxContainer, label_text: String, initial: float, apply_callable: Callable) -> void:

@@ -26,10 +26,10 @@ func _ready() -> void:
 var _fanfare_player: AudioStreamPlayer
 
 func _setup_movement_input() -> void:
-	_bind_move_key("move_up", [Key.W, Key.UP])
-	_bind_move_key("move_down", [Key.S, Key.DOWN])
-	_bind_move_key("move_left", [Key.A, Key.LEFT])
-	_bind_move_key("move_right", [Key.D, Key.RIGHT])
+	_bind_move_key("move_up", [KEY_W, KEY_UP])
+	_bind_move_key("move_down", [KEY_S, KEY_DOWN])
+	_bind_move_key("move_left", [KEY_A, KEY_LEFT])
+	_bind_move_key("move_right", [KEY_D, KEY_RIGHT])
 
 func _bind_move_key(action: String, keys: Array) -> void:
 	if !InputMap.has_action(action):

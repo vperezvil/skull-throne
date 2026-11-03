@@ -69,7 +69,7 @@ static func add_equip_stash(parent: VBoxContainer, party: Array, message_label: 
 		parent.add_child(empty)
 		return
 	for eq_id in RunState.equipment_stash:
-		var def := EquipmentRegistry.get_definition(eq_id)
+		var def: EquipmentDefinition = EquipmentRegistry.get_definition(eq_id)
 		if def == null:
 			continue
 		for member in party:

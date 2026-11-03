@@ -57,7 +57,7 @@ func refresh_stat_preview(party: Array) -> void:
 	party_stat_preview.clear()
 	for member in party:
 		if member is Character:
-			var def := ContentRegistry.get_character_by_id(member.character_id)
+			var def: CharacterDefinition = ContentRegistry.get_character_by_id(member.character_id)
 			if def != null:
 				var rolled := ContentRegistry.roll_stat_variant(def)
 				if MetaProgress.get_locked_stat_character_id() == member.character_id:
@@ -94,7 +94,7 @@ func roll_party_stats(party: Array) -> void:
 	party_stat_variants.clear()
 	for member in party:
 		if member is Character:
-			var def := ContentRegistry.get_character_by_id(member.character_id)
+			var def: CharacterDefinition = ContentRegistry.get_character_by_id(member.character_id)
 			if def != null:
 				party_stat_variants[member.character_id] = ContentRegistry.roll_stat_variant(def)
 

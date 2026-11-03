@@ -6,7 +6,7 @@ func _ready() -> void:
 	_register_all()
 
 func get_definition(id: String) -> EquipmentDefinition:
-	return catalog.get(id)
+	return catalog.get(id) as EquipmentDefinition
 
 func get_all_ids() -> Array:
 	return catalog.keys()

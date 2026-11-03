@@ -219,7 +219,7 @@ func skill_tier_cost(_character_id: String) -> int:
 func save_veteran_progress(character: Character) -> void:
 	if character == null:
 		return
-	var def := ContentRegistry.get_character_by_id(character.character_id)
+	var def: CharacterDefinition = ContentRegistry.get_character_by_id(character.character_id)
 	if def == null or !def.retains_progress:
 		return
 	roster_progress[character.character_id] = {
@@ -289,7 +289,7 @@ func should_show_stain_tip() -> bool:
 	return !tutorial_stain_seen
 
 func get_veteran_level_bonuses(character_id: String) -> Dictionary:
-	var def := ContentRegistry.get_character_by_id(character_id)
+	var def: CharacterDefinition = ContentRegistry.get_character_by_id(character_id)
 	if def == null or !def.retains_progress or !roster_progress.has(character_id):
 		return {"hp": 0, "atk": 0, "levels": 0}
 	var data: Dictionary = roster_progress[character_id]
@@ -299,7 +299,7 @@ func get_veteran_level_bonuses(character_id: String) -> Dictionary:
 func apply_veteran_progress(character: Character) -> void:
 	if character == null:
 		return
-	var def := ContentRegistry.get_character_by_id(character.character_id)
+	var def: CharacterDefinition = ContentRegistry.get_character_by_id(character.character_id)
 	if def == null or !def.retains_progress:
 		character._veteran_bonus_hp = 0
 		character._veteran_bonus_atk = 0
