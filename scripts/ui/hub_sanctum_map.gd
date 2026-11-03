@@ -27,7 +27,7 @@ var _viewport: SubViewport
 var _world_root: Node2D
 var _tilemap: TileMapLayer
 var _player: CharacterBody2D
-var _player_sprite: Sprite2D
+var _walker_ap: AnimationPlayer
 var _camera: Camera2D
 var _prompt: Label
 var _has_party: bool = false
@@ -36,8 +36,8 @@ var _floor_source: int = 0
 var _wall_source: int = 6
 var _physics_driver: WalkerPhysicsDriver
 var _template_tile_set: TileSet
+var _last_move_dir := Vector2.DOWN
 
-## Call before add_child when the hub map is built (UI _ready runs before Map may be easy to reach).
 func set_template_tile_set(source: TileSet) -> void:
 	_template_tile_set = source
 
@@ -91,6 +91,7 @@ func _build_viewport() -> void:
 func _build_town_map() -> void:
 	_tilemap = TileMapLayer.new()
 	_tilemap.name = "SanctumTownMap"
+	_tilemap.collision_enabled = true
 	var src_tile_set: TileSet = _find_live_world_tile_set()
 	if src_tile_set == null:
 		push_error("HubSanctumMap: could not resolve TileSet from World/Map.")
@@ -105,33 +106,86 @@ func _build_town_map() -> void:
 	_floor_source = int(theme["floor"])
 	_wall_source = int(theme["wall"])
 	MapTileBuilder.ensure_wall_physics(_tilemap.tile_set, _wall_source)
+	_paint_sanctum_town()
+	_tilemap.update_internals()
+
+func _max_atlas_index(source_id: int) -> int:
+	if _tilemap == null or _tilemap.tile_set == null or !_tilemap.tile_set.has_source(source_id):
+		return 0
+	var source := _tilemap.tile_set.get_source(source_id) as TileSetAtlasSource
+	if source == null or source.texture == null:
+		return 0
+	var cols: int = maxi(1, int(source.texture.get_width()) / maxi(source.texture_region_size.x, 1))
+	return maxi(cols - 1, 0)
+
+func _floor_atlas(cell: Vector2i) -> Vector2i:
+	var max_i := _max_atlas_index(_floor_source)
+	for attempt in range(max_i + 1):
+		var idx: int = (cell.x * 5 + cell.y * 11 + attempt * 3) % (max_i + 1)
+		var atlas := Vector2i(idx, 0)
+		if !_hub_floor_blocks_movement(atlas):
+			return atlas
+	return Vector2i(0, 0)
+
+func _hub_floor_blocks_movement(atlas: Vector2i) -> bool:
+	if _tilemap == null or _tilemap.tile_set == null or !_tilemap.tile_set.has_source(_floor_source):
+		return false
+	var source := _tilemap.tile_set.get_source(_floor_source) as TileSetAtlasSource
+	if source == null:
+		return false
+	var data: TileData = source.get_tile_data(atlas, 0)
+	if data == null:
+		return true
+	return data.get_collision_polygons_count(0) > 0
+
+func _wall_atlas(cell: Vector2i) -> Vector2i:
+	var max_i := _max_atlas_index(_wall_source)
+	var idx: int = (cell.x + cell.y * 3) % (max_i + 1)
+	return Vector2i(idx, 0)
+
+func _set_floor(cell: Vector2i) -> void:
+	_tilemap.set_cell(cell, _floor_source, _floor_atlas(cell))
+
+func _set_wall(cell: Vector2i) -> void:
+	_tilemap.set_cell(cell, _wall_source, _wall_atlas(cell))
+
+func _paint_sanctum_town() -> void:
 	for x in TOWN_TILES_W:
 		for y in TOWN_TILES_H:
-			var cell := Vector2i(x, y)
-			var edge := x == 0 or y == 0 or x == TOWN_TILES_W - 1 or y == TOWN_TILES_H - 1
-			if edge:
-				_tilemap.set_cell(cell, _wall_source, Vector2i((x + y) % 8, 0))
-			else:
-				_tilemap.set_cell(cell, _floor_source, Vector2i((x * 3 + y) % 8, 0))
-	_tilemap.update_internals()
-	_stamp_service_shrines()
-
-func _stamp_service_shrines() -> void:
-	var center := Vector2i(TOWN_TILES_W / 2, TOWN_TILES_H / 2)
+			_set_floor(Vector2i(x, y))
+	for x in TOWN_TILES_W:
+		_set_wall(Vector2i(x, 0))
+		_set_wall(Vector2i(x, TOWN_TILES_H - 1))
+	for y in TOWN_TILES_H:
+		_set_wall(Vector2i(0, y))
+		_set_wall(Vector2i(TOWN_TILES_W - 1, y))
+	var mid_x := TOWN_TILES_W / 2
+	var mid_y := TOWN_TILES_H / 2
+	for x in range(1, TOWN_TILES_W - 1):
+		_set_floor(Vector2i(x, mid_y))
+		_set_floor(Vector2i(x, mid_y - 1))
+	for y in range(1, TOWN_TILES_H - 1):
+		_set_floor(Vector2i(mid_x, y))
+		_set_floor(Vector2i(mid_x - 1, y))
 	for def in NPC_DEFS:
-		var npc_tile: Vector2i = def["tile"]
-		for dx in range(-1, 2):
-			for dy in range(-1, 2):
-				if dx == 0 and dy == 0:
-					continue
-				var cell := npc_tile + Vector2i(dx, dy)
-				if cell.x <= 0 or cell.y <= 0 or cell.x >= TOWN_TILES_W - 1 or cell.y >= TOWN_TILES_H - 1:
-					continue
-				_tilemap.set_cell(cell, _wall_source, Vector2i((cell.x + cell.y) % 8, 0))
-		var door := npc_tile + Vector2i(signi(center.x - npc_tile.x), signi(center.y - npc_tile.y))
-		if door != npc_tile and door.x > 0 and door.y > 0 and door.x < TOWN_TILES_W - 1 and door.y < TOWN_TILES_H - 1:
-			_tilemap.set_cell(door, _floor_source, Vector2i((door.x * 3 + door.y) % 8, 0))
-	_tilemap.update_internals()
+		_stamp_service_building(def["tile"] as Vector2i, Vector2i(mid_x, mid_y))
+
+func _stamp_service_building(npc_tile: Vector2i, plaza_center: Vector2i) -> void:
+	var rect := Rect2i(npc_tile.x - 2, npc_tile.y - 2, 5, 5)
+	for x in range(rect.position.x, rect.position.x + rect.size.x):
+		for y in range(rect.position.y, rect.position.y + rect.size.y):
+			var cell := Vector2i(x, y)
+			if cell.x <= 0 or cell.y <= 0 or cell.x >= TOWN_TILES_W - 1 or cell.y >= TOWN_TILES_H - 1:
+				continue
+			var on_edge := x == rect.position.x or x == rect.position.x + rect.size.x - 1 or y == rect.position.y or y == rect.position.y + rect.size.y - 1
+			if on_edge:
+				_set_wall(cell)
+			else:
+				_set_floor(cell)
+	var door := npc_tile + Vector2i(signi(plaza_center.x - npc_tile.x), signi(plaza_center.y - npc_tile.y))
+	if door.x > 0 and door.y > 0 and door.x < TOWN_TILES_W - 1 and door.y < TOWN_TILES_H - 1:
+		_set_floor(door)
+	_set_floor(npc_tile)
 
 func _build_player() -> void:
 	_player = CharacterBody2D.new()
@@ -140,14 +194,9 @@ func _build_player() -> void:
 	_player.collision_mask = 1
 	var col := CollisionShape2D.new()
 	var circle := CircleShape2D.new()
-	circle.radius = 11.0
+	circle.radius = 10.0
 	col.shape = circle
 	_player.add_child(col)
-	_player_sprite = Sprite2D.new()
-	_player_sprite.name = "Body"
-	_player_sprite.texture = load("res://assets/monsters/harpy.png")
-	_player_sprite.scale = Vector2(0.9, 0.9)
-	_player.add_child(_player_sprite)
 	_world_root.add_child(_player)
 	_camera = Camera2D.new()
 	_camera.enabled = true
@@ -159,7 +208,7 @@ func _build_npcs() -> void:
 		return
 	for def in NPC_DEFS:
 		var tile: Vector2i = def["tile"]
-		var world_pos := _tilemap.map_to_local(tile + Vector2i(0, 0)) + Vector2(TILE_SIZE * 0.5, TILE_SIZE * 0.5)
+		var world_pos := _tilemap.map_to_local(tile) + Vector2(TILE_SIZE * 0.5, TILE_SIZE * 0.5)
 		var npc_root := Node2D.new()
 		npc_root.position = world_pos
 		npc_root.name = "NPC_%d" % int(def["tab"])
@@ -184,7 +233,7 @@ func _build_npcs() -> void:
 		area.collision_mask = 1
 		var area_shape := CollisionShape2D.new()
 		var rect := RectangleShape2D.new()
-		rect.size = Vector2(TILE_SIZE * 1.6, TILE_SIZE * 1.6)
+		rect.size = Vector2(TILE_SIZE * 2.2, TILE_SIZE * 2.2)
 		area_shape.shape = rect
 		area.add_child(area_shape)
 		var tab_index: int = int(def["tab"])
@@ -205,9 +254,30 @@ func _drive_player_physics(_delta: float) -> void:
 	var dir := _read_move_vector()
 	if dir.length_squared() > 0.001:
 		_player.velocity = dir.normalized() * MOVE_SPEED
+		_last_move_dir = dir
+		_update_walker_animation(dir)
 	else:
 		_player.velocity = Vector2.ZERO
+		_update_walker_animation(Vector2.ZERO)
 	_player.move_and_slide()
+
+func _update_walker_animation(dir: Vector2) -> void:
+	if _walker_ap == null or !_walker_ap.is_inside_tree():
+		return
+	if dir.length_squared() < 0.001:
+		if _walker_ap.has_animation("walk_down"):
+			_walker_ap.play("walk_down")
+		return
+	if absf(dir.x) >= absf(dir.y):
+		if dir.x >= 0.0 and _walker_ap.has_animation("walk_right"):
+			_walker_ap.play("walk_right")
+		elif _walker_ap.has_animation("walk_left"):
+			_walker_ap.play("walk_left")
+	else:
+		if dir.y >= 0.0 and _walker_ap.has_animation("walk_down"):
+			_walker_ap.play("walk_down")
+		elif _walker_ap.has_animation("walk_up"):
+			_walker_ap.play("walk_up")
 
 func _read_move_vector() -> Vector2:
 	var dir := Vector2.ZERO
@@ -251,9 +321,54 @@ func set_hub_state(has_party: bool, _hint_text: String) -> void:
 		_prompt.text = "Select a party, then explore the sanctum."
 		_near_service_tab = -1
 
+func set_party_lead_source(source: Character) -> void:
+	_clear_walker_visual()
+	if source == null or _player == null:
+		return
+	var walker := source.duplicate() as Character
+	_strip_walker_for_hub(walker)
+	_player.add_child(walker)
+	walker.visible = true
+	walker.position = Vector2.ZERO
+	_walker_ap = walker.get_node_or_null("AnimationPlayer") as AnimationPlayer
+	if _walker_ap != null:
+		_update_walker_animation(Vector2.ZERO)
+
 func set_party_walker_texture(tex: Texture2D) -> void:
-	if _player_sprite != null and tex != null:
-		_player_sprite.texture = tex
+	_clear_walker_visual()
+	if tex == null or _player == null:
+		return
+	var sprite := Sprite2D.new()
+	sprite.name = "Body"
+	sprite.texture = tex
+	sprite.scale = Vector2(0.95, 0.95)
+	_player.add_child(sprite)
+
+func _strip_walker_for_hub(walker: Character) -> void:
+	walker.visible = true
+	walker.battle_started = true
+	walker.set_process(false)
+	walker.set_physics_process(false)
+	walker.collision_layer = 0
+	walker.collision_mask = 0
+	for node_name in ["ProgressBar", "MpBar", "XpBar", "DamageReceived", "Camera2D", "Focus", "CollisionShape2D"]:
+		var node := walker.get_node_or_null(node_name)
+		if node != null:
+			node.queue_free()
+	for child in walker.get_children():
+		if child is AudioStreamPlayer:
+			child.queue_free()
+
+func _clear_walker_visual() -> void:
+	if _player == null:
+		return
+	for child in _player.get_children():
+		if child == _camera:
+			continue
+		if child is CollisionShape2D:
+			continue
+		child.queue_free()
+	_walker_ap = null
 
 func set_descent_plan(_zone_ids: Array[String]) -> void:
 	pass

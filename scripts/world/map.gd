@@ -46,7 +46,7 @@ func generate_chunk(room_position, room_size):
 			var coord = Vector2i(int(room_position.x) + x, int(room_position.y) + y)
 			if !get_used_cells().has(coord):
 				var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
-				set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
+				set_cell(coord, level, _walkable_floor_atlas(floor_map))
 
 func print_room_border(room_position, room_size):
 	var room_right = int(room_position.x + room_size.x)
@@ -63,8 +63,6 @@ func print_room_border(room_position, room_size):
 		_set_wall(Vector2i(room_right - 1, y))
 
 func _set_wall(coord: Vector2i) -> void:
-	if get_used_cells().has(coord):
-		return
 	var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
 	set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
 
@@ -80,15 +78,40 @@ func draw_corridor(start, end):
 			var coord = Vector2i(main_coord + offset, i) if is_vertical else Vector2i(i, main_coord + offset)
 			var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
 			var is_border_tile = offset < 0 or offset >= corridor_width
-			if is_border_tile and !get_used_cells().has(coord):
+			if is_border_tile:
 				set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
-			elif !is_border_tile:
-				set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
+			else:
+				set_cell(coord, level, _walkable_floor_atlas(floor_map))
 
 func _atlas_coord(noise_sample: float, divisor: float) -> Vector2i:
 	var atlas_index: int = int(round((noise_sample + 10.0) / divisor))
 	atlas_index = clampi(atlas_index, 0, _max_atlas_index_for_source(level))
 	return Vector2i(atlas_index, 0)
+
+func _walkable_floor_atlas(noise_sample: float) -> Vector2i:
+	var candidate := _atlas_coord(noise_sample, floor_noise_divisor)
+	if !_floor_tile_blocks_movement(candidate):
+		return candidate
+	return _first_walkable_floor_atlas()
+
+func _first_walkable_floor_atlas() -> Vector2i:
+	var max_i := _max_atlas_index_for_source(level)
+	for i in range(max_i + 1):
+		var atlas := Vector2i(i, 0)
+		if !_floor_tile_blocks_movement(atlas):
+			return atlas
+	return Vector2i(0, 0)
+
+func _floor_tile_blocks_movement(atlas: Vector2i) -> bool:
+	if tile_set == null or !tile_set.has_source(level):
+		return false
+	var source := tile_set.get_source(level) as TileSetAtlasSource
+	if source == null:
+		return false
+	var data: TileData = source.get_tile_data(atlas, 0)
+	if data == null:
+		return true
+	return data.get_collision_polygons_count(0) > 0
 
 func _wall_atlas_coord(noise_sample: float) -> Vector2i:
 	var atlas_index: int = int(round((noise_sample + 10.0) / wall_noise_divisor))

@@ -600,24 +600,33 @@ func _refresh_hub_ui() -> void:
 	if hub_sanctum_map:
 		hub_sanctum_map.set_hub_state(has_party, "")
 		if has_party and character_ids_toggled.size() > 0:
-			var lead_def: CharacterDefinition = ContentRegistry.get_character_for_menu_index(character_ids_toggled[0])
-			if lead_def != null and lead_def.scene_path != "":
-				var packed: PackedScene = load(lead_def.scene_path) as PackedScene
-				if packed != null:
-					var preview: Node = packed.instantiate()
-					var sprite_node: Node = preview.get_node_or_null("Body")
-					if sprite_node == null:
-						sprite_node = preview.get_node_or_null("BodySkeleton")
-					if sprite_node is Sprite2D:
-						var body: Sprite2D = sprite_node as Sprite2D
-						if body.texture != null:
-							hub_sanctum_map.set_party_walker_texture(body.texture)
-					preview.queue_free()
+			var lead_id: int = character_ids_toggled[0]
+			var lead_char: Character = _resolve_hub_lead_character(lead_id)
+			if lead_char != null:
+				hub_sanctum_map.set_party_lead_source(lead_char)
 	_refresh_hub_route_list()
 	if ascended_toggle:
 		ascended_toggle.disabled = !MetaProgress.can_use_ascended()
 		ascended_toggle.button_pressed = MetaProgress.ascended_next_run
 	_refresh_hub_upgrade_button_labels()
+
+func _resolve_hub_lead_character(lead_id: int) -> Character:
+	var world_node: Node = get_parent()
+	if world_node != null and world_node.get("character_dict") != null:
+		var dict: Dictionary = world_node.character_dict
+		if dict.has(lead_id):
+			return dict[lead_id] as Character
+	var lead_def: CharacterDefinition = ContentRegistry.get_character_for_menu_index(lead_id)
+	if lead_def == null or lead_def.scene_path == "":
+		return null
+	var packed: PackedScene = load(lead_def.scene_path) as PackedScene
+	if packed == null:
+		return null
+	var temp: Character = packed.instantiate() as Character
+	if temp == null:
+		return null
+	temp.apply_definition(lead_def)
+	return temp
 
 func _on_hub_service_picked(tab_index: int) -> void:
 	if hub_tabs == null or hub_services_overlay == null:

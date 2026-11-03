@@ -4,8 +4,8 @@ class_name BattleHudLayout
 const BAR_HALF_W := 80.0
 const BAR_H := 18.0
 const BAR_XP_H := 4.0
-const BAR_STACK_GAP := 3.0
-const BAR_XP_GAP := 2.0
+const BAR_STACK_GAP := 1.0
+const BAR_XP_GAP := 0.0
 const GAP_ABOVE_CROWN := 4.0
 const CROWN_FRAC := 0.36
 const BAR_FONT_SIZE := 13
