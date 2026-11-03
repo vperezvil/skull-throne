@@ -175,7 +175,7 @@ func _setup_hub_menu() -> void:
 	hub_message_label = Label.new()
 	hub_message_label.modulate = Color(1.0, 0.75, 0.45)
 	hub_message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		left.add_child(hub_message_label)
+	left.add_child(hub_message_label)
 	var right := VBoxContainer.new()
 	right.custom_minimum_size.x = 480
 	root.add_child(right)

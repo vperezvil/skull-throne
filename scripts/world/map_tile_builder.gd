@@ -7,17 +7,17 @@ const SOURCE_GRASS_FLOOR := 0
 const SOURCE_COBBLE_FLOOR := 1
 const SOURCE_GRASS_WALL := 6
 
-const _THEME_CACHE: Dictionary = {}
+static var _theme_cache: Dictionary = {}
 
 static func apply_theme(layer: TileMapLayer, theme_id: String) -> Dictionary:
 	var tile_set: TileSet = layer.tile_set
 	if tile_set == null:
 		push_error("Map has no TileSet.")
 		return {"floor": 0, "wall": 6}
-	if _THEME_CACHE.has(theme_id):
-		return _THEME_CACHE[theme_id]
-	var result := _build_theme(tile_set, theme_id)
-	_THEME_CACHE[theme_id] = result
+	if _theme_cache.has(theme_id):
+		return _theme_cache[theme_id]
+	var result: Dictionary = _build_theme(tile_set, theme_id)
+	_theme_cache[theme_id] = result
 	return result
 
 static func _build_theme(tile_set: TileSet, theme_id: String) -> Dictionary:

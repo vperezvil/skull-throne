@@ -6,7 +6,7 @@ class_name Combatant
 @onready var ap: AnimationPlayer = $AnimationPlayer
 @onready var progress_bar: ProgressBar = $ProgressBar
 @onready var focus: Control = $Focus
-@onready var damage_text: Label = $DamageReceived
+@onready var damage_text: RichTextLabel = $DamageReceived
 @onready var damage_sound: AudioStreamPlayer = $DamageSound
 @onready var death_sound: AudioStreamPlayer = $DeathSound
 
