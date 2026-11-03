@@ -101,6 +101,14 @@ func roll_party_stats(party: Array) -> void:
 func get_stat_variant(character_id: String) -> Dictionary:
 	return party_stat_variants.get(character_id, {})
 
+var hub_descent_plan: Array[String] = []
+
+func refresh_hub_descent_preview() -> void:
+	hub_descent_plan = ContentRegistry.build_run_plan()
+
+func get_hub_descent_preview() -> Array[String]:
+	return hub_descent_plan.duplicate()
+
 func begin_campaign() -> void:
 	campaign_active = true
 	current_floor_index = 0
@@ -111,7 +119,11 @@ func begin_campaign() -> void:
 	character_equipment.clear()
 	run_start_snapshots.clear()
 	run_xp_gained.clear()
-	run_floor_ids = ContentRegistry.build_run_plan()
+	if hub_descent_plan.is_empty():
+		run_floor_ids = ContentRegistry.build_run_plan()
+	else:
+		run_floor_ids = hub_descent_plan.duplicate()
+	hub_descent_plan.clear()
 	run_blessing_ids.clear()
 	ascended_run = MetaProgress.ascended_next_run and MetaProgress.can_use_ascended()
 	run_modifier_id = RunModifiers.roll_modifier_id(ascended_run)
@@ -128,6 +140,7 @@ func reset_campaign() -> void:
 	run_start_snapshots.clear()
 	run_xp_gained.clear()
 	run_floor_ids.clear()
+	hub_descent_plan.clear()
 	party_stat_variants.clear()
 	party_stat_preview.clear()
 	_preview_party_key = ""

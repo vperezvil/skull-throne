@@ -59,8 +59,10 @@ var map_toast: Label
 var ascended_toggle: CheckButton
 var hub_mirror_select: OptionButton
 var hub_begin_btn: Button
-var hub_steps_label: Label
 var hub_party_chip_row: HBoxContainer
+var hub_sanctum_map: HubSanctumMap
+var hub_details_panel: PanelContainer
+var hub_details_toggle: CheckButton
 var _shrine_campaign_complete: bool = false
 var _menu_backdrop: ColorRect
 
@@ -164,7 +166,7 @@ func _setup_hub_menu() -> void:
 	title.add_theme_font_size_override("font_size", Global.get_ui_font_size(44))
 	title_col.add_child(title)
 	var subtitle := Label.new()
-	subtitle.text = "Rest, upgrade, and prepare your party before the descent."
+	subtitle.text = "Tap the map, ready your party, descend."
 	subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	HubUiHelpers.style_body_label(subtitle, 18)
 	title_col.add_child(subtitle)
@@ -186,32 +188,51 @@ func _setup_hub_menu() -> void:
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	left.add_theme_constant_override("separation", 14)
 	left_scroll.add_child(left)
-	hub_steps_label = Label.new()
-	hub_steps_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	HubUiHelpers.style_body_label(hub_steps_label, 17)
-	left.add_child(HubUiHelpers.make_card("What to do", hub_steps_label))
+	hub_sanctum_map = HubSanctumMap.new()
+	hub_sanctum_map.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hub_sanctum_map.service_picked.connect(_on_hub_service_picked)
+	left.add_child(hub_sanctum_map)
+	var reroute_row := HBoxContainer.new()
+	reroute_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	left.add_child(reroute_row)
+	var reroute_btn := Button.new()
+	reroute_btn.text = "Reroll descent route"
+	HubUiHelpers.style_ghost_button(reroute_btn)
+	reroute_btn.pressed.connect(_on_hub_reroll_route)
+	reroute_row.add_child(reroute_btn)
 	hub_party_chip_row = HBoxContainer.new()
 	hub_party_chip_row.add_theme_constant_override("separation", 10)
-	left.add_child(HubUiHelpers.make_card("Your party", hub_party_chip_row))
-	hub_party_label = Label.new()
-	hub_party_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	HubUiHelpers.style_body_label(hub_party_label, 15)
-	left.add_child(HubUiHelpers.make_card("Descent stat preview", hub_party_label))
-	hub_run_hint_label = Label.new()
-	hub_run_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	HubUiHelpers.style_body_label(hub_run_hint_label, 15)
-	left.add_child(HubUiHelpers.make_card("Campaign progress", hub_run_hint_label))
-	hub_stats_label = RichTextLabel.new()
-	hub_stats_label.custom_minimum_size = Vector2(0, 100)
-	hub_stats_label.scroll_active = false
-	hub_stats_label.fit_content = true
-	hub_stats_label.add_theme_font_size_override("normal_font_size", Global.get_ui_font_size(14))
-	left.add_child(HubUiHelpers.make_card("Sanctum ledger", hub_stats_label))
+	left.add_child(hub_party_chip_row)
 	hub_message_label = Label.new()
 	hub_message_label.modulate = Color(1.0, 0.82, 0.55)
 	hub_message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	hub_message_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(16))
-	left.add_child(HubUiHelpers.make_card("Updates", hub_message_label))
+	hub_message_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(15))
+	left.add_child(hub_message_label)
+	hub_details_toggle = CheckButton.new()
+	hub_details_toggle.text = "Show stats & tips"
+	hub_details_toggle.toggled.connect(_on_hub_details_toggled)
+	left.add_child(hub_details_toggle)
+	hub_details_panel = PanelContainer.new()
+	hub_details_panel.visible = false
+	hub_details_panel.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.08, 0.04, 0.05, 0.9)))
+	var details_v := VBoxContainer.new()
+	details_v.add_theme_constant_override("separation", 8)
+	hub_details_panel.add_child(details_v)
+	hub_run_hint_label = Label.new()
+	hub_run_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	HubUiHelpers.style_body_label(hub_run_hint_label, 14)
+	details_v.add_child(hub_run_hint_label)
+	hub_party_label = Label.new()
+	hub_party_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	HubUiHelpers.style_body_label(hub_party_label, 14)
+	details_v.add_child(hub_party_label)
+	hub_stats_label = RichTextLabel.new()
+	hub_stats_label.custom_minimum_size = Vector2(0, 80)
+	hub_stats_label.scroll_active = false
+	hub_stats_label.fit_content = true
+	hub_stats_label.add_theme_font_size_override("normal_font_size", Global.get_ui_font_size(13))
+	details_v.add_child(hub_stats_label)
+	left.add_child(hub_details_panel)
 	var right := VBoxContainer.new()
 	right.custom_minimum_size.x = 520
 	right.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -352,11 +373,10 @@ func _add_hub_button(parent: VBoxContainer, text: String, callback: Callable, dy
 
 func show_hub() -> void:
 	hub_message_label.text = ""
+	RunState.refresh_hub_descent_preview()
 	if MetaProgress.should_show_sanctum_tutorial():
 		hub_message_label.text = (
-			"Blood Tithe is permanent; run gold only lasts this descent. "
-			+ "Waystations every %d cleared floors. Early abandon can reduce rewards."
-			% GameConstants.FLOORS_BETWEEN_WAYSTATIONS
+			"Welcome: use the sanctum map (markers + route), then Begin descent."
 		)
 		MetaProgress.mark_sanctum_tutorial_seen()
 	hub_panel.visible = true
@@ -371,6 +391,7 @@ func show_hub() -> void:
 func show_hub_after_run(payload: RunEndPayload) -> void:
 	hide_run_overlays()
 	hub_panel.visible = true
+	RunState.refresh_hub_descent_preview()
 	_sync_menu_backdrop()
 	var tithe_earned: int = payload.tithe_earned
 	var victory: bool = payload.victory
@@ -473,22 +494,31 @@ func _refresh_hub_ui() -> void:
 	if hub_begin_btn:
 		hub_begin_btn.disabled = !has_party
 		hub_begin_btn.text = "Begin descent" if has_party else "Select a party first"
-	if hub_steps_label:
-		if !has_party:
-			hub_steps_label.text = (
-				"1. Tap Change party (below)\n"
-				+ "2. Select at least one hero\n"
-				+ "3. Return here and review stats\n"
-				+ "4. Begin descent when ready"
-			)
-		else:
-			hub_steps_label.text = (
-				"Party ready. Optional: shop or train on the right, reroll stats, then Begin descent."
-			)
+	if hub_sanctum_map:
+		var hint: String = "Choose party with Change party, then tap a sanctum marker."
+		if has_party:
+			hint = "Tap Shop · Train · Boons · Stash on the map, then Begin descent."
+		hub_sanctum_map.set_hub_state(has_party, hint)
+		hub_sanctum_map.set_descent_plan(RunState.get_hub_descent_preview())
 	if ascended_toggle:
 		ascended_toggle.disabled = !MetaProgress.can_use_ascended()
 		ascended_toggle.button_pressed = MetaProgress.ascended_next_run
 	_refresh_hub_upgrade_button_labels()
+
+func _on_hub_service_picked(tab_index: int) -> void:
+	if hub_tabs == null:
+		return
+	hub_tabs.current_tab = tab_index
+
+func _on_hub_details_toggled(show_details: bool) -> void:
+	if hub_details_panel:
+		hub_details_panel.visible = show_details
+
+func _on_hub_reroll_route() -> void:
+	RunState.refresh_hub_descent_preview()
+	if hub_sanctum_map:
+		hub_sanctum_map.set_descent_plan(RunState.get_hub_descent_preview())
+	hub_message_label.text = "Rolled a new descent route preview."
 
 func _refresh_hub_party_chips() -> void:
 	if hub_party_chip_row == null:

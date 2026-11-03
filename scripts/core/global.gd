@@ -111,7 +111,20 @@ func _load_movement_bindings(cfg: ConfigFile) -> void:
 	for action in ["move_up", "move_down", "move_left", "move_right"]:
 		var code: int = int(cfg.get_value("input", action, 0))
 		if code > 0:
-			_bind_single_key(action, code as Key)
+			_add_move_key(action, code as Key)
+
+func _add_move_key(action: String, keycode: Key) -> void:
+	if !InputMap.has_action(action):
+		InputMap.add_action(action, 0.15)
+	for existing in InputMap.action_get_events(action):
+		if existing is InputEventKey:
+			var key_ev: InputEventKey = existing as InputEventKey
+			if key_ev.physical_keycode == keycode or key_ev.keycode == keycode:
+				return
+	var ev := InputEventKey.new()
+	ev.keycode = keycode
+	ev.physical_keycode = keycode
+	InputMap.action_add_event(action, ev)
 
 func _bind_single_key(action: String, keycode: Key) -> void:
 	if !InputMap.has_action(action):
@@ -162,6 +175,8 @@ func _save_settings() -> void:
 	cfg.set_value("accessibility", "screen_shake", screen_shake_enabled)
 	for action in ["move_up", "move_down", "move_left", "move_right"]:
 		var events := InputMap.action_get_events(action)
-		if events.size() > 0 and events[0] is InputEventKey:
-			cfg.set_value("input", action, int((events[0] as InputEventKey).physical_keycode))
+		for ev in events:
+			if ev is InputEventKey:
+				cfg.set_value("input", action, int((ev as InputEventKey).physical_keycode))
+				break
 	cfg.save(SETTINGS_PATH)

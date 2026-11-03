@@ -121,6 +121,8 @@ func remove_character(id: int) -> void:
 		characters.erase(character)
 
 func _on_game_started() -> void:
+	resume_paused_game()
+	ui.in_battle = false
 	RunState.begin_campaign()
 	RunState.roll_party_stats(characters)
 	for member in characters:
@@ -139,11 +141,13 @@ func _on_game_started() -> void:
 	start_zone_run()
 
 func start_zone_run() -> void:
+	resume_paused_game()
+	ui.in_battle = false
 	_apply_zone_config()
 	# TileMapLayer skips rendering updates while invisible; paint tiles after showing the layer.
 	tilemap.visible = true
 	generate_map()
-	tilemap.update_internals()
+	tilemap.refresh_physics()
 	spawn_player()
 	spawn_boss()
 	spawn_fountain()
@@ -220,6 +224,7 @@ func generate_map():
 			connections_visited.append(p)
 	for room in rooms:
 		tilemap.seal_room_corners(room)
+	tilemap.refresh_physics()
 
 func spawn_player():
 	if characters.is_empty():
@@ -240,6 +245,8 @@ func spawn_player():
 			var offset: Vector2 = PARTY_FOLLOW_OFFSETS[mini(i, PARTY_FOLLOW_OFFSETS.size() - 1)]
 			member.spawn_as_follower(starting_room, tilemap, characters[0], offset)
 		member.battle_started = false
+		if member is Character:
+			member.begin_encounter_grace(2.5)
 		_update_overworld_visibility(member)
 
 func _wire_party_leader(lead: Character) -> void:

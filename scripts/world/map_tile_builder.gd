@@ -176,7 +176,15 @@ static func _register_atlas_texture(tile_set: TileSet, texture: Texture2D, _cach
 		if with_physics:
 			_set_wall_collision(source, coords)
 	var source_id: int = tile_set.add_source(source)
+	if with_physics:
+		_add_wall_physics(tile_set, source_id)
 	return source_id
+
+static func ensure_wall_physics(tile_set: TileSet, source_id: int) -> void:
+	if tile_set == null or !tile_set.has_source(source_id):
+		return
+	_add_wall_physics(tile_set, source_id)
+	tile_set.emit_changed()
 
 static func _add_wall_physics(tile_set: TileSet, source_id: int) -> void:
 	var source := tile_set.get_source(source_id) as TileSetAtlasSource

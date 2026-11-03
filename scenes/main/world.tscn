@@ -71,7 +71,7 @@ texture_region_size = Vector2i(32, 32)
 [sub_resource type="TileSet" id="TileSet_tk8u3"]
 tile_size = Vector2i(32, 32)
 physics_layer_0/collision_layer = 1
-physics_layer_0/collision_mask = 2
+physics_layer_0/collision_mask = 1
 sources/0 = SubResource("TileSetAtlasSource_o0l37")
 sources/1 = SubResource("TileSetAtlasSource_xmktd")
 sources/6 = SubResource("TileSetAtlasSource_mhuem")
@@ -87,6 +87,7 @@ process_mode = 1
 process_mode = 1
 tile_set = SubResource("TileSet_tk8u3")
 rendering_quadrant_size = 24
+collision_enabled = true
 script = ExtResource("3_wvnbh")
 
 [node name="ui" parent="." unique_id=1714492097 instance=ExtResource("7_16ak5")]

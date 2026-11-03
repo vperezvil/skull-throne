@@ -169,13 +169,18 @@ func refresh_skills_from_training() -> void:
 	skill_cooldowns.clear()
 
 func spawn(starting_room, tilemap):
-	var center = tilemap.map_to_local(starting_room.get_center())
+	var center_tile := Vector2i(
+		int(starting_room.position.x + starting_room.size.x * 0.5),
+		int(starting_room.position.y + starting_room.size.y * 0.5)
+	)
+	var center: Vector2 = tilemap.map_to_local(center_tile)
 	if is_party_leader:
 		position = center
 	else:
 		position = center + follow_offset
 	initiative = clampi(initiative, 1, 100)
 	visible = true
+	battle_started = false
 	_configure_party_collision()
 
 func spawn_as_follower(starting_room, tilemap, leader: Character, offset: Vector2) -> void:
@@ -218,6 +223,8 @@ func read_input():
 	var direction: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if direction.length_squared() < 0.01:
 		direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	if direction.length_squared() < 0.01:
+		direction = _read_movement_keys_direct()
 	if direction.length_squared() > 0.01:
 		direction = direction.normalized()
 		if abs(direction.x) > abs(direction.y):
@@ -229,6 +236,18 @@ func read_input():
 	else:
 		ap.stop()
 	handle_collision()
+
+func _read_movement_keys_direct() -> Vector2:
+	var dir := Vector2.ZERO
+	if Input.is_physical_key_pressed(KEY_A) or Input.is_physical_key_pressed(KEY_LEFT):
+		dir.x -= 1.0
+	if Input.is_physical_key_pressed(KEY_D) or Input.is_physical_key_pressed(KEY_RIGHT):
+		dir.x += 1.0
+	if Input.is_physical_key_pressed(KEY_W) or Input.is_physical_key_pressed(KEY_UP):
+		dir.y -= 1.0
+	if Input.is_physical_key_pressed(KEY_S) or Input.is_physical_key_pressed(KEY_DOWN):
+		dir.y += 1.0
+	return dir
 
 func handle_collision():
 	if !is_party_leader:
