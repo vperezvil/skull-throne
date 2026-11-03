@@ -62,7 +62,7 @@ func _set_wall(coord: Vector2i) -> void:
 	if get_used_cells().has(coord):
 		return
 	var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
-	set_cell(coord, wall_level, _atlas_coord(floor_map, wall_noise_divisor))
+	set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
 
 func draw_corridor(start, end):
 	var is_vertical = start.x == end.x
@@ -77,11 +77,25 @@ func draw_corridor(start, end):
 			var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
 			var is_border_tile = offset < 0 or offset >= corridor_width
 			if is_border_tile and !get_used_cells().has(coord):
-				set_cell(coord, wall_level, _atlas_coord(floor_map, wall_noise_divisor))
+				set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
 			elif !is_border_tile:
 				set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
 
 func _atlas_coord(noise_sample: float, divisor: float) -> Vector2i:
 	var atlas_index: int = int(round((noise_sample + 10.0) / divisor))
-	atlas_index = clampi(atlas_index, 0, 11)
+	atlas_index = clampi(atlas_index, 0, _max_atlas_index_for_source(level))
 	return Vector2i(atlas_index, 0)
+
+func _wall_atlas_coord(noise_sample: float) -> Vector2i:
+	var atlas_index: int = int(round((noise_sample + 10.0) / wall_noise_divisor))
+	atlas_index = clampi(atlas_index, 0, _max_atlas_index_for_source(wall_level))
+	return Vector2i(atlas_index, 0)
+
+func _max_atlas_index_for_source(source_id: int) -> int:
+	if tile_set == null or !tile_set.has_source(source_id):
+		return 11
+	var source := tile_set.get_source(source_id) as TileSetAtlasSource
+	if source == null or source.texture == null:
+		return 11
+	var cols: int = maxi(1, int(source.texture.get_width()) / source.texture_region_size.x)
+	return clampi(cols - 1, 0, 11)

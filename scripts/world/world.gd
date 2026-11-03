@@ -140,7 +140,10 @@ func _on_game_started() -> void:
 
 func start_zone_run() -> void:
 	_apply_zone_config()
+	# TileMapLayer skips rendering updates while invisible; paint tiles after showing the layer.
+	tilemap.visible = true
 	generate_map()
+	tilemap.update_internals()
 	spawn_player()
 	spawn_boss()
 	spawn_fountain()
@@ -151,7 +154,6 @@ func start_zone_run() -> void:
 	spawn_map_events()
 	map_generated.emit()
 	map_music.play()
-	tilemap.visible = true
 
 func advance_to_next_zone() -> void:
 	if !RunState.has_more_floors():

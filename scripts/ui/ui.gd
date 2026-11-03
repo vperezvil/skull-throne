@@ -1131,17 +1131,25 @@ func _sync_menu_backdrop() -> void:
 	_menu_backdrop.visible = main_menu.visible or character_menu.visible
 
 func _setup_character_select_buttons() -> void:
+	const VIEWPORT_W := 1920.0
+	const ROW_W := 580.0
 	var intro: RichTextLabel = character_menu.get_node("RichTextLabel")
+	intro.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	intro.offset_left = (VIEWPORT_W - 900.0) * 0.5
+	intro.offset_top = 186.0
+	intro.offset_right = intro.offset_left + 900.0
+	intro.offset_bottom = 340.0
 	intro.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	intro.custom_minimum_size = Vector2(900, 0)
 	intro.scroll_active = false
 	intro.fit_content = true
 	var row: HBoxContainer = character_menu.get_node("CharacterSelection/HBoxContainer")
-	row.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	row.offset_left = -360
-	row.offset_top = 320
-	row.offset_right = 360
-	row.offset_bottom = 440
+	row.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	row.offset_left = (VIEWPORT_W - ROW_W) * 0.5
+	row.offset_top = 390.0
+	row.offset_right = row.offset_left + ROW_W
+	row.offset_bottom = 490.0
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
 	row.add_theme_constant_override("separation", 28)
 	var button_paths := [
 		"Character-menu/CharacterSelection/HBoxContainer/TinyBones",

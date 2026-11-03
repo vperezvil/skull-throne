@@ -451,11 +451,12 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_f4t1p")
 text = "Start run"
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Character-menu"]
-offset_left = 672.0
+offset_left = 510.0
 offset_top = 186.0
-offset_right = 1255.0
-offset_bottom = 286.0
+offset_right = 1410.0
+offset_bottom = 340.0
 theme_override_font_sizes/normal_font_size = 22
+autowrap_mode = 3
 text = "Pick a party, then the Blood Sanctum: Grum sells gear, the Enchantress trains skills. Every 2 floors, a caravan camp opens on your descent.
 Select up to 4 - first selected leads on the map."
 
@@ -472,10 +473,10 @@ text = "You need to select at least one character"
 [node name="CharacterSelection" type="Node2D" parent="Character-menu"]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Character-menu/CharacterSelection"]
-offset_left = 799.0
-offset_top = 391.0
-offset_right = 1067.0
-offset_bottom = 455.0
+offset_left = 670.0
+offset_top = 390.0
+offset_right = 1250.0
+offset_bottom = 490.0
 alignment = 1
 
 [node name="TinyBones" type="TextureButton" parent="Character-menu/CharacterSelection/HBoxContainer"]
