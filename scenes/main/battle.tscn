@@ -47,21 +47,11 @@ offset_right = 1922.0
 offset_bottom = 1077.0
 texture = ExtResource("3_wklv1")
 
-[node name="EnemyContainer" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(228, 715)
-offset_left = 333.0
-offset_top = 201.0
-offset_right = 561.0
-offset_bottom = 1016.0
-alignment = 1
+[node name="EnemyContainer" type="Node2D" parent="."]
+position = Vector2(447.0, 608.0)
 
-[node name="CharacterContainer" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(228, 715)
-offset_left = 1312.0
-offset_top = 201.0
-offset_right = 1540.0
-offset_bottom = 1016.0
-alignment = 1
+[node name="CharacterContainer" type="Node2D" parent="."]
+position = Vector2(1426.0, 608.0)
 
 [node name="UI" type="CanvasLayer" parent="."]
 

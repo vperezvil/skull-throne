@@ -139,10 +139,9 @@ func fill_characters(characters):
 				camera.enabled = false
 			character.apply_battle_presentation_scale(2.0)
 			if is_lonely_character:
-				var min_size = character_container.get_custom_minimum_size()
-				character.position = Vector2(min_size.x,min_size.y/2)
+				character.position = Vector2.ZERO
 			else:
-				character.position = Vector2(0,offset)
+				character.position = Vector2(0, offset)
 			offset += spacing_between_characters
 			character.collided_with_enemy()
 			character.reset_battle_cooldowns()
@@ -182,10 +181,9 @@ func fill_enemies(enemies):
 				}
 				enemy.get_parent().remove_child(enemy)
 			if is_lonely_enemy:
-				var min_size = enemy_container.get_custom_minimum_size()
-				enemy.position = Vector2(min_size.x,min_size.y/2)
+				enemy.position = Vector2.ZERO
 			else:
-				enemy.position = Vector2(0,offset)
+				enemy.position = Vector2(0, offset)
 				offset += spacing_between_enemies
 			if enemy.has_method("apply_battle_presentation_scale"):
 				enemy.apply_battle_presentation_scale(3.0)

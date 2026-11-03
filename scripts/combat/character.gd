@@ -93,7 +93,7 @@ func apply_battle_presentation_scale(factor: float) -> void:
 		xp_bar.scale = Vector2(inv, inv)
 
 func align_battle_hud_to_sprite() -> void:
-	BattleHudLayout.mount_party_bars(self, progress_bar, mp_bar, max_mp > 0)
+	BattleHudLayout.mount_party_bars(self, progress_bar, mp_bar, max_mp > 0, xp_bar, _battle_hud_active)
 
 func prepare_battle_hud() -> void:
 	_battle_hud_active = true
@@ -104,10 +104,10 @@ func prepare_battle_hud() -> void:
 		_mp_bar_value_label = BattleHudLayout.ensure_bar_label(mp_bar)
 		_mp_bar_value_label.visible = true
 		mp_bar.show_percentage = false
-	if xp_bar:
-		xp_bar.visible = false
+	_update_resource_bars()
 	align_battle_hud_to_sprite()
 	_sync_bar_value_label()
+	call_deferred("align_battle_hud_to_sprite")
 
 func _ensure_bar_value_label() -> void:
 	if _bar_value_label == null:
@@ -131,9 +131,8 @@ func _setup_resource_bars() -> void:
 	mp_bar.offset_right = progress_bar.offset_right
 	mp_bar.offset_top = progress_bar.offset_top + 14.0
 	mp_bar.offset_bottom = progress_bar.offset_bottom + 14.0
-	if theme:
-		mp_bar.theme = theme
-	mp_bar.modulate = Color(0.55, 0.75, 1.0)
+	if mp_bar:
+		mp_bar.modulate = Color.WHITE
 	add_child(mp_bar)
 	xp_bar = ProgressBar.new()
 	xp_bar.name = "XpBar"
@@ -143,8 +142,6 @@ func _setup_resource_bars() -> void:
 	xp_bar.offset_right = progress_bar.offset_right
 	xp_bar.offset_top = progress_bar.offset_top + 28.0
 	xp_bar.offset_bottom = progress_bar.offset_bottom + 28.0
-	if theme:
-		xp_bar.theme = theme
 	add_child(xp_bar)
 	_update_resource_bars()
 	
@@ -542,6 +539,7 @@ func gain_xp(amount: int, track_for_run: bool = true) -> void:
 	while xp >= xp_to_next_level():
 		xp -= xp_to_next_level()
 		_level_up()
+	_update_resource_bars()
 
 func apply_level_up_bonus() -> void:
 	_base_max_hp += 8

@@ -474,7 +474,7 @@ func show_hub() -> void:
 	hub_message_label.text = ""
 	RunState.refresh_hub_descent_preview()
 	if MetaProgress.should_show_sanctum_tutorial():
-		hub_message_label.text = "Select Party, then tap a marker on the map."
+		hub_message_label.text = "Select a party, then walk the sanctum (WASD) and talk to NPCs (E)."
 		hub_message_label.visible = true
 		MetaProgress.mark_sanctum_tutorial_seen()
 	hub_panel.visible = true
@@ -594,6 +594,20 @@ func _refresh_hub_ui() -> void:
 		hub_begin_btn.text = "Begin descent" if has_party else "Select a party first"
 	if hub_sanctum_map:
 		hub_sanctum_map.set_hub_state(has_party, "")
+		if has_party and character_ids_toggled.size() > 0:
+			var lead_def: CharacterDefinition = ContentRegistry.get_character_for_menu_index(character_ids_toggled[0])
+			if lead_def != null and lead_def.scene_path != "":
+				var packed: PackedScene = load(lead_def.scene_path) as PackedScene
+				if packed != null:
+					var preview: Node = packed.instantiate()
+					var sprite_node: Node = preview.get_node_or_null("Body")
+					if sprite_node == null:
+						sprite_node = preview.get_node_or_null("BodySkeleton")
+					if sprite_node is Sprite2D:
+						var body: Sprite2D = sprite_node as Sprite2D
+						if body.texture != null:
+							hub_sanctum_map.set_party_walker_texture(body.texture)
+					preview.queue_free()
 	_refresh_hub_route_list()
 	if ascended_toggle:
 		ascended_toggle.disabled = !MetaProgress.can_use_ascended()
