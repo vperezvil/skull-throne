@@ -20,6 +20,7 @@ var initiative: int = 50
 var attack: int = 10
 var _bar_value_label: Label
 var _battle_hud_active: bool = false
+var _battle_bar_mount: Dictionary = {}
 
 func _ready_combatant() -> void:
 	progress_bar.max_value = max_hp
@@ -45,50 +46,10 @@ func apply_battle_presentation_scale(factor: float) -> void:
 	var inv := 1.0 / factor
 	progress_bar.scale = Vector2(inv, inv)
 
-func _visual_sprite_node() -> Node2D:
-	if has_node("EnemySprite"):
-		return $EnemySprite as Node2D
-	if has_node("Body"):
-		return $Body as Node2D
-	for child in get_children():
-		if child is Sprite2D or child is AnimatedSprite2D:
-			return child as Node2D
-	return null
-
-func _sprite_top_local_y() -> float:
-	var sprite := _visual_sprite_node()
-	if sprite == null:
-		return -56.0
-	var height := 64.0
-	if sprite is Sprite2D:
-		var s: Sprite2D = sprite as Sprite2D
-		if s.texture != null:
-			var frame_h: float = s.texture.get_height() / maxf(float(maxi(s.vframes, 1)), 1.0)
-			height = frame_h * absf(s.scale.y)
-		else:
-			height = 64.0 * absf(s.scale.y)
-	elif sprite is AnimatedSprite2D:
-		var a: AnimatedSprite2D = sprite as AnimatedSprite2D
-		if a.sprite_frames != null and a.sprite_frames.has_animation(a.animation):
-			var tex: Texture2D = a.sprite_frames.get_frame_texture(a.animation, 0)
-			if tex != null:
-				height = tex.get_height() * absf(a.scale.y)
-	return sprite.position.y - height * 0.5
-
-func _sprite_center_x() -> float:
-	var sprite := _visual_sprite_node()
-	return sprite.position.x if sprite != null else 0.0
-
 func align_battle_hud_to_sprite() -> void:
-	var cx := _sprite_center_x()
-	var top_y := _sprite_top_local_y()
-	var bar_h := 14.0
-	var gap := 10.0
-	var half_w := 56.0
-	progress_bar.offset_left = cx - half_w
-	progress_bar.offset_right = cx + half_w
-	progress_bar.offset_top = top_y - bar_h - gap
-	progress_bar.offset_bottom = top_y - gap
+	var saved: Dictionary = BattleHudLayout.mount_bar(self, progress_bar)
+	if !saved.is_empty():
+		_battle_bar_mount = saved
 
 func prepare_battle_hud() -> void:
 	_battle_hud_active = true
@@ -119,7 +80,10 @@ func reset_presentation_bars() -> void:
 	_battle_hud_active = false
 	if _bar_value_label:
 		_bar_value_label.visible = false
+	BattleHudLayout.unmount_bar(progress_bar, _battle_bar_mount)
+	_battle_bar_mount.clear()
 	progress_bar.scale = Vector2.ONE
+	progress_bar.position = Vector2.ZERO
 	progress_bar.offset_left = -52.0
 	progress_bar.offset_right = 53.0
 	progress_bar.offset_top = -42.0

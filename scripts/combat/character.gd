@@ -14,6 +14,7 @@ var mp_bar: ProgressBar
 var xp_bar: ProgressBar
 var _bar_value_label: Label
 var _battle_hud_active: bool = false
+var _battle_bar_mount: Dictionary = {}
 
 signal boss_battle_start
 signal enemy_battle_start
@@ -91,36 +92,9 @@ func apply_battle_presentation_scale(factor: float) -> void:
 		xp_bar.scale = Vector2(inv, inv)
 
 func align_battle_hud_to_sprite() -> void:
-	var cx := _sprite_center_x()
-	var top_y := _sprite_top_local_y()
-	var bar_h := 14.0
-	var gap := 10.0
-	var half_w := 56.0
-	progress_bar.offset_left = cx - half_w
-	progress_bar.offset_right = cx + half_w
-	progress_bar.offset_top = top_y - bar_h - gap
-	progress_bar.offset_bottom = top_y - gap
-	if mp_bar:
-		mp_bar.offset_left = progress_bar.offset_left
-		mp_bar.offset_right = progress_bar.offset_right
-		mp_bar.offset_top = progress_bar.offset_bottom + 2.0
-		mp_bar.offset_bottom = progress_bar.offset_bottom + 16.0
-	if xp_bar:
-		xp_bar.offset_left = progress_bar.offset_left
-		xp_bar.offset_right = progress_bar.offset_right
-
-func _sprite_center_x() -> float:
-	if has_node("Body"):
-		return ($Body as Node2D).position.x
-	return 0.0
-
-func _sprite_top_local_y() -> float:
-	if has_node("Body"):
-		var body: Sprite2D = $Body
-		if body.texture != null:
-			var frame_h: float = body.texture.get_height() / maxf(float(maxi(body.vframes, 1)), 1.0)
-			return body.position.y - frame_h * absf(body.scale.y) * 0.5
-	return -58.0
+	var saved: Dictionary = BattleHudLayout.mount_bar(self, progress_bar)
+	if !saved.is_empty():
+		_battle_bar_mount = saved
 
 func prepare_battle_hud() -> void:
 	_battle_hud_active = true
@@ -423,7 +397,10 @@ func reset_presentation_bars() -> void:
 	_battle_hud_active = false
 	if _bar_value_label:
 		_bar_value_label.visible = false
+	BattleHudLayout.unmount_bar(progress_bar, _battle_bar_mount)
+	_battle_bar_mount.clear()
 	progress_bar.scale = Vector2.ONE
+	progress_bar.position = Vector2.ZERO
 	progress_bar.offset_left = -65.0
 	progress_bar.offset_right = 71.0
 	progress_bar.offset_top = -58.0
