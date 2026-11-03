@@ -13,7 +13,7 @@ Skull Throne is a top-down 2D roguelike inspired by *Darkest Dungeon* and *Warha
 
 Each fallen hero adds a skull to that throne. Over time, the Blood God grows tougher, and the finale arena fills with the cost of your runs. Heroes can roll **slightly different stats** each time you **Begin descent**, so the same roster can play differently from run to run.
 
-The engine is **Godot 4.2** with **GDScript**. Maps are built from rooms linked by a minimum spanning tree so every floor is connected and playable, with biome-specific tiles, enemies, and music.
+The engine is **Godot 4.7** with **GDScript**. Maps are built from rooms linked by a minimum spanning tree so every floor is connected and playable, with biome-specific tiles, enemies, and music.
 
 ## Usage
 
@@ -34,7 +34,7 @@ The engine is **Godot 4.2** with **GDScript**. Maps are built from rooms linked 
 #### From Source
 
 1. **Prerequisites**
-	- Ensure you have [Godot Engine](https://godotengine.org/) installed. The game is developed using Godot version 4.2.1.
+	- Install [Godot 4.7.2 stable](https://godotengine.org/download/archive/4.7.2-stable/) (or a newer 4.7.x patch). See [docs/godot-upgrade.md](docs/godot-upgrade.md) when upgrading from an older project save.
 
 2. **Open the Project**
 	- Launch Godot Engine.
@@ -86,10 +86,11 @@ The engine is **Godot 4.2** with **GDScript**. Maps are built from rooms linked 
 
 ### Contributing / releases
 
-Pull requests run **Godot CI** (import, content validation, smoke run).
+Pull requests run **Godot CI** (import, content validation, smoke test).
 
 | Doc | Audience |
 | --- | --- |
+| [docs/godot-upgrade.md](docs/godot-upgrade.md) | Reviving the project, 4.2 to 4.7, map node layout |
 | [docs/codebase-layout.md](docs/codebase-layout.md) | Scripts and scenes folder map |
 | [docs/releasing.md](docs/releasing.md) | Version tags, export, playtest |
 | [docs/third-party-licenses.md](docs/third-party-licenses.md) | Ship with builds (also linked from [THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)) |

@@ -4,7 +4,7 @@ class_name HubCommerce
 # Shop and trainer purchases; use_run_gold = waystation, else Blood Tithe in sanctum.
 
 static func buy_equipment(equipment_id: String, use_run_gold: bool) -> bool:
-	var def := EquipmentRegistry.get(equipment_id)
+	var def := EquipmentRegistry.get_definition(equipment_id)
 	if def == null:
 		return false
 	var price := def.waystation_price if use_run_gold else def.sanctum_price
@@ -40,7 +40,7 @@ static func train_skill(character_id: String, use_run_gold: bool) -> bool:
 static func equip_on_character(character: Character, equipment_id: String) -> bool:
 	if character == null or !RunState.stash_has(equipment_id):
 		return false
-	var def := EquipmentRegistry.get(equipment_id)
+	var def := EquipmentRegistry.get_definition(equipment_id)
 	if def == null:
 		return false
 	RunState.equip(character.character_id, equipment_id, def.slot)

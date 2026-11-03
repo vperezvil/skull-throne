@@ -34,8 +34,8 @@ static func add_equipment_shop(
 	message_label: Label,
 	on_purchased: Callable = Callable()
 ) -> void:
-	for eq_id in EquipmentRegistry.get_shop_ids(use_run_gold):
-		var def: EquipmentDefinition = EquipmentRegistry.get(eq_id)
+	for eq_id in EquipmentRegistry.get_definition_shop_ids(use_run_gold):
+		var def: EquipmentDefinition = EquipmentRegistry.get_definition(eq_id)
 		if def == null:
 			continue
 		var price := def.waystation_price if use_run_gold else def.sanctum_price
@@ -69,7 +69,7 @@ static func add_equip_stash(parent: VBoxContainer, party: Array, message_label: 
 		parent.add_child(empty)
 		return
 	for eq_id in RunState.equipment_stash:
-		var def := EquipmentRegistry.get(eq_id)
+		var def := EquipmentRegistry.get_definition(eq_id)
 		if def == null:
 			continue
 		for member in party:

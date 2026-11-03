@@ -44,7 +44,7 @@ func configure_khorne() -> void:
 		sprite.modulate = Color(1.0, 0.35, 0.25)
 		sprite.scale = Vector2(4.5, 4.5)
 
-func spawn(room: Rect2, tilemap: TileMap) -> void:
+func spawn(room: Rect2, tilemap: Node2D) -> void:
 	var center := tilemap.map_to_local(room.get_center())
 	position = center
 	spawn_initiative_clamp()

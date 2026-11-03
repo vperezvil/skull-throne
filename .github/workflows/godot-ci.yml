@@ -11,7 +11,7 @@ jobs:
   godot:
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:4.2.2
+      image: barichello/godot-ci:4.7.2
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,5 +22,5 @@ jobs:
       - name: Validate game content
         run: godot --headless --path . --script res://scripts/tools/content_validator.gd
 
-      - name: Smoke run (main scene loads)
-        run: godot --headless --path . --quit-after 2
+      - name: Smoke test (main scene + map generation)
+        run: godot --headless --path . --script res://scripts/tools/smoke_test.gd

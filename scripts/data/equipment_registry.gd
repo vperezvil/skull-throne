@@ -5,7 +5,7 @@ var catalog: Dictionary = {}
 func _ready() -> void:
 	_register_all()
 
-func get(id: String) -> EquipmentDefinition:
+func get_definition(id: String) -> EquipmentDefinition:
 	return catalog.get(id)
 
 func get_all_ids() -> Array:

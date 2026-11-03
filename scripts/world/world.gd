@@ -368,7 +368,7 @@ func _throne_skull_tint() -> Color:
 			return Color(0.92, 0.88, 0.88, 0.95)
 
 func collect_walkable_tiles():
-	walkable_tiles = tilemap.get_used_cells_by_id(0, tilemap.level)
+	walkable_tiles = tilemap.get_used_cells_by_id(tilemap.level)
 	SpawnHelpers.erase_tiles_in_rect(walkable_tiles, starting_room)
 	SpawnHelpers.erase_tiles_in_rect(walkable_tiles, fountain_room)
 	SpawnHelpers.erase_tiles_in_rect(walkable_tiles, boss_room)

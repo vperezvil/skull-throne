@@ -1,4 +1,4 @@
-extends TileMap
+extends TileMapLayer
 
 var map = FastNoiseLite.new()
 var width = 570
@@ -11,7 +11,7 @@ var floor_noise_divisor := 1.3
 var wall_noise_divisor := 5.0
 var _theme_id := "grim_fields"
 
-func _ready():
+func _ready() -> void:
 	map.seed = randi()
 
 func apply_zone(zone: ZoneDefinition) -> void:
@@ -33,16 +33,16 @@ func stamp_throne_arena(room: Rect2) -> void:
 	var center := room.get_center()
 	for offset in [Vector2i(-2, 0), Vector2i(2, 0), Vector2i(0, -2), Vector2i(0, 2)]:
 		var coord := Vector2i(int(center.x) + offset.x, int(center.y) + offset.y)
-		if get_used_cells(0).has(coord):
-			set_cell(0, coord, level, Vector2i(0, 0))
+		if get_used_cells().has(coord):
+			set_cell(coord, level, Vector2i(0, 0))
 
 func generate_chunk(room_position, room_size):
 	for x in range(int(room_size.x)):
 		for y in range(int(room_size.y)):
 			var coord = Vector2i(int(room_position.x) + x, int(room_position.y) + y)
-			if !get_used_cells(0).has(coord):
+			if !get_used_cells().has(coord):
 				var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
-				set_cell(0, coord, level, _atlas_coord(floor_map, floor_noise_divisor))
+				set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
 
 func print_room_border(room_position, room_size):
 	var room_right = int(room_position.x + room_size.x)
@@ -59,10 +59,10 @@ func print_room_border(room_position, room_size):
 		_set_wall(Vector2i(room_right - 1, y))
 
 func _set_wall(coord: Vector2i) -> void:
-	if get_used_cells(0).has(coord):
+	if get_used_cells().has(coord):
 		return
 	var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
-	set_cell(0, coord, wall_level, _atlas_coord(floor_map, wall_noise_divisor))
+	set_cell(coord, wall_level, _atlas_coord(floor_map, wall_noise_divisor))
 
 func draw_corridor(start, end):
 	var is_vertical = start.x == end.x
@@ -76,10 +76,10 @@ func draw_corridor(start, end):
 			var coord = Vector2i(main_coord + offset, i) if is_vertical else Vector2i(i, main_coord + offset)
 			var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
 			var is_border_tile = offset < 0 or offset >= corridor_width
-			if is_border_tile and !get_used_cells(0).has(coord):
-				set_cell(0, coord, wall_level, _atlas_coord(floor_map, wall_noise_divisor))
+			if is_border_tile and !get_used_cells().has(coord):
+				set_cell(coord, wall_level, _atlas_coord(floor_map, wall_noise_divisor))
 			elif !is_border_tile:
-				set_cell(0, coord, level, _atlas_coord(floor_map, floor_noise_divisor))
+				set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
 
 func _atlas_coord(noise_sample: float, divisor: float) -> Vector2i:
 	var atlas_index := int(round((noise_sample + 10.0) / divisor))

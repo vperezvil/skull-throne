@@ -9,8 +9,8 @@ const SOURCE_GRASS_WALL := 6
 
 const _THEME_CACHE: Dictionary = {}
 
-static func apply_theme(tile_map: TileMap, theme_id: String) -> Dictionary:
-	var tile_set: TileSet = tile_map.tile_set
+static func apply_theme(layer: TileMapLayer, theme_id: String) -> Dictionary:
+	var tile_set: TileSet = layer.tile_set
 	if tile_set == null:
 		push_error("Map has no TileSet.")
 		return {"floor": 0, "wall": 6}

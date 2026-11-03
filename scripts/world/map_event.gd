@@ -31,7 +31,7 @@ func _ready() -> void:
 	shape.shape = circle
 	add_child(shape)
 
-func setup(tilemap: TileMap, cell: Vector2i, id: String) -> void:
+func setup(tilemap: Node2D, cell: Vector2i, id: String) -> void:
 	event_id = id
 	position = tilemap.map_to_local(cell)
 
