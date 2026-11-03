@@ -183,7 +183,7 @@ func remove_trait(character_id: String, trait_id: String) -> bool:
 	return true
 
 func treat_trait(character_id: String, trait_id: String) -> bool:
-	var cost := CharacterTraits.treatment_cost(trait_id)
+	var cost: int = CharacterTraits.treatment_cost(trait_id)
 	if !spend_tithe(cost):
 		return false
 	return remove_trait(character_id, trait_id)

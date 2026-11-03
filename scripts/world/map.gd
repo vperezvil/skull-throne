@@ -18,7 +18,7 @@ func apply_zone(zone: ZoneDefinition) -> void:
 	if zone == null:
 		return
 	_theme_id = zone.map_theme_id
-	var theme_sources := MapTileBuilder.apply_theme(self, _theme_id)
+	var theme_sources: Dictionary = MapTileBuilder.apply_theme(self, _theme_id)
 	level = theme_sources["floor"]
 	wall_level = theme_sources["wall"]
 	floor_noise_divisor = MapThemeSettings.get_floor_noise_divisor(_theme_id)

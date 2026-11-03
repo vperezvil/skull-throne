@@ -12,7 +12,7 @@ const ICON_BLOOD := "res://assets/items/potion/i-blood.png"
 
 static func get_skills_for_character(character_id: String) -> Array[SkillDefinition]:
 	var skills := _base_skills(character_id)
-	var tier := MetaProgress.get_skill_tier(character_id)
+	var tier: int = MetaProgress.get_skill_tier(character_id)
 	skills.append_array(_tier_bonus_skills(character_id, tier))
 	return skills
 
@@ -79,7 +79,7 @@ static func _make(
 	cooldown: int = 0,
 	icon: String = ""
 ) -> SkillDefinition:
-	var skill := SkillDefinition.new()
+	var skill: SkillDefinition = SkillDefinition.new()
 	skill.skill_id = id
 	skill.display_name = name
 	skill.description = desc

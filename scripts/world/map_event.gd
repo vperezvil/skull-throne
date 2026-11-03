@@ -4,7 +4,7 @@ class_name MapEvent
 signal triggered(event_id: String)
 
 var event_id: String = "healing_spring"
-var _fired := false
+var _fired: bool = false
 
 func _ready() -> void:
 	collision_layer = 0

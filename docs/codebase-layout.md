@@ -12,7 +12,9 @@ Godot **4.7** project. Main scene: `res://scenes/main/world.tscn` (see `project.
 | `world/` | Overworld, map generation, events, `run_director.gd` |
 | `combat/` | Battle, combatants, enemies, biome combat |
 | `ui/` | HUD, hub commerce, party HUD, pause settings |
-| `tools/` | Headless CI scripts (`content_validator.gd`, `smoke_test.gd`) |
+| `tools/` | Headless CI scripts (`content_validator.gd`, `smoke_test.gd`, `check_gdscript_patterns.gd`) |
+
+Script files use **snake_case** (e.g. `map.gd`, `ui.gd`, `character.gd`). `class_name` types may stay PascalCase (`Character`, `Item`).
 | `characters/` | Playable party scripts |
 | `items/` | Inventory and pickups |
 | `systems/` | Shrines, soul marks, stress |

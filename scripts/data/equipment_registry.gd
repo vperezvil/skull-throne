@@ -16,7 +16,7 @@ func get_shop_ids(use_run_gold: bool) -> Array:
 	ids.sort()
 	if !use_run_gold:
 		return ids
-	var depth := RunState.floors_cleared_this_run
+	var depth: int = RunState.floors_cleared_this_run
 	var count := clampi(4 + depth / 2, 4, ids.size())
 	return ids.slice(0, count)
 
@@ -53,7 +53,7 @@ func _add(
 	sanctum: int,
 	way: int
 ) -> void:
-	var def := EquipmentDefinition.new()
+	var def: EquipmentDefinition = EquipmentDefinition.new()
 	def.equipment_id = id
 	def.display_name = display
 	def.slot = slot

@@ -1,7 +1,7 @@
 extends RefCounted
 class_name HubNpcUi
 
-# Builds shop / trainer / stash controls for UI.gd hub and waystation panels.
+# Builds shop / trainer / stash controls for ui.gd hub and waystation panels.
 
 static func npc_portrait(path: String) -> TextureRect:
 	var tex := TextureRect.new()
@@ -34,7 +34,7 @@ static func add_equipment_shop(
 	message_label: Label,
 	on_purchased: Callable = Callable()
 ) -> void:
-	for eq_id in EquipmentRegistry.get_definition_shop_ids(use_run_gold):
+	for eq_id in EquipmentRegistry.get_shop_ids(use_run_gold):
 		var def: EquipmentDefinition = EquipmentRegistry.get_definition(eq_id)
 		if def == null:
 			continue
@@ -97,7 +97,7 @@ static func add_skill_trainer(
 		if !(member is Character):
 			continue
 		var ch: Character = member
-		var tier := MetaProgress.get_skill_tier(ch.character_id)
+		var tier: int = MetaProgress.get_skill_tier(ch.character_id)
 		var btn := Button.new()
 		var price := 20 if use_run_gold else 35
 		btn.text = "Train %s skills (tier %d/3) - %d %s" % [
@@ -135,7 +135,7 @@ static func add_trait_treatment(
 	header.text = "Purify Stains (breaking an Oath costs more tithe)"
 	header.add_theme_font_size_override("font_size", 16)
 	parent.add_child(header)
-	var any := false
+	var any: bool = false
 	for member in party:
 		if !(member is Character):
 			continue
@@ -143,8 +143,8 @@ static func add_trait_treatment(
 		for trait_id in MetaProgress.get_traits(ch.character_id):
 			any = true
 			var btn := Button.new()
-			var cost := CharacterTraits.treatment_cost(trait_id)
-			var cat := CharacterTraits.get_category_label(trait_id)
+			var cost: int = CharacterTraits.treatment_cost(trait_id)
+			var cat: String = CharacterTraits.get_category_label(trait_id)
 			btn.text = "Purify %s: %s %s (%d tithe)" % [ch.name, cat, CharacterTraits.get_title(trait_id), cost]
 			btn.pressed.connect(_on_treat_trait.bind(ch, trait_id, message_label, on_changed))
 			parent.add_child(btn)

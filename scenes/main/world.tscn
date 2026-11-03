@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dobmn3f1283i6" path="res://assets/map/floor/cobble_atlas_1.png" id="2_jfbwa"]
 [ext_resource type="PackedScene" uid="uid://j0yjavdk5yib" path="res://scenes/main/battle.tscn" id="2_mlip8"]
 [ext_resource type="Texture2D" uid="uid://btocr5dtn0m3l" path="res://assets/map/wall/grass_wall.png" id="3_6ommp"]
-[ext_resource type="Script" uid="uid://d125lgs58qpgq" path="res://scripts/world/Map.gd" id="3_wvnbh"]
+[ext_resource type="Script" uid="uid://d125lgs58qpgq" path="res://scripts/world/map.gd" id="3_wvnbh"]
 [ext_resource type="PackedScene" uid="uid://cpq13kxejjodc" path="res://scenes/main/ui.tscn" id="7_16ak5"]
 [ext_resource type="PackedScene" uid="uid://cy5t48r5pe16n" path="res://scenes/characters/beth.tscn" id="8_1diee"]
 [ext_resource type="PackedScene" uid="uid://c8xai0wl4sw44" path="res://scenes/enemies/boss.tscn" id="8_7hej8"]

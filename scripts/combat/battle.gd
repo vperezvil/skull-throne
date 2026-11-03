@@ -37,8 +37,8 @@ var dead_players = 0
 var is_boss_battle = false
 var is_run_pressed = false
 var pending_skill: SkillDefinition = null
-var battle_xp_reward := 0
-var _boss_turn_counter := 0
+var battle_xp_reward: int = 0
+var _boss_turn_counter: int = 0
 var party_status_label: Label
 signal battle_ended
 signal battle_fled
@@ -77,7 +77,7 @@ func _update_battle_party_status() -> void:
 	for ch in character_container.get_children():
 		if !(ch is Character) or ch.current_hp <= 0:
 			continue
-		var tags := ""
+		var tags: String = ""
 		if ch.stress > 0:
 			tags += " Str %d/%d" % [ch.stress, StressSystem.STRESS_MAX]
 		if ch.bleed_stacks > 0:
@@ -113,7 +113,7 @@ func start_battle(characters, enemies):
 	sort_combatants_by_initiative()
 	combat_dialog.visible = true
 	combat_dialog.text = BATTLE_STARTED
-	var zone := RunState.get_current_zone()
+	var zone: ZoneDefinition = RunState.get_current_zone()
 	if zone != null:
 		combat_dialog.text += BiomeCombat.get_battle_opening(zone.map_theme_id)
 	if RunState.run_modifier_id != "":
@@ -166,8 +166,8 @@ func fill_enemies(enemies):
 		# Music from zone boss_kind (warden vs khorne), set in ZoneMusic.
 		boss_music.stream = ZoneMusic.get_boss_battle_music_for_zone(RunState.get_current_zone())
 		boss_music.play()
-		var zone := RunState.get_current_zone()
-		var depth := RunState.get_run_depth()
+		var zone: ZoneDefinition = RunState.get_current_zone()
+		var depth: int = RunState.get_run_depth()
 		battle_xp_reward = 200 if zone != null and zone.boss_kind == "khorne" else 120 + depth * 40
 	else:
 		background_enemy.visible = true
@@ -210,8 +210,8 @@ func end_battle():
 
 	var fled: bool = is_run_pressed
 	if !fled:
-		var zone := RunState.get_current_zone()
-		var finale := zone != null and zone.is_final_zone and is_boss_battle
+		var zone: ZoneDefinition = RunState.get_current_zone()
+		var finale: bool = zone != null and zone.is_final_zone and is_boss_battle
 		win_music.stream = ZoneMusic.get_victory_music(finale)
 		win_music.play()
 		combat_dialog.text += WIN_BATTLE
@@ -231,7 +231,7 @@ func end_battle():
 			if ch is Character:
 				flee_party.append(ch)
 		StressSystem.on_flee(flee_party)
-	var remaining_characters := _restore_party_members()
+	var remaining_characters: Array = _restore_party_members()
 	if !fled:
 		_award_battle_xp(remaining_characters)
 		_award_battle_gold(remaining_characters)
@@ -317,8 +317,8 @@ func _on_skills_pressed():
 		battle_menu.visible = true
 		return
 	var user: Character = current_combatant
-	var tier := MetaProgress.get_skill_tier(user.character_id)
-	var mult := MetaProgress.get_skill_damage_multiplier(user.character_id)
+	var tier: int = MetaProgress.get_skill_tier(user.character_id)
+	var mult: float = MetaProgress.get_skill_damage_multiplier(user.character_id)
 	combat_dialog.text += "\nTier %d (damage x%.2f)." % [tier, mult]
 	if tier < 2:
 		combat_dialog.text += " Sanctum tier 2+ unlocks extra skills."
@@ -411,8 +411,8 @@ func _apply_skill(user: Character, skill: SkillDefinition, target) -> void:
 				target.apply_healing(skill.power)
 		SkillDefinition.DamageKind.PHYSICAL, SkillDefinition.DamageKind.MAGICAL:
 			if target is Combatant or target is Boss:
-				var was_crit := false
-				var damage := user.compute_skill_damage(skill, target)
+				var was_crit: bool = false
+				var damage: int = user.compute_skill_damage(skill, target)
 				if user is Character and skill.damage_kind == SkillDefinition.DamageKind.PHYSICAL:
 					was_crit = damage >= (user.attack + skill.power) * 2 - 1
 				combat_dialog.text += DAMAGE_DEALT.replace("{player1}", user.name).replace("{damage}", str(damage)).replace("{player2}", target_name)
@@ -438,8 +438,8 @@ func _on_enemy_selected(enemy):
 		_apply_skill(current_combatant, pending_skill, enemy)
 		enemy.focus.visible = false
 		return
-	var damage := current_combatant.attack
-	var was_crit := false
+	var damage: int = current_combatant.attack
+	var was_crit: bool = false
 	if current_combatant is Character:
 		damage = current_combatant.compute_basic_attack_damage()
 		was_crit = damage > current_combatant.attack
@@ -468,14 +468,14 @@ func _award_battle_xp(survivors: Array) -> void:
 func _award_battle_gold(survivors: Array) -> void:
 	if is_boss_battle:
 		return
-	var depth := RunState.get_run_depth()
+	var depth: int = RunState.get_run_depth()
 	var gold := GameConstants.BATTLE_GOLD_BASE + depth * 2
 	for foe in enemy_original_state.keys():
 		if is_instance_valid(foe) and foe.get("is_elite") == true:
 			gold += 14
-	var before := RunState.run_gold
+	var before: int = RunState.run_gold
 	RunState.add_run_gold(gold)
-	var gained := RunState.run_gold - before
+	var gained: int = RunState.run_gold - before
 	if gained > 0:
 		var shown := gained
 		for ch in survivors:
@@ -524,10 +524,10 @@ func start_turn():
 			var regen := current_combatant.regenerate_mp_this_turn()
 			if regen > 0:
 				combat_dialog.text += MP_REGEN_MSG.replace("{player1}", current_combatant.name).replace("{amount}", str(regen))
-			var status_msg := current_combatant.tick_status_effects_start_of_turn()
+			var status_msg: String = current_combatant.tick_status_effects_start_of_turn()
 			if status_msg != "":
 				combat_dialog.text += "\n%s suffers%s." % [current_combatant.name, status_msg]
-			var trait_msg := CharacterTraits.tick_combat_turn_start(current_combatant)
+			var trait_msg: String = CharacterTraits.tick_combat_turn_start(current_combatant)
 			if trait_msg != "":
 				combat_dialog.text += "\n%s: %s." % [current_combatant.name, trait_msg]
 			StressSystem.on_low_hp_turn(current_combatant)
@@ -547,8 +547,8 @@ func boss_take_turn(boss: Boss) -> void:
 		combat_dialog.text += "\nTelegraph: Skull Throne rampage incoming!"
 	_boss_turn_counter += 1
 	battle_menu.visible = false
-	var theme_id := ""
-	var zone := RunState.get_current_zone()
+	var theme_id: String = ""
+	var zone: ZoneDefinition = RunState.get_current_zone()
 	if zone != null:
 		theme_id = zone.map_theme_id
 	if boss.boss_kind == "warden" and _boss_turn_counter % 3 == 0:
@@ -568,7 +568,7 @@ func _boss_cleave(boss: Boss, theme_id: String) -> void:
 		advance_turn()
 		return
 	combat_dialog.text += "\n%s unleashes Blood Cleave!" % boss.name
-	var damage := BiomeCombat.compute_enemy_damage(theme_id, boss, targets[0])
+	var damage: int = BiomeCombat.compute_enemy_damage(theme_id, boss, targets[0])
 	damage = maxi(1, int(damage * 0.72))
 	for target in targets:
 		target.receive_damage(damage)
@@ -577,11 +577,11 @@ func _boss_cleave(boss: Boss, theme_id: String) -> void:
 
 func _boss_rampage(boss: Boss, theme_id: String) -> void:
 	var targets: Array = character_container.get_children()
-	var target := BiomeCombat.pick_target(theme_id, boss, targets)
+	var target: Character = BiomeCombat.pick_target(theme_id, boss, targets)
 	if target == null:
 		advance_turn()
 		return
-	var damage := maxi(1, int(BiomeCombat.compute_enemy_damage(theme_id, boss, target) * 1.55))
+	var damage: int = maxi(1, int(BiomeCombat.compute_enemy_damage(theme_id, boss, target) * 1.55))
 	combat_dialog.text += "\n%s focuses Skull Throne wrath on %s!" % [boss.name, target.name]
 	target.receive_damage(damage)
 	combat_dialog.text += DAMAGE_DEALT.replace("{player1}", boss.name).replace("{damage}", str(damage)).replace("{player2}", target.name)
@@ -595,20 +595,20 @@ func _tick_all_skill_cooldowns() -> void:
 func enemy_take_turn(enemy):
 	battle_menu.visible = false
 	var targets: Array = character_container.get_children()
-	var theme_id := ""
-	var zone := RunState.get_current_zone()
+	var theme_id: String = ""
+	var zone: ZoneDefinition = RunState.get_current_zone()
 	if zone != null:
 		theme_id = zone.map_theme_id
-	var random_target := BiomeCombat.pick_target(theme_id, enemy, targets)
+	var random_target: Character = BiomeCombat.pick_target(theme_id, enemy, targets)
 	if random_target == null:
 		advance_turn()
 		return
-	var damage := BiomeCombat.compute_enemy_damage(theme_id, enemy, random_target)
+	var damage: int = BiomeCombat.compute_enemy_damage(theme_id, enemy, random_target)
 	combat_dialog.text += ATTACK_MSG.replace("{player1}", enemy.name).replace("{player2}", random_target.name)
 	await get_tree().create_timer(1.0).timeout
 	random_target.receive_damage(damage)
 	combat_dialog.text += DAMAGE_DEALT.replace("{player1}", enemy.name).replace("{damage}", str(damage)).replace("{player2}", random_target.name)
-	var extra := BiomeCombat.apply_post_hit(theme_id, enemy, random_target, damage)
+	var extra: String = BiomeCombat.apply_post_hit(theme_id, enemy, random_target, damage)
 	if extra != "":
 		combat_dialog.text += extra
 	if enemy.get("combat_trait") == "skirmisher" and randf() < 0.22:

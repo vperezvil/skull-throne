@@ -64,7 +64,7 @@ func get_enemy_battle_music() -> AudioStream:
 func get_victory_music(finale: bool) -> AudioStream:
 	if finale:
 		return _load(PATH_WIN_3)
-	var idx := RunState.floors_cleared_this_run % _VICTORY_PATHS.size()
+	var idx: int = RunState.floors_cleared_this_run % _VICTORY_PATHS.size()
 	return _load(_VICTORY_PATHS[idx])
 
 func get_boss_battle_music_for_zone(zone: ZoneDefinition) -> AudioStream:

@@ -1,16 +1,16 @@
 [gd_scene load_steps=66 format=3 uid="uid://cpq13kxejjodc"]
 
-[ext_resource type="Script" path="res://scripts/ui/UI.gd" id="1_1ysiq"]
+[ext_resource type="Script" path="res://scripts/ui/ui.gd" id="1_1ysiq"]
 [ext_resource type="AudioStream" uid="uid://ddd6be4vrlx03" path="res://assets/music/win music 1.wav" id="2_dl3am"]
 [ext_resource type="AudioStream" uid="uid://j1wvypup53fs" path="res://assets/music/the road&#039;s end.mp3" id="2_qsy3c"]
 [ext_resource type="AudioStream" uid="uid://w8ndfa4qni53" path="res://assets/music/pheonton - war - 01 - maintheme.mp3" id="2_sflr1"]
-[ext_resource type="Script" path="res://scripts/ui/Character-menu.gd" id="2_xgiog"]
+[ext_resource type="Script" path="res://scripts/ui/character_menu.gd" id="2_xgiog"]
 [ext_resource type="Texture2D" uid="uid://gqmnnu6na04v" path="res://assets/players/tinybones/BODY_skeleton.png" id="2_yki2a"]
 [ext_resource type="Texture2D" uid="uid://doja20t8asyxk" path="res://assets/accessories/HEAD_robe_hood.png" id="3_4knjl"]
 [ext_resource type="Texture2D" uid="uid://bh4tc5sw485ej" path="res://assets/players/beth/mage_f.png" id="3_dwamy"]
 [ext_resource type="Texture2D" uid="uid://cccsqjr0mtjkm" path="res://assets/players/dalf/wizard.png" id="4_vjq34"]
 [ext_resource type="Texture2D" uid="uid://c1rup6awajp6e" path="res://assets/players/trece/lpccatratdog.png" id="5_ai2oh"]
-[ext_resource type="Script" path="res://scripts/ui/PlayerSelectName.gd" id="11_2oxo3"]
+[ext_resource type="Script" path="res://scripts/ui/player_select_name.gd" id="11_2oxo3"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jcbd3"]
 bg_color = Color(1, 0.552941, 0.301961, 1)

@@ -22,5 +22,8 @@ jobs:
       - name: Validate game content
         run: godot --headless --path . --script res://scripts/tools/content_validator.gd
 
+      - name: Check GDScript patterns (4.7)
+        run: godot --headless --path . --script res://scripts/tools/check_gdscript_patterns.gd
+
       - name: Smoke test (main scene + map generation)
         run: godot --headless --path . --script res://scripts/tools/smoke_test.gd

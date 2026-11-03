@@ -4,7 +4,7 @@ class_name RunDirector
 # Run lifecycle helpers used by world.gd (hub return, zone clear flow).
 
 static func build_end_payload(world: Node, victory: bool, voluntary_abandon: bool) -> RunEndPayload:
-	var penalty := 0.0
+	var penalty: float = 0.0
 	if voluntary_abandon and !victory and RunState.is_early_return():
 		penalty = RunState.get_early_return_penalty_fraction()
 		RunState.apply_voluntary_abandon_penalties(world.characters, penalty)
@@ -17,10 +17,10 @@ static func build_end_payload(world: Node, victory: bool, voluntary_abandon: boo
 		stress_events = StressSystem.apply_retreat_stress(world.characters)
 	elif victory:
 		trait_events = CharacterTraits.roll_victory_oaths(world.characters)
-	var earned := MetaProgress.complete_run(RunState.floors_cleared_this_run, victory, penalty)
-	var run_summary := RunState.build_run_summary(victory)
+	var earned: int = MetaProgress.complete_run(RunState.floors_cleared_this_run, victory, penalty)
+	var run_summary: Dictionary = RunState.build_run_summary(victory)
 	run_summary["traits_gained"] = trait_events
-	var payload := RunEndPayload.from_run(victory, voluntary_abandon, penalty, earned, run_summary, trait_events, stress_events)
+	var payload: RunEndPayload = RunEndPayload.from_run(victory, voluntary_abandon, penalty, earned, run_summary, trait_events, stress_events)
 	return payload
 
 static func apply_hub_return(world: Node, payload: RunEndPayload) -> void:

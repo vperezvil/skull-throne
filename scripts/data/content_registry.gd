@@ -49,7 +49,7 @@ func get_enemy(enemy_id: String) -> EnemyDefinition:
 	return enemies.get(enemy_id)
 
 func spawn_enemy_from_id(enemy_id: String) -> ConfigurableEnemy:
-	var definition := get_enemy(enemy_id)
+	var definition: EnemyDefinition = get_enemy(enemy_id)
 	if definition == null:
 		return null
 	var instance: ConfigurableEnemy = SPAWNABLE_ENEMY_SCENE.instantiate()
@@ -121,7 +121,7 @@ func _register_enemy(
 	xp: int,
 	combat_trait: String = "standard"
 ) -> void:
-	var def := EnemyDefinition.new()
+	var def: EnemyDefinition = EnemyDefinition.new()
 	def.enemy_id = id
 	def.display_name = display
 	def.texture_path = texture
@@ -188,7 +188,7 @@ func _add_biome(
 	enemy_count: int,
 	seed_offset: int
 ) -> void:
-	var def := ZoneDefinition.new()
+	var def: ZoneDefinition = ZoneDefinition.new()
 	def.zone_id = zone_id
 	def.display_name = display_name
 	def.map_theme_id = theme_id
@@ -223,7 +223,7 @@ func _make_character(
 	speed: float,
 	mp_regen: int
 ) -> CharacterDefinition:
-	var def := CharacterDefinition.new()
+	var def: CharacterDefinition = CharacterDefinition.new()
 	def.character_id = id
 	def.display_name = display
 	def.max_hp = hp

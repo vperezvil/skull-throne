@@ -108,7 +108,7 @@ static func get_stat_modifiers(character_id: String) -> Dictionary:
 
 static func _apply_synergy_bonuses(character_id: String, mods: Dictionary) -> Dictionary:
 	var out := mods.duplicate()
-	var mod_id := RunState.run_modifier_id if RunState.campaign_active else ""
+	var mod_id: String = RunState.run_modifier_id if RunState.campaign_active else ""
 	if mod_id == "blood_frenzy" and MetaProgress.get_traits(character_id).has("clear_mind"):
 		out["attack"] = int(out.get("attack", 0)) + 2
 	if mod_id == "heroes_haste" and MetaProgress.get_traits(character_id).has("iron_nerves"):
@@ -181,7 +181,7 @@ static func tick_combat_turn_start(character: Character) -> String:
 	return ""
 
 static func format_roster_line(character_id: String, display_name: String) -> String:
-	var traits := MetaProgress.get_traits(character_id)
+	var traits: Array = MetaProgress.get_traits(character_id)
 	if traits.is_empty():
 		return display_name
 	var parts: PackedStringArray = []
