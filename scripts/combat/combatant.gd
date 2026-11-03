@@ -44,16 +44,53 @@ func apply_battle_presentation_scale(factor: float) -> void:
 	scale *= factor
 	var inv := 1.0 / factor
 	progress_bar.scale = Vector2(inv, inv)
-	progress_bar.offset_left = -48.0
-	progress_bar.offset_right = 48.0
-	progress_bar.offset_top = -88.0
-	progress_bar.offset_bottom = -70.0
+
+func _visual_sprite_node() -> Node2D:
+	if has_node("EnemySprite"):
+		return $EnemySprite as Node2D
+	if has_node("Body"):
+		return $Body as Node2D
+	for child in get_children():
+		if child is Sprite2D or child is AnimatedSprite2D:
+			return child as Node2D
+	return null
+
+func _sprite_top_local_y() -> float:
+	var sprite := _visual_sprite_node()
+	if sprite == null:
+		return -56.0
+	var height := 64.0
+	if sprite is Sprite2D:
+		var s: Sprite2D = sprite as Sprite2D
+		if s.texture != null:
+			var frame_h: float = s.texture.get_height() / maxf(float(maxi(s.vframes, 1)), 1.0)
+			height = frame_h * absf(s.scale.y)
+		else:
+			height = 64.0 * absf(s.scale.y)
+	elif sprite is AnimatedSprite2D:
+		var a: AnimatedSprite2D = sprite as AnimatedSprite2D
+		if a.sprite_frames != null and a.sprite_frames.has_animation(a.animation):
+			var tex: Texture2D = a.sprite_frames.get_frame_texture(a.animation, 0)
+			if tex != null:
+				height = tex.get_height() * absf(a.scale.y)
+	return sprite.position.y - height * 0.5
+
+func align_battle_hud_to_sprite() -> void:
+	var top_y := _sprite_top_local_y()
+	var bar_h := 14.0
+	var gap := 10.0
+	progress_bar.offset_top = top_y - bar_h - gap
+	progress_bar.offset_bottom = top_y - gap
+	var half_w := 54.0
+	progress_bar.offset_left = -half_w
+	progress_bar.offset_right = half_w
 
 func prepare_battle_hud() -> void:
 	_battle_hud_active = true
 	_ensure_bar_value_label()
 	_bar_value_label.visible = true
 	progress_bar.show_percentage = false
+	align_battle_hud_to_sprite()
 	_sync_bar_value_label()
 
 func _ensure_bar_value_label() -> void:

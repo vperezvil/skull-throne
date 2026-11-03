@@ -146,10 +146,10 @@ func fill_characters(characters):
 			offset += spacing_between_characters
 			character.collided_with_enemy()
 			character.reset_battle_cooldowns()
-			if character.has_method("prepare_battle_hud"):
-				character.prepare_battle_hud()
 			character.character_defeated.connect(_on_character_defeated.bind(character))
 			character_container.add_child(character)
+			if character.has_method("prepare_battle_hud"):
+				character.prepare_battle_hud()
 		character.visible = true
 		
 func fill_enemies(enemies):
@@ -191,11 +191,11 @@ func fill_enemies(enemies):
 				enemy.apply_battle_presentation_scale(3.0)
 			else:
 				enemy.scale *= 3.0
+			enemy.enemy_defeated.connect(_on_enemy_defeated.bind(enemy))
+			enemy_container.add_child(enemy)
 			if enemy.has_method("prepare_battle_hud"):
 				enemy.prepare_battle_hud()
 			enemy.progress_bar.visible = true
-			enemy.enemy_defeated.connect(_on_enemy_defeated.bind(enemy))
-			enemy_container.add_child(enemy)
 		enemy.visible = true
 
 func end_battle():

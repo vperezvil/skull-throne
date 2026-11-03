@@ -5,8 +5,8 @@ var width = 570
 var height = 550
 var level = 0
 var wall_level = 6
-var border_width: int = GameConstants.MAP_CORRIDOR_BORDER_WIDTH
-var corridor_width: int = GameConstants.MAP_CORRIDOR_WALK_WIDTH
+var border_width: int = 1
+var corridor_width: int = 2
 var floor_noise_divisor: float = 1.3
 var wall_noise_divisor: float = 5.0
 var _theme_id := "grim_fields"
@@ -54,8 +54,7 @@ func seal_room_corners(room: Rect2) -> void:
 	var right := int(room.position.x + room.size.x) - 1
 	var bottom := int(room.position.y + room.size.y) - 1
 	for corner in [Vector2i(left, top), Vector2i(right, top), Vector2i(left, bottom), Vector2i(right, bottom)]:
-		if !_cell_is_walkable_floor(corner):
-			_paint_wall(corner)
+		_paint_wall(corner)
 
 func stamp_corridor_junction(center_a: Vector2, center_b: Vector2) -> void:
 	var junction := Vector2i(int(center_b.x), int(center_a.y))
@@ -63,62 +62,35 @@ func stamp_corridor_junction(center_a: Vector2, center_b: Vector2) -> void:
 	var vy := signi(int(center_b.y) - int(center_a.y))
 	if hx == 0 or vy == 0:
 		return
-	# Outer convex corner of the L (single tile); avoids extra rim walls that thicken corridors.
-	var outer := Vector2i(junction.x + hx * (corridor_width + border_width), junction.y + vy * (corridor_width + border_width))
-	if !_cell_is_walkable_floor(outer):
-		_paint_wall(outer)
-
-func carve_connection_mouths(rooms: Array, center_a: Vector2, center_b: Vector2) -> void:
-	var ax := int(center_a.x)
-	var ay := int(center_a.y)
-	var bx := int(center_b.x)
-	var by := int(center_b.y)
-	for room in rooms:
-		if !(room is Rect2):
-			continue
-		var rect: Rect2 = room
-		if rect.has_point(center_a):
-			_carve_horizontal_mouth(rect, ay, signi(bx - ax))
-		if rect.has_point(center_b):
-			_carve_vertical_mouth(rect, bx, signi(by - ay))
-
-func _carve_horizontal_mouth(room: Rect2, corridor_y: int, dir_x: int) -> void:
-	if dir_x == 0:
-		return
-	var left := int(room.position.x)
-	var right := int(room.position.x + room.size.x) - 1
-	var top := int(room.position.y)
-	var bottom := int(room.position.y + room.size.y) - 1
-	var y0 := clampi(corridor_y, top, bottom - corridor_width + 1)
-	var wall_x := right if dir_x > 0 else left
-	var out_x := wall_x + dir_x
-	for w in corridor_width:
-		_force_floor(Vector2i(wall_x, y0 + w))
-		_force_floor(Vector2i(out_x, y0 + w))
-
-func _carve_vertical_mouth(room: Rect2, corridor_x: int, dir_y: int) -> void:
-	if dir_y == 0:
-		return
-	var left := int(room.position.x)
-	var right := int(room.position.x + room.size.x) - 1
-	var top := int(room.position.y)
-	var bottom := int(room.position.y + room.size.y) - 1
-	var x0 := clampi(corridor_x, left, right - corridor_width + 1)
-	var wall_y := bottom if dir_y > 0 else top
-	var out_y := wall_y + dir_y
-	for w in corridor_width:
-		_force_floor(Vector2i(x0 + w, wall_y))
-		_force_floor(Vector2i(x0 + w, out_y))
-
-func _force_floor(coord: Vector2i) -> void:
-	var floor_map := map.get_noise_2d(coord.x, coord.y) * 10.0
-	set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
+	var outer: int = corridor_width + border_width
+	var north: int = junction.y - border_width
+	var east: int = junction.x + corridor_width + border_width - 1
+	var west: int = junction.x - border_width
+	var caps: Array[Vector2i] = [
+		Vector2i(junction.x + hx * outer, north),
+		Vector2i(junction.x + hx * (outer - 1), north),
+		Vector2i(junction.x + hx * outer, north - 1),
+	]
+	if hx > 0:
+		caps.append_array([
+			Vector2i(east, junction.y + vy * outer),
+			Vector2i(east, junction.y + vy * (outer - 1)),
+			Vector2i(east + 1, junction.y + vy * outer),
+		])
+	else:
+		caps.append_array([
+			Vector2i(west, junction.y + vy * outer),
+			Vector2i(west, junction.y + vy * (outer - 1)),
+			Vector2i(west - 1, junction.y + vy * outer),
+		])
+	for coord in caps:
+		_paint_wall(coord)
 
 func _cell_is_walkable_floor(coord: Vector2i) -> bool:
 	return get_cell_source_id(coord) == level
 
-func _paint_wall(coord: Vector2i) -> void:
-	if _cell_is_walkable_floor(coord):
+func _paint_wall(coord: Vector2i, allow_overwrite_floor: bool = false) -> void:
+	if !allow_overwrite_floor and _cell_is_walkable_floor(coord):
 		return
 	var floor_map := map.get_noise_2d(coord.x, coord.y) * 10.0
 	set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
@@ -143,21 +115,21 @@ func _set_wall(coord: Vector2i) -> void:
 	_paint_wall(coord)
 
 func draw_corridor(start, end):
-	var is_vertical := int(start.x) == int(end.x)
-	var main_coord := int(start.x) if is_vertical else int(start.y)
-	var range_start := mini(int(start.y), int(end.y)) if is_vertical else mini(int(start.x), int(end.x))
-	var range_end := maxi(int(start.y), int(end.y)) if is_vertical else maxi(int(start.x), int(end.x))
-	range_end += 1
-	var outer_min := -border_width
-	var outer_max := corridor_width + border_width - 1
-	for offset in range(outer_min, outer_max + 1):
-		var is_border_tile := offset < 0 or offset >= corridor_width
-		for i in range(range_start, range_end + 1):
-			var coord := Vector2i(main_coord + offset, i) if is_vertical else Vector2i(i, main_coord + offset)
+	var is_vertical = start.x == end.x
+	var main_coord = start.x if is_vertical else start.y
+	var range_start = min(start.y, end.y) if is_vertical else min(start.x, end.x)
+	var range_end = max(start.y, end.y) if is_vertical else max(start.x, end.x)
+	range_end += border_width + 1
+	var total_width = corridor_width + 2 * border_width
+	for offset in range(-border_width, total_width - border_width):
+		for i in range(int(range_start), int(range_end)):
+			var coord = Vector2i(main_coord + offset, i) if is_vertical else Vector2i(i, main_coord + offset)
+			var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
+			var is_border_tile = offset < 0 or offset >= corridor_width
 			if is_border_tile:
 				_paint_wall(coord)
 			elif !_cell_is_walkable_floor(coord):
-				_force_floor(coord)
+				set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
 
 func _atlas_coord(noise_sample: float, divisor: float) -> Vector2i:
 	var atlas_index: int = int(round((noise_sample + 10.0) / divisor))

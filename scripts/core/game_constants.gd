@@ -19,5 +19,3 @@ const ELITE_SPAWN_CHANCE := 0.11
 const MAP_EVENTS_PER_FLOOR := 2
 const EARLY_RETURN_SAFE_FLOORS := 3 # fewer cleared floors on abandon -> penalty in RunState
 const FLEE_SUCCESS_CHANCE := 0.62
-const MAP_CORRIDOR_WALK_WIDTH := 3
-const MAP_CORRIDOR_BORDER_WIDTH := 1

@@ -67,6 +67,13 @@ var _shrine_campaign_complete: bool = false
 var _menu_backdrop: ColorRect
 var main_menu_settings_panel: Panel
 var main_menu_settings_open: bool = false
+var hub_services_overlay: Panel
+var hub_route_panel: Panel
+var hub_route_list: ItemList
+var hub_prep_panel: Panel
+var journey_button: Button
+var journey_panel: Panel
+var journey_list: ItemList
 
 var character_ids_toggled = []
 var characters = []
@@ -98,6 +105,7 @@ func _ready():
 	zone_title_label.offset_bottom = 72
 	zone_title_label.visible = false
 	add_child(zone_title_label)
+	_setup_journey_ui()
 	continue_button = Button.new()
 	continue_button.name = "Continue"
 	continue_button.text = "Continue"
@@ -149,106 +157,112 @@ func _setup_hub_menu() -> void:
 	add_child(hub_panel)
 	var margin := MarginContainer.new()
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 40)
-	margin.add_theme_constant_override("margin_top", 32)
-	margin.add_theme_constant_override("margin_right", 40)
-	margin.add_theme_constant_override("margin_bottom", 32)
+	margin.add_theme_constant_override("margin_left", 48)
+	margin.add_theme_constant_override("margin_top", 36)
+	margin.add_theme_constant_override("margin_right", 48)
+	margin.add_theme_constant_override("margin_bottom", 36)
 	hub_panel.add_child(margin)
 	var root := VBoxContainer.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.add_theme_constant_override("separation", 20)
+	root.add_theme_constant_override("separation", 16)
 	margin.add_child(root)
 	var header := HBoxContainer.new()
-	header.add_theme_constant_override("separation", 16)
 	root.add_child(header)
-	var title_col := VBoxContainer.new()
-	title_col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	header.add_child(title_col)
 	var title := Label.new()
 	title.text = "Blood Sanctum"
-	title.add_theme_font_size_override("font_size", Global.get_ui_font_size(44))
-	title_col.add_child(title)
-	var subtitle := Label.new()
-	subtitle.text = "Tap the map, ready your party, descend."
-	subtitle.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	HubUiHelpers.style_body_label(subtitle, 18)
-	title_col.add_child(subtitle)
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.add_theme_font_size_override("font_size", Global.get_ui_font_size(40))
+	header.add_child(title)
 	hub_tithe_label = Label.new()
 	hub_tithe_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	hub_tithe_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(20))
+	hub_tithe_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(18))
 	hub_tithe_label.modulate = HubUiHelpers.COLOR_ACCENT
 	header.add_child(hub_tithe_label)
-	var main_row := HBoxContainer.new()
-	main_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	main_row.add_theme_constant_override("separation", 28)
-	root.add_child(main_row)
-	var left_scroll := ScrollContainer.new()
-	left_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	left_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	main_row.add_child(left_scroll)
-	var left := VBoxContainer.new()
-	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	left.add_theme_constant_override("separation", 14)
-	left_scroll.add_child(left)
 	hub_sanctum_map = HubSanctumMap.new()
+	hub_sanctum_map.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	hub_sanctum_map.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	hub_sanctum_map.service_picked.connect(_on_hub_service_picked)
-	left.add_child(hub_sanctum_map)
-	var reroute_row := HBoxContainer.new()
-	reroute_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	left.add_child(reroute_row)
-	var reroute_btn := Button.new()
-	reroute_btn.text = "Reroll descent route"
-	HubUiHelpers.style_ghost_button(reroute_btn)
-	reroute_btn.pressed.connect(_on_hub_reroll_route)
-	reroute_row.add_child(reroute_btn)
-	hub_party_chip_row = HBoxContainer.new()
-	hub_party_chip_row.add_theme_constant_override("separation", 10)
-	left.add_child(hub_party_chip_row)
+	root.add_child(hub_sanctum_map)
+	var dock := HBoxContainer.new()
+	dock.alignment = BoxContainer.ALIGNMENT_CENTER
+	dock.add_theme_constant_override("separation", 12)
+	root.add_child(dock)
+	var party_btn := Button.new()
+	party_btn.text = "Party"
+	party_btn.pressed.connect(_on_hub_change_party)
+	HubUiHelpers.style_secondary_button(party_btn)
+	dock.add_child(party_btn)
+	var route_btn := Button.new()
+	route_btn.text = "Descent route"
+	route_btn.pressed.connect(_on_hub_route_menu_pressed)
+	HubUiHelpers.style_secondary_button(route_btn)
+	dock.add_child(route_btn)
+	var prep_btn := Button.new()
+	prep_btn.text = "Run prep"
+	prep_btn.pressed.connect(_on_hub_prep_menu_pressed)
+	HubUiHelpers.style_secondary_button(prep_btn)
+	dock.add_child(prep_btn)
+	hub_begin_btn = Button.new()
+	hub_begin_btn.text = "Begin descent"
+	hub_begin_btn.pressed.connect(_on_hub_begin_descent)
+	HubUiHelpers.style_primary_button(hub_begin_btn)
+	dock.add_child(hub_begin_btn)
+	var main_btn := Button.new()
+	main_btn.text = "Main menu"
+	main_btn.pressed.connect(_on_hub_main_menu)
+	HubUiHelpers.style_ghost_button(main_btn)
+	dock.add_child(main_btn)
 	hub_message_label = Label.new()
 	hub_message_label.modulate = Color(1.0, 0.82, 0.55)
 	hub_message_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	hub_message_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(15))
-	left.add_child(hub_message_label)
-	hub_details_toggle = CheckButton.new()
-	hub_details_toggle.text = "Show stats & tips"
-	hub_details_toggle.toggled.connect(_on_hub_details_toggled)
-	left.add_child(hub_details_toggle)
+	hub_message_label.add_theme_font_size_override("font_size", Global.get_ui_font_size(14))
+	hub_message_label.visible = false
+	root.add_child(hub_message_label)
+	_build_hub_services_overlay()
+	_build_hub_route_panel()
+	_build_hub_prep_panel()
+	hub_party_chip_row = HBoxContainer.new()
+	hub_party_chip_row.visible = false
 	hub_details_panel = PanelContainer.new()
 	hub_details_panel.visible = false
-	hub_details_panel.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.08, 0.04, 0.05, 0.9)))
-	var details_v := VBoxContainer.new()
-	details_v.add_theme_constant_override("separation", 8)
-	hub_details_panel.add_child(details_v)
-	hub_run_hint_label = Label.new()
-	hub_run_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	HubUiHelpers.style_body_label(hub_run_hint_label, 14)
-	details_v.add_child(hub_run_hint_label)
-	hub_party_label = Label.new()
-	hub_party_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	HubUiHelpers.style_body_label(hub_party_label, 14)
-	details_v.add_child(hub_party_label)
-	hub_stats_label = RichTextLabel.new()
-	hub_stats_label.custom_minimum_size = Vector2(0, 80)
-	hub_stats_label.scroll_active = false
-	hub_stats_label.fit_content = true
-	hub_stats_label.add_theme_font_size_override("normal_font_size", Global.get_ui_font_size(13))
-	details_v.add_child(hub_stats_label)
-	left.add_child(hub_details_panel)
-	var right := VBoxContainer.new()
-	right.custom_minimum_size.x = 520
-	right.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	right.add_theme_constant_override("separation", 12)
-	main_row.add_child(right)
-	var services_title := Label.new()
-	services_title.text = "Sanctum services"
-	HubUiHelpers.style_section_title(services_title, 22)
-	right.add_child(services_title)
+	hub_details_toggle = CheckButton.new()
+	hub_details_toggle.visible = false
+	_refresh_hub_ui()
+
+func _build_hub_services_overlay() -> void:
+	hub_services_overlay = Panel.new()
+	hub_services_overlay.name = "HubServicesOverlay"
+	hub_services_overlay.visible = false
+	hub_services_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	hub_services_overlay.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.02, 0.01, 0.02, 0.94), HubUiHelpers.COLOR_ACCENT))
+	hub_panel.add_child(hub_services_overlay)
+	var omargin := MarginContainer.new()
+	omargin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	omargin.add_theme_constant_override("margin_left", 64)
+	omargin.add_theme_constant_override("margin_top", 48)
+	omargin.add_theme_constant_override("margin_right", 64)
+	omargin.add_theme_constant_override("margin_bottom", 48)
+	hub_services_overlay.add_child(omargin)
+	var ovbox := VBoxContainer.new()
+	ovbox.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ovbox.add_theme_constant_override("separation", 12)
+	omargin.add_child(ovbox)
+	var top_row := HBoxContainer.new()
+	ovbox.add_child(top_row)
+	var svc_title := Label.new()
+	svc_title.text = "Sanctum services"
+	svc_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	HubUiHelpers.style_section_title(svc_title, 24)
+	top_row.add_child(svc_title)
+	var close_svc := Button.new()
+	close_svc.text = "Close"
+	close_svc.pressed.connect(_on_hub_services_close)
+	HubUiHelpers.style_ghost_button(close_svc)
+	top_row.add_child(close_svc)
 	hub_tabs = TabContainer.new()
 	hub_tabs.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	hub_tabs.add_theme_font_size_override("font_size", Global.get_ui_font_size(16))
-	right.add_child(hub_tabs)
+	ovbox.add_child(hub_tabs)
 	hub_tab_grum = VBoxContainer.new()
 	hub_tab_grum.name = "Grum"
 	hub_tab_grum.add_theme_constant_override("separation", 8)
@@ -260,7 +274,7 @@ func _setup_hub_menu() -> void:
 	)
 	HubNpcUi.add_potion_buy(hub_tab_grum, false, hub_message_label)
 	HubNpcUi.add_equipment_shop(hub_tab_grum, false, hub_message_label, _rebuild_hub_grum_commerce)
-	hub_tabs.add_child(HubUiHelpers.wrap_scroll(hub_tab_grum, 340.0))
+	hub_tabs.add_child(HubUiHelpers.wrap_scroll(hub_tab_grum, 420.0))
 	hub_tab_enchantress = VBoxContainer.new()
 	hub_tab_enchantress.name = "Enchantress"
 	hub_tab_enchantress.add_theme_constant_override("separation", 8)
@@ -270,100 +284,182 @@ func _setup_hub_menu() -> void:
 		"Enchantress — Tutor",
 		"Train skills, purify stains, and spend tithe on lasting power."
 	)
-	hub_tabs.add_child(HubUiHelpers.wrap_scroll(hub_tab_enchantress, 340.0))
+	hub_tabs.add_child(HubUiHelpers.wrap_scroll(hub_tab_enchantress, 420.0))
 	var tab_boons := VBoxContainer.new()
 	tab_boons.name = "Sanctum boons"
 	tab_boons.add_theme_constant_override("separation", 8)
-	var boons_blurb := Label.new()
-	boons_blurb.text = "Permanent upgrades that apply to every future descent."
-	boons_blurb.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	HubUiHelpers.style_body_label(boons_blurb, 14)
-	tab_boons.add_child(boons_blurb)
 	_add_hub_button(tab_boons, "Vitality (+12 HP)", _on_hub_upgrade_vitality, true)
 	_add_hub_button(tab_boons, "Fury (+2 ATK)", _on_hub_upgrade_fury, true)
 	_add_hub_button(tab_boons, "Supplies (start items)", _on_hub_upgrade_supply, true)
-	hub_tabs.add_child(HubUiHelpers.wrap_scroll(tab_boons, 340.0))
+	hub_tabs.add_child(HubUiHelpers.wrap_scroll(tab_boons, 420.0))
 	var stash_box := VBoxContainer.new()
 	stash_box.name = "Equip stash"
 	stash_box.add_theme_constant_override("separation", 8)
-	var stash_title := Label.new()
-	stash_title.text = "Assign gear you bought to party members."
-	stash_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	HubUiHelpers.style_body_label(stash_title, 14)
-	stash_box.add_child(stash_title)
-	hub_tabs.add_child(HubUiHelpers.wrap_scroll(stash_box, 340.0))
+	hub_tabs.add_child(HubUiHelpers.wrap_scroll(stash_box, 420.0))
 	hub_tabs.set_tab_title(0, "Shop")
 	hub_tabs.set_tab_title(1, "Train")
 	hub_tabs.set_tab_title(2, "Boons")
 	hub_tabs.set_tab_title(3, "Stash")
-	var options_card := PanelContainer.new()
-	options_card.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.1, 0.05, 0.06, 0.9)))
-	var options := VBoxContainer.new()
-	options.add_theme_constant_override("separation", 8)
-	options_card.add_child(options)
-	right.add_child(options_card)
-	var options_heading := Label.new()
-	options_heading.text = "Run options"
-	HubUiHelpers.style_section_title(options_heading, 17)
-	options.add_child(options_heading)
+
+func _build_hub_route_panel() -> void:
+	hub_route_panel = Panel.new()
+	hub_route_panel.name = "HubRoutePanel"
+	hub_route_panel.visible = false
+	hub_route_panel.set_anchors_preset(Control.PRESET_CENTER)
+	hub_route_panel.offset_left = -280.0
+	hub_route_panel.offset_top = -220.0
+	hub_route_panel.offset_right = 280.0
+	hub_route_panel.offset_bottom = 220.0
+	hub_route_panel.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.08, 0.04, 0.05, 0.96), HubUiHelpers.COLOR_ACCENT))
+	hub_panel.add_child(hub_route_panel)
+	var rm := MarginContainer.new()
+	rm.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rm.add_theme_constant_override("margin_left", 24)
+	rm.add_theme_constant_override("margin_top", 20)
+	rm.add_theme_constant_override("margin_right", 24)
+	rm.add_theme_constant_override("margin_bottom", 20)
+	hub_route_panel.add_child(rm)
+	var rv := VBoxContainer.new()
+	rv.set_anchors_preset(Control.PRESET_FULL_RECT)
+	rv.add_theme_constant_override("separation", 12)
+	rm.add_child(rv)
+	var rt := Label.new()
+	rt.text = "Descent route"
+	HubUiHelpers.style_section_title(rt, 22)
+	rv.add_child(rt)
+	hub_route_list = ItemList.new()
+	hub_route_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	hub_route_list.select_mode = ItemList.SELECT_SINGLE
+	rv.add_child(hub_route_list)
+	var rrow := HBoxContainer.new()
+	rrow.add_theme_constant_override("separation", 10)
+	rv.add_child(rrow)
+	var reroute := Button.new()
+	reroute.text = "Reroll route"
+	reroute.pressed.connect(_on_hub_reroll_route)
+	HubUiHelpers.style_secondary_button(reroute)
+	rrow.add_child(reroute)
+	var rclose := Button.new()
+	rclose.text = "Close"
+	rclose.pressed.connect(func() -> void: hub_route_panel.visible = false)
+	HubUiHelpers.style_ghost_button(rclose)
+	rrow.add_child(rclose)
+
+func _build_hub_prep_panel() -> void:
+	hub_prep_panel = Panel.new()
+	hub_prep_panel.name = "HubPrepPanel"
+	hub_prep_panel.visible = false
+	hub_prep_panel.set_anchors_preset(Control.PRESET_CENTER)
+	hub_prep_panel.offset_left = -320.0
+	hub_prep_panel.offset_top = -240.0
+	hub_prep_panel.offset_right = 320.0
+	hub_prep_panel.offset_bottom = 240.0
+	hub_prep_panel.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.08, 0.04, 0.05, 0.96), HubUiHelpers.COLOR_ACCENT))
+	hub_panel.add_child(hub_prep_panel)
+	var pm := MarginContainer.new()
+	pm.set_anchors_preset(Control.PRESET_FULL_RECT)
+	pm.add_theme_constant_override("margin_left", 24)
+	pm.add_theme_constant_override("margin_top", 20)
+	pm.add_theme_constant_override("margin_right", 24)
+	pm.add_theme_constant_override("margin_bottom", 20)
+	hub_prep_panel.add_child(pm)
+	var pv := VBoxContainer.new()
+	pv.set_anchors_preset(Control.PRESET_FULL_RECT)
+	pv.add_theme_constant_override("separation", 10)
+	pm.add_child(pv)
+	var pt := Label.new()
+	pt.text = "Run preparation"
+	HubUiHelpers.style_section_title(pt, 22)
+	pv.add_child(pt)
+	hub_run_hint_label = Label.new()
+	hub_run_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	HubUiHelpers.style_body_label(hub_run_hint_label, 14)
+	pv.add_child(hub_run_hint_label)
+	hub_party_label = Label.new()
+	hub_party_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	HubUiHelpers.style_body_label(hub_party_label, 14)
+	pv.add_child(hub_party_label)
+	hub_stats_label = RichTextLabel.new()
+	hub_stats_label.custom_minimum_size = Vector2(0, 72)
+	hub_stats_label.scroll_active = false
+	hub_stats_label.fit_content = true
+	hub_stats_label.add_theme_font_size_override("normal_font_size", Global.get_ui_font_size(13))
+	pv.add_child(hub_stats_label)
 	var mirror_row := HBoxContainer.new()
 	mirror_row.add_theme_constant_override("separation", 8)
 	var mirror_lbl := Label.new()
-	mirror_lbl.text = "Lock stats for:"
+	mirror_lbl.text = "Lock stats:"
 	mirror_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	HubUiHelpers.style_body_label(mirror_lbl, 14)
 	mirror_row.add_child(mirror_lbl)
 	hub_mirror_select = OptionButton.new()
-	hub_mirror_select.name = "MirrorHeroSelect"
 	hub_mirror_select.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	mirror_row.add_child(hub_mirror_select)
-	options.add_child(mirror_row)
+	pv.add_child(mirror_row)
 	var reroll_btn := Button.new()
 	reroll_btn.text = "Reroll stat preview"
 	reroll_btn.pressed.connect(_on_hub_reroll_stats)
 	HubUiHelpers.style_secondary_button(reroll_btn)
-	options.add_child(reroll_btn)
+	pv.add_child(reroll_btn)
 	var mirror_btn := Button.new()
 	mirror_btn.text = "Lock mirror (60 tithe)"
 	mirror_btn.pressed.connect(_on_hub_lock_mirror)
 	HubUiHelpers.style_secondary_button(mirror_btn)
-	options.add_child(mirror_btn)
+	pv.add_child(mirror_btn)
 	ascended_toggle = CheckButton.new()
-	ascended_toggle.text = "Ascended descent (harder; after 1 victory)"
-	ascended_toggle.disabled = !MetaProgress.can_use_ascended()
-	ascended_toggle.button_pressed = MetaProgress.ascended_next_run
+	ascended_toggle.text = "Ascended descent"
 	ascended_toggle.toggled.connect(_on_ascended_toggled)
-	options.add_child(ascended_toggle)
-	var actions := VBoxContainer.new()
-	actions.add_theme_constant_override("separation", 10)
-	right.add_child(actions)
-	hub_begin_btn = Button.new()
-	hub_begin_btn.text = "Begin descent"
-	hub_begin_btn.pressed.connect(_on_hub_begin_descent)
-	HubUiHelpers.style_primary_button(hub_begin_btn)
-	actions.add_child(hub_begin_btn)
-	var action_row := HBoxContainer.new()
-	action_row.add_theme_constant_override("separation", 10)
-	action_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var rest_btn := Button.new()
-	rest_btn.text = "Rest party"
-	rest_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	rest_btn.pressed.connect(_on_hub_rest_pressed)
-	HubUiHelpers.style_secondary_button(rest_btn)
-	action_row.add_child(rest_btn)
-	var party_btn := Button.new()
-	party_btn.text = "Change party"
-	party_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	party_btn.pressed.connect(_on_hub_change_party)
-	HubUiHelpers.style_secondary_button(party_btn)
-	action_row.add_child(party_btn)
-	actions.add_child(action_row)
-	var main_btn := Button.new()
-	main_btn.text = "Back to main menu"
-	main_btn.pressed.connect(_on_hub_main_menu)
-	HubUiHelpers.style_ghost_button(main_btn)
-	actions.add_child(main_btn)
-	_refresh_hub_ui()
+	pv.add_child(ascended_toggle)
+	var prep_close := Button.new()
+	prep_close.text = "Close"
+	prep_close.pressed.connect(func() -> void: hub_prep_panel.visible = false)
+	HubUiHelpers.style_ghost_button(prep_close)
+	pv.add_child(prep_close)
+
+func _setup_journey_ui() -> void:
+	journey_button = Button.new()
+	journey_button.name = "JourneyMenuButton"
+	journey_button.visible = false
+	journey_button.text = "Journey"
+	journey_button.offset_left = 32.0
+	journey_button.offset_top = 24.0
+	journey_button.offset_right = 160.0
+	journey_button.offset_bottom = 64.0
+	journey_button.pressed.connect(_on_journey_menu_pressed)
+	add_child(journey_button)
+	journey_panel = Panel.new()
+	journey_panel.name = "JourneyPanel"
+	journey_panel.visible = false
+	journey_panel.set_anchors_preset(Control.PRESET_CENTER)
+	journey_panel.offset_left = -300.0
+	journey_panel.offset_top = -240.0
+	journey_panel.offset_right = 300.0
+	journey_panel.offset_bottom = 240.0
+	journey_panel.add_theme_stylebox_override("panel", HubUiHelpers.flat_panel(Color(0.06, 0.03, 0.05, 0.96), HubUiHelpers.COLOR_ACCENT))
+	add_child(journey_panel)
+	var jm := MarginContainer.new()
+	jm.set_anchors_preset(Control.PRESET_FULL_RECT)
+	jm.add_theme_constant_override("margin_left", 24)
+	jm.add_theme_constant_override("margin_top", 20)
+	jm.add_theme_constant_override("margin_right", 24)
+	jm.add_theme_constant_override("margin_bottom", 20)
+	journey_panel.add_child(jm)
+	var jv := VBoxContainer.new()
+	jv.set_anchors_preset(Control.PRESET_FULL_RECT)
+	jv.add_theme_constant_override("separation", 12)
+	jm.add_child(jv)
+	var jt := Label.new()
+	jt.text = "Descent progress"
+	HubUiHelpers.style_section_title(jt, 22)
+	jv.add_child(jt)
+	journey_list = ItemList.new()
+	journey_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	jv.add_child(journey_list)
+	var jclose := Button.new()
+	jclose.text = "Close"
+	jclose.pressed.connect(func() -> void: journey_panel.visible = false)
+	HubUiHelpers.style_ghost_button(jclose)
+	jv.add_child(jclose)
 
 func _add_hub_button(parent: VBoxContainer, text: String, callback: Callable, dynamic_cost: bool = false) -> void:
 	var btn := Button.new()
@@ -378,9 +474,8 @@ func show_hub() -> void:
 	hub_message_label.text = ""
 	RunState.refresh_hub_descent_preview()
 	if MetaProgress.should_show_sanctum_tutorial():
-		hub_message_label.text = (
-			"Welcome: use the sanctum map (markers + route), then Begin descent."
-		)
+		hub_message_label.text = "Select Party, then tap a marker on the map."
+		hub_message_label.visible = true
 		MetaProgress.mark_sanctum_tutorial_seen()
 	hub_panel.visible = true
 	character_menu.visible = false
@@ -498,20 +593,73 @@ func _refresh_hub_ui() -> void:
 		hub_begin_btn.disabled = !has_party
 		hub_begin_btn.text = "Begin descent" if has_party else "Select a party first"
 	if hub_sanctum_map:
-		var hint: String = "Choose party with Change party, then tap a sanctum marker."
-		if has_party:
-			hint = "Tap Shop · Train · Boons · Stash on the map, then Begin descent."
-		hub_sanctum_map.set_hub_state(has_party, hint)
-		hub_sanctum_map.set_descent_plan(RunState.get_hub_descent_preview())
+		hub_sanctum_map.set_hub_state(has_party, "")
+	_refresh_hub_route_list()
 	if ascended_toggle:
 		ascended_toggle.disabled = !MetaProgress.can_use_ascended()
 		ascended_toggle.button_pressed = MetaProgress.ascended_next_run
 	_refresh_hub_upgrade_button_labels()
 
 func _on_hub_service_picked(tab_index: int) -> void:
-	if hub_tabs == null:
+	if hub_tabs == null or hub_services_overlay == null:
 		return
 	hub_tabs.current_tab = tab_index
+	hub_services_overlay.visible = true
+	_rebuild_hub_trainers_and_stash()
+
+func _on_hub_services_close() -> void:
+	if hub_services_overlay:
+		hub_services_overlay.visible = false
+
+func _on_hub_route_menu_pressed() -> void:
+	_refresh_hub_route_list()
+	if hub_route_panel:
+		hub_route_panel.visible = true
+
+func _on_hub_prep_menu_pressed() -> void:
+	if hub_prep_panel:
+		hub_prep_panel.visible = true
+
+func _refresh_hub_route_list() -> void:
+	if hub_route_list == null:
+		return
+	hub_route_list.clear()
+	var zone_ids: Array[String] = RunState.get_hub_descent_preview()
+	if zone_ids.is_empty():
+		hub_route_list.add_item("Begin descent to roll your path.")
+		return
+	for i in zone_ids.size():
+		var zone_id: String = zone_ids[i]
+		var zone: ZoneDefinition = ContentRegistry.get_zone_by_id(zone_id)
+		var title: String = zone.display_name if zone != null else zone_id
+		if zone != null and zone.is_final_zone:
+			title = "Skull Throne"
+		var line := "%d. %s" % [i + 1, title]
+		if (i + 1) % GameConstants.FLOORS_BETWEEN_WAYSTATIONS == 0 and i + 1 < zone_ids.size():
+			line += "  (waystation)"
+		hub_route_list.add_item(line)
+
+func _on_journey_menu_pressed() -> void:
+	_refresh_journey_list()
+	if journey_panel:
+		journey_panel.visible = true
+
+func _refresh_journey_list() -> void:
+	if journey_list == null:
+		return
+	journey_list.clear()
+	if !RunState.campaign_active:
+		journey_list.add_item("No active descent.")
+		return
+	var current: int = RunState.get_current_floor_number()
+	for i in RunState.run_floor_ids.size():
+		var zone_id: String = RunState.run_floor_ids[i]
+		var zone: ZoneDefinition = ContentRegistry.get_zone_by_id(zone_id)
+		var title: String = zone.display_name if zone != null else zone_id
+		if zone != null and zone.is_final_zone:
+			title = "Skull Throne"
+		var prefix := "> " if i + 1 == current else "  "
+		journey_list.add_item("%s%d. %s" % [prefix, i + 1, title])
 
 func _on_hub_details_toggled(show_details: bool) -> void:
 	if hub_details_panel:
@@ -519,9 +667,9 @@ func _on_hub_details_toggled(show_details: bool) -> void:
 
 func _on_hub_reroll_route() -> void:
 	RunState.refresh_hub_descent_preview()
-	if hub_sanctum_map:
-		hub_sanctum_map.set_descent_plan(RunState.get_hub_descent_preview())
-	hub_message_label.text = "Rolled a new descent route preview."
+	_refresh_hub_route_list()
+	hub_message_label.text = "Rolled a new descent route."
+	hub_message_label.visible = true
 
 func _refresh_hub_party_chips() -> void:
 	if hub_party_chip_row == null:
@@ -980,23 +1128,30 @@ func _setup_pause_ui() -> void:
 	settings_panel = Panel.new()
 	settings_panel.name = "AudioSettingsPanel"
 	settings_panel.visible = false
-	settings_panel.offset_left = 720.0
-	settings_panel.offset_top = 280.0
-	settings_panel.offset_right = 1200.0
-	settings_panel.offset_bottom = 520.0
+	settings_panel.offset_left = 680.0
+	settings_panel.offset_top = 240.0
+	settings_panel.offset_right = 1240.0
+	settings_panel.offset_bottom = 580.0
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.08, 0.08, 0.08, 0.92)
 	panel_style.border_color = Color("#FF8D4D")
 	panel_style.set_border_width_all(2)
-	panel_style.content_margin_left = 16
-	panel_style.content_margin_top = 12
-	panel_style.content_margin_right = 16
-	panel_style.content_margin_bottom = 12
+	panel_style.content_margin_left = 24
+	panel_style.content_margin_top = 20
+	panel_style.content_margin_right = 24
+	panel_style.content_margin_bottom = 20
 	settings_panel.add_theme_stylebox_override("panel", panel_style)
 	game_menu.add_child(settings_panel)
+	var settings_margin := MarginContainer.new()
+	settings_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	settings_margin.add_theme_constant_override("margin_left", 24)
+	settings_margin.add_theme_constant_override("margin_top", 20)
+	settings_margin.add_theme_constant_override("margin_right", 24)
+	settings_margin.add_theme_constant_override("margin_bottom", 20)
+	settings_panel.add_child(settings_margin)
 	var settings_vbox := VBoxContainer.new()
-	settings_vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
-	settings_panel.add_child(settings_vbox)
+	settings_vbox.add_theme_constant_override("separation", 14)
+	settings_margin.add_child(settings_vbox)
 	var title := Label.new()
 	title.text = "Audio"
 	title.add_theme_font_size_override("font_size", 28)
@@ -1084,10 +1239,10 @@ func _setup_credits_panel() -> void:
 	panel_style.bg_color = Color(0.06, 0.05, 0.08, 0.96)
 	panel_style.border_color = Color("#FF8D4D")
 	panel_style.set_border_width_all(2)
-	panel_style.content_margin_left = 16
-	panel_style.content_margin_top = 12
-	panel_style.content_margin_right = 16
-	panel_style.content_margin_bottom = 12
+	panel_style.content_margin_left = 24
+	panel_style.content_margin_top = 20
+	panel_style.content_margin_right = 24
+	panel_style.content_margin_bottom = 20
 	credits_panel.add_theme_stylebox_override("panel", panel_style)
 	game_menu.add_child(credits_panel)
 	var scroll := ScrollContainer.new()
@@ -1129,21 +1284,23 @@ func _on_credits_back_pressed() -> void:
 
 func _add_volume_row(parent: VBoxContainer, label_text: String, initial: float, apply_callable: Callable) -> void:
 	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
 	parent.add_child(row)
 	var label := Label.new()
 	label.text = label_text
-	label.custom_minimum_size.x = 80
+	label.custom_minimum_size.x = 88
 	row.add_child(label)
 	var slider := HSlider.new()
 	slider.min_value = 0.0
 	slider.max_value = 1.0
 	slider.step = 0.01
+	slider.custom_minimum_size.y = 28.0
 	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	slider.value = initial
 	slider.value_changed.connect(func(v: float): apply_callable.call(v))
 	row.add_child(slider)
 	var value_label := Label.new()
-	value_label.custom_minimum_size.x = 48
+	value_label.custom_minimum_size.x = 52
 	value_label.text = "%d%%" % int(initial * 100.0)
 	slider.value_changed.connect(func(v: float): value_label.text = "%d%%" % int(v * 100.0))
 	row.add_child(value_label)
@@ -1181,23 +1338,30 @@ func _setup_main_menu_options() -> void:
 	main_menu_settings_panel = Panel.new()
 	main_menu_settings_panel.name = "MainMenuAudioPanel"
 	main_menu_settings_panel.visible = false
-	main_menu_settings_panel.offset_left = 640.0
-	main_menu_settings_panel.offset_top = 320.0
-	main_menu_settings_panel.offset_right = 1220.0
-	main_menu_settings_panel.offset_bottom = 520.0
+	main_menu_settings_panel.offset_left = 560.0
+	main_menu_settings_panel.offset_top = 280.0
+	main_menu_settings_panel.offset_right = 1300.0
+	main_menu_settings_panel.offset_bottom = 560.0
 	var panel_style := StyleBoxFlat.new()
 	panel_style.bg_color = Color(0.08, 0.08, 0.08, 0.92)
 	panel_style.border_color = Color("#FF8D4D")
 	panel_style.set_border_width_all(2)
-	panel_style.content_margin_left = 16
-	panel_style.content_margin_top = 12
-	panel_style.content_margin_right = 16
-	panel_style.content_margin_bottom = 12
+	panel_style.content_margin_left = 24
+	panel_style.content_margin_top = 20
+	panel_style.content_margin_right = 24
+	panel_style.content_margin_bottom = 20
 	main_menu_settings_panel.add_theme_stylebox_override("panel", panel_style)
 	main_menu.add_child(main_menu_settings_panel)
+	var mm_margin := MarginContainer.new()
+	mm_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	mm_margin.add_theme_constant_override("margin_left", 28)
+	mm_margin.add_theme_constant_override("margin_top", 24)
+	mm_margin.add_theme_constant_override("margin_right", 28)
+	mm_margin.add_theme_constant_override("margin_bottom", 24)
+	main_menu_settings_panel.add_child(mm_margin)
 	var vbox := VBoxContainer.new()
-	vbox.set_anchors_preset(Control.PRESET_FULL_RECT)
-	main_menu_settings_panel.add_child(vbox)
+	vbox.add_theme_constant_override("separation", 16)
+	mm_margin.add_child(vbox)
 	var title := Label.new()
 	title.text = "Sound & music"
 	title.add_theme_font_size_override("font_size", 28)
@@ -1230,26 +1394,20 @@ func _on_world_map_generated():
 	hub_panel.visible = false
 	waystation_panel.visible = false
 	if zone_title_label:
-		zone_title_label.visible = true
+		zone_title_label.visible = false
+	if journey_button:
+		journey_button.visible = true
 
 func set_zone_title(title: String) -> void:
-	if zone_title_label == null:
-		return
-	var total: int = RunState.get_run_floor_count()
+	if zone_title_label:
+		zone_title_label.visible = false
 	var index: int = RunState.get_current_floor_number()
-	var zone: ZoneDefinition = RunState.get_current_zone()
-	var music_hint: String = ""
-	if zone != null:
-		music_hint = " | %s" % ZoneMusic.get_track_label(zone.map_theme_id)
-	var gold_hint: String = ""
-	if RunState.campaign_active:
-		gold_hint = " | Run gold: %d" % RunState.run_gold
-	var mod_hint: String = ""
-	if RunState.campaign_active and RunState.run_modifier_id != "":
-		mod_hint = " | %s" % RunModifiers.get_display_name(RunState.run_modifier_id)
-	if RunState.ascended_run:
-		mod_hint += " | Ascended"
-	zone_title_label.text = "Floor %d/%d: %s%s%s%s" % [index, total, title, gold_hint, mod_hint, music_hint]
+	var total: int = RunState.get_run_floor_count()
+	if journey_button:
+		journey_button.visible = RunState.campaign_active
+		journey_button.text = "Floor %d/%d" % [index, total]
+		journey_button.tooltip_text = title
+	_refresh_journey_list()
 
 func show_zone_cleared(remaining_characters: Array, campaign_complete: bool) -> void:
 	var character_names: PackedStringArray = []

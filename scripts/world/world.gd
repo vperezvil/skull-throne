@@ -534,17 +534,12 @@ func find_mst():
 	return path
 
 func connect_rooms(center_a, center_b):
-	var ax := int(center_a.x)
-	var ay := int(center_a.y)
-	var bx := int(center_b.x)
-	var by := int(center_b.y)
-	var horizontal_start := Vector2(mini(ax, bx), ay)
-	var horizontal_end := Vector2(maxi(ax, bx), ay)
-	var vertical_start := Vector2(bx, ay)
-	var vertical_end := Vector2(bx, by)
+	var horizontal_start = Vector2(min(center_a.x, center_b.x), center_a.y)
+	var horizontal_end = Vector2(max(center_a.x, center_b.x), center_a.y)
+	var vertical_start = Vector2(center_b.x, center_a.y)
+	var vertical_end = Vector2(center_b.x, center_b.y)
 	tilemap.draw_corridor(horizontal_start, horizontal_end)
 	tilemap.draw_corridor(vertical_start, vertical_end)
-	tilemap.carve_connection_mouths(rooms, center_a, center_b)
 	tilemap.stamp_corridor_junction(center_a, center_b)
 
 func find_boss_room() -> Rect2:

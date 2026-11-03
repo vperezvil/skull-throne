@@ -85,22 +85,36 @@ func apply_battle_presentation_scale(factor: float) -> void:
 	scale *= factor
 	var inv := 1.0 / factor
 	progress_bar.scale = Vector2(inv, inv)
-	progress_bar.offset_left = -50.0
-	progress_bar.offset_right = 50.0
-	progress_bar.offset_top = -92.0
-	progress_bar.offset_bottom = -74.0
 	if mp_bar:
 		mp_bar.scale = Vector2(inv, inv)
-		mp_bar.offset_left = progress_bar.offset_left
-		mp_bar.offset_right = progress_bar.offset_right
-		mp_bar.offset_top = progress_bar.offset_top + 14.0
-		mp_bar.offset_bottom = progress_bar.offset_bottom + 14.0
 	if xp_bar:
 		xp_bar.scale = Vector2(inv, inv)
+
+func align_battle_hud_to_sprite() -> void:
+	var top_y := _sprite_top_local_y()
+	var bar_h := 14.0
+	var gap := 10.0
+	progress_bar.offset_top = top_y - bar_h - gap
+	progress_bar.offset_bottom = top_y - gap
+	var half_w := 58.0
+	progress_bar.offset_left = -half_w
+	progress_bar.offset_right = half_w
+	if mp_bar:
+		mp_bar.offset_left = progress_bar.offset_left
+		mp_bar.offset_right = progress_bar.offset_right
+		mp_bar.offset_top = progress_bar.offset_bottom + 2.0
+		mp_bar.offset_bottom = progress_bar.offset_bottom + 16.0
+	if xp_bar:
 		xp_bar.offset_left = progress_bar.offset_left
 		xp_bar.offset_right = progress_bar.offset_right
-		xp_bar.offset_top = progress_bar.offset_top + 28.0
-		xp_bar.offset_bottom = progress_bar.offset_bottom + 28.0
+
+func _sprite_top_local_y() -> float:
+	if has_node("Body"):
+		var body: Sprite2D = $Body
+		if body.texture != null:
+			var frame_h: float = body.texture.get_height() / maxf(float(maxi(body.vframes, 1)), 1.0)
+			return body.position.y - frame_h * absf(body.scale.y) * 0.5
+	return -58.0
 
 func prepare_battle_hud() -> void:
 	_battle_hud_active = true
@@ -111,6 +125,7 @@ func prepare_battle_hud() -> void:
 		mp_bar.visible = false
 	if xp_bar:
 		xp_bar.visible = false
+	align_battle_hud_to_sprite()
 	_sync_bar_value_label()
 
 func _ensure_bar_value_label() -> void:
