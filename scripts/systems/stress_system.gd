@@ -12,7 +12,7 @@ static func add_stress(character: Character, amount: int, _reason: String = "") 
 	if character.stress >= STRESS_BREAK:
 		character.stress = int(STRESS_BREAK * 0.35)
 		if randf() < 0.55:
-			var stain := CharacterTraits.roll_random_stain(character.character_id)
+			var stain: Dictionary = CharacterTraits.roll_random_stain(character.character_id)
 			if !stain.is_empty():
 				events.append({
 					"type": "stain",
@@ -20,7 +20,7 @@ static func add_stress(character: Character, amount: int, _reason: String = "") 
 					"title": String(stain.get("title", "")),
 				})
 		elif randf() < 0.12:
-			var oath := CharacterTraits.roll_random_oath(character.character_id)
+			var oath: Dictionary = CharacterTraits.roll_random_oath(character.character_id)
 			if !oath.is_empty():
 				events.append({
 					"type": "oath",

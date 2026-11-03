@@ -66,10 +66,10 @@ static func waystation_campfire(party: Array) -> bool:
 		if member is Character:
 			member.clear_status_effects()
 			member.stress = maxi(0, member.stress - 20)
-	var purified := false
+	var purified: bool = false
 	for member in party:
 		if member is Character:
-			var stains := MetaProgress.get_traits(member.character_id)
+			var stains: Array = MetaProgress.get_traits(member.character_id)
 			for tid in stains:
 				if !CharacterTraits.is_positive(tid):
 					MetaProgress.remove_trait(member.character_id, tid)

@@ -33,7 +33,7 @@ func build_run_summary(victory: bool) -> Dictionary:
 func add_run_gold(amount: int) -> void:
 	if !campaign_active or amount <= 0:
 		return
-	var scaled := int(amount * RunModifiers.gold_multiplier(run_modifier_id))
+	var scaled: int = int(amount * RunModifiers.gold_multiplier(run_modifier_id))
 	if run_blessing_ids.has("gold_whisper"):
 		scaled = int(scaled * 1.1)
 	if ascended_run:
@@ -50,7 +50,7 @@ func _party_key(party: Array) -> String:
 	return ",".join(ids)
 
 func refresh_stat_preview(party: Array) -> void:
-	var key := _party_key(party)
+	var key: String = _party_key(party)
 	if key == _preview_party_key and !party_stat_preview.is_empty():
 		return
 	_preview_party_key = key
@@ -61,7 +61,7 @@ func refresh_stat_preview(party: Array) -> void:
 			if def != null:
 				var rolled: Dictionary = ContentRegistry.roll_stat_variant(def)
 				if MetaProgress.get_locked_stat_character_id() == member.character_id:
-					var locked := MetaProgress.get_locked_stat_roll()
+					var locked: Dictionary = MetaProgress.get_locked_stat_roll()
 					if !locked.is_empty():
 						rolled = locked
 				party_stat_preview[member.character_id] = rolled
@@ -75,7 +75,7 @@ func get_stat_preview(character_id: String) -> Dictionary:
 	return party_stat_preview.get(character_id, {})
 
 func format_stat_preview_line(character_id: String, display_name: String) -> String:
-	var preview := get_stat_preview(character_id)
+	var preview: Dictionary = get_stat_preview(character_id)
 	if preview.is_empty():
 		return display_name
 	return "%s: HP %d  ATK %d  INIT %d  MP %d" % [
@@ -87,7 +87,7 @@ func format_stat_preview_line(character_id: String, display_name: String) -> Str
 	]
 
 func roll_party_stats(party: Array) -> void:
-	var key := _party_key(party)
+	var key: String = _party_key(party)
 	if key == _preview_party_key and !party_stat_preview.is_empty():
 		party_stat_variants = party_stat_preview.duplicate(true)
 		return
@@ -219,7 +219,7 @@ func get_voluntary_abandon_warning_text() -> String:
 
 func get_progression_hint_text() -> String:
 	var lines: PackedStringArray = []
-	var floors := MetaProgress.get_lifetime_floors_cleared()
+	var floors: int = MetaProgress.get_lifetime_floors_cleared()
 	var next_unlock: String = ContentRegistry.get_next_character_unlock(floors)
 	if next_unlock != "":
 		lines.append("Next unlock: %s (clear %d lifetime floors)." % [next_unlock, ContentRegistry.get_unlock_floor_for(next_unlock)])
@@ -232,7 +232,7 @@ func get_progression_hint_text() -> String:
 	return "\n".join(lines)
 
 func get_early_return_warning_text() -> String:
-	var penalty := get_early_return_penalty_fraction()
+	var penalty: float = get_early_return_penalty_fraction()
 	var pct := int(round(penalty * 100.0))
 	var tithe_estimate := int(maxi(0, floors_cleared_this_run) * 12 * (1.0 - penalty))
 	return (

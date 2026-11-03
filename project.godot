@@ -25,7 +25,7 @@ config/windows_native_icon="res://assets/logo.ico"
 [autoload]
 
 Global="*res://scripts/core/global.gd"
-Inventory="*res://scripts/items/InventoryManager.gd"
+Inventory="*res://scripts/items/inventory_manager.gd"
 ZoneMusic="*res://scripts/data/zone_music.gd"
 ContentRegistry="*res://scripts/data/content_registry.gd"
 RunState="*res://scripts/run/run_state.gd"

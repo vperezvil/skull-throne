@@ -27,7 +27,7 @@ var _base_initiative: int = 50
 var _veteran_bonus_hp: int = 0
 var _veteran_bonus_atk: int = 0
 var stress: int = 0
-var _battle_first_kill_done := false
+var _battle_first_kill_done: bool = false
 var _equip_attack: int = 0
 var _equip_hp: int = 0
 var _equip_crit: float = 0.0
@@ -49,7 +49,7 @@ var _base_mp_regen: int = 2
 var skill_cooldowns: Dictionary = {}
 var is_defending = false
 var is_colliding = false
-var is_party_leader := true
+var is_party_leader: bool = true
 var follow_target: Character = null
 var follow_offset := Vector2.ZERO
 
@@ -176,7 +176,7 @@ func _follow_leader(delta: float) -> void:
 	if to_target.length() < 8.0:
 		ap.stop()
 		return
-	var direction := to_target.normalized()
+	var direction: Vector2 = to_target.normalized()
 	if abs(direction.x) > abs(direction.y):
 		ap.play("walk_right" if direction.x > 0 else "walk_left")
 	else:
@@ -186,7 +186,7 @@ func _follow_leader(delta: float) -> void:
 		
 func read_input():
 	velocity = Vector2.ZERO
-	var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	var direction: Vector2 = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if direction.length_squared() < 0.01:
 		direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if direction.length_squared() > 0.01:
@@ -348,9 +348,9 @@ func apply_blessing_bonuses() -> void:
 	recalculate_combat_stats()
 
 func recalculate_combat_stats() -> void:
-	var trait_mods := CharacterTraits.get_stat_modifiers(character_id)
-	var sanctum_hp := MetaProgress.vitality_level * MetaProgress.VITALITY_HP_BONUS
-	var sanctum_atk := MetaProgress.fury_level * MetaProgress.FURY_ATK_BONUS
+	var trait_mods: Dictionary = CharacterTraits.get_stat_modifiers(character_id)
+	var sanctum_hp: int = MetaProgress.vitality_level * MetaProgress.VITALITY_HP_BONUS
+	var sanctum_atk: int = MetaProgress.fury_level * MetaProgress.FURY_ATK_BONUS
 	attack = (
 		_base_attack
 		+ _equip_attack
@@ -467,7 +467,7 @@ func apply_run_equipment() -> void:
 	_equip_hp = 0
 	_equip_crit = 0.0
 	for slot in [EquipmentDefinition.Slot.WEAPON, EquipmentDefinition.Slot.HEAD, EquipmentDefinition.Slot.HANDS, EquipmentDefinition.Slot.BODY]:
-		var eq_id := RunState.get_equipped_id(character_id, slot)
+		var eq_id: String = RunState.get_equipped_id(character_id, slot)
 		if eq_id == "":
 			continue
 		var def: EquipmentDefinition = EquipmentRegistry.get_definition(eq_id)

@@ -2,7 +2,7 @@ extends Area2D
 class_name TreasureCache
 
 var gold_amount: int = 14
-var _picked := false
+var _picked: bool = false
 
 func _ready() -> void:
 	collision_layer = 0

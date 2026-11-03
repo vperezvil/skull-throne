@@ -34,7 +34,7 @@ var pause_backdrop: ColorRect
 var pause_title: Label
 var resume_button: Button
 var settings_panel: Panel
-var settings_open := false
+var settings_open: bool = false
 var hub_panel: Panel
 var hub_tithe_label: Label
 var hub_stats_label: RichTextLabel
@@ -58,7 +58,7 @@ var shrine_option_box: VBoxContainer
 var map_toast: Label
 var ascended_toggle: CheckButton
 var hub_mirror_select: OptionButton
-var _shrine_campaign_complete := false
+var _shrine_campaign_complete: bool = false
 
 var character_ids_toggled = []
 var characters = []
@@ -287,9 +287,9 @@ func show_hub() -> void:
 func show_hub_after_run(payload: RunEndPayload) -> void:
 	hide_run_overlays()
 	hub_panel.visible = true
-	var tithe_earned := payload.tithe_earned
-	var victory := payload.victory
-	var penalty := payload.penalty_fraction
+	var tithe_earned: int = payload.tithe_earned
+	var victory: bool = payload.victory
+	var penalty: float = payload.penalty_fraction
 	if victory:
 		hub_message_label.text = "Khorne is slain! You earned %d Blood Tithe." % tithe_earned
 	elif penalty > 0.0:
@@ -297,9 +297,9 @@ func show_hub_after_run(payload: RunEndPayload) -> void:
 			int(round(penalty * 100.0)), tithe_earned]
 	else:
 		hub_message_label.text = "The run ends. You earned %d Blood Tithe for the sanctum." % tithe_earned
-	var run_summary := payload.run_summary
+	var run_summary: Dictionary = payload.run_summary
 	if !run_summary.is_empty():
-		var mod_name := RunModifiers.get_display_name(String(run_summary.get("modifier_id", "")))
+		var mod_name: String = RunModifiers.get_display_name(String(run_summary.get("modifier_id", "")))
 		hub_message_label.text += (
 			"\n\nRun debrief: %d floor(s), %d run gold, %d shrine blessing(s).\nModifier: %s%s."
 			% [
@@ -422,7 +422,7 @@ func _refresh_hub_mirror_select() -> void:
 		hub_mirror_select.disabled = true
 	else:
 		hub_mirror_select.disabled = false
-		var locked := MetaProgress.get_locked_stat_character_id()
+		var locked: String = MetaProgress.get_locked_stat_character_id()
 		if locked != "":
 			for i in party.size():
 				if party[i] is Character and (party[i] as Character).character_id == locked:
@@ -439,7 +439,7 @@ func _on_hub_lock_mirror() -> void:
 		hub_message_label.text = "Choose which hero to lock in the dropdown above."
 		return
 	var ch: Character = party[idx]
-	var roll := RunState.get_stat_preview(ch.character_id)
+	var roll: Dictionary = RunState.get_stat_preview(ch.character_id)
 	if roll.is_empty():
 		hub_message_label.text = "No preview roll for that hero."
 		return
@@ -665,7 +665,7 @@ func _populate_shrine_options() -> void:
 		shrine_option_box.add_child(btn)
 
 func _on_shrine_option_pressed(option_id: String) -> void:
-	var result := ShrineChoices.apply(option_id, characters)
+	var result: String = ShrineChoices.apply(option_id, characters)
 	shrine_message.text = result
 	shrine_panel.visible = false
 	show_zone_cleared(characters, _shrine_campaign_complete)
@@ -1018,16 +1018,16 @@ func _on_world_map_generated():
 func set_zone_title(title: String) -> void:
 	if zone_title_label == null:
 		return
-	var total := RunState.get_run_floor_count()
-	var index := RunState.get_current_floor_number()
-	var zone := RunState.get_current_zone()
-	var music_hint := ""
+	var total: int = RunState.get_run_floor_count()
+	var index: int = RunState.get_current_floor_number()
+	var zone: ZoneDefinition = RunState.get_current_zone()
+	var music_hint: String = ""
 	if zone != null:
 		music_hint = " | %s" % ZoneMusic.get_track_label(zone.map_theme_id)
-	var gold_hint := ""
+	var gold_hint: String = ""
 	if RunState.campaign_active:
 		gold_hint = " | Run gold: %d" % RunState.run_gold
-	var mod_hint := ""
+	var mod_hint: String = ""
 	if RunState.campaign_active and RunState.run_modifier_id != "":
 		mod_hint = " | %s" % RunModifiers.get_display_name(RunState.run_modifier_id)
 	if RunState.ascended_run:
@@ -1038,7 +1038,7 @@ func show_zone_cleared(remaining_characters: Array, campaign_complete: bool) -> 
 	var character_names: PackedStringArray = []
 	for character in remaining_characters:
 		character_names.append(character.name)
-	var zone := RunState.get_current_zone()
+	var zone: ZoneDefinition = RunState.get_current_zone()
 	var zone_name := zone.display_name if zone != null else "the realm"
 	if end_title_label:
 		if campaign_complete:
@@ -1122,7 +1122,7 @@ func _refresh_character_select_locks() -> void:
 		button.modulate = Color.WHITE if unlocked else Color(0.45, 0.45, 0.45, 1.0)
 		if definition != null and !unlocked:
 			var need := definition.unlock_after_zones_cleared
-			var have := MetaProgress.get_lifetime_floors_cleared()
+			var have: int = MetaProgress.get_lifetime_floors_cleared()
 			button.tooltip_text = "Unlock after %d lifetime floor clears (%d/%d)." % [need, have, need]
 		else:
 			button.tooltip_text = definition.display_name if definition != null else ""

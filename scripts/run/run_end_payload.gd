@@ -10,7 +10,7 @@ var trait_events: Array = []
 var stress_events: Array = []
 
 static func from_run(victory: bool, voluntary_abandon: bool, penalty: float, tithe: int, summary: Dictionary, traits: Array, stress: Array = []) -> RunEndPayload:
-	var p := RunEndPayload.new()
+	var p: RunEndPayload = RunEndPayload.new()
 	p.victory = victory
 	p.voluntary_abandon = voluntary_abandon
 	p.penalty_fraction = penalty

@@ -131,7 +131,7 @@ func _on_game_started() -> void:
 				member.apply_definition(def)
 			MetaProgress.apply_meta_to_character(member)
 			member.apply_run_equipment()
-			var init_bonus := RunModifiers.party_initiative_bonus(RunState.run_modifier_id)
+			var init_bonus: int = RunModifiers.party_initiative_bonus(RunState.run_modifier_id)
 			if init_bonus > 0:
 				member.initiative = clampi(member.initiative + init_bonus, 1, 100)
 	MetaProgress.grant_run_start_supplies()
@@ -163,11 +163,11 @@ func advance_to_next_zone() -> void:
 func _apply_zone_config() -> void:
 	current_zone = RunState.get_current_zone()
 	tilemap.apply_zone(current_zone)
-	var depth := RunState.get_run_depth()
+	var depth: int = RunState.get_run_depth()
 	num_rooms = current_zone.num_rooms + depth
 	enemies_total = current_zone.enemy_count + depth * 2
 	if current_zone != null:
-		var next_stream := ZoneMusic.get_overworld_music_for_zone(current_zone)
+		var next_stream: AudioStream = ZoneMusic.get_overworld_music_for_zone(current_zone)
 		if map_music.stream != next_stream:
 			ZoneMusic.apply_to_player(map_music, next_stream, _map_music_normal_db)
 	ui.set_zone_title(current_zone.display_name)
@@ -255,7 +255,7 @@ func _get_party_leader() -> Character:
 	return null
 
 func _sync_enemy_chase_targets() -> void:
-	var leader := _get_party_leader()
+	var leader: Character = _get_party_leader()
 	for e in enemies:
 		if is_instance_valid(e) and e is Enemy:
 			e.set_chase_target(leader)
@@ -326,7 +326,7 @@ func _build_skull_throne_arena(room: Rect2) -> void:
 	_spawn_throne_skulls(center)
 
 func _spawn_throne_skulls(arena_center: Vector2) -> void:
-	var skull_count := Global.get_skull_count()
+	var skull_count: int = Global.get_skull_count()
 	if skull_count <= 0:
 		return
 	var texture: Texture2D = load("res://assets/monsters/undead/flying_skull.png")
@@ -386,9 +386,9 @@ func spawn_enemies():
 			if enemy == null:
 				continue
 			if enemy is ConfigurableEnemy:
-				var cfg := enemy as ConfigurableEnemy
+				var cfg: ConfigurableEnemy = enemy as ConfigurableEnemy
 				cfg.apply_run_scaling(RunState.get_run_depth())
-				var elite_roll := GameConstants.ELITE_SPAWN_CHANCE + RunState.get_run_depth() * 0.015
+				var elite_roll: float = GameConstants.ELITE_SPAWN_CHANCE + RunState.get_run_depth() * 0.015
 				elite_roll += RunModifiers.elite_chance_bonus(RunState.run_modifier_id)
 				elite_roll += RunModifiers.ascended_elite_chance_bonus(RunState.ascended_run)
 				if randf() < elite_roll:
@@ -427,7 +427,7 @@ func spawn_items():
 		items.append(item)
 
 func spawn_treasure_caches() -> void:
-	var count := RunModifiers.extra_cache_count(RunState.run_modifier_id)
+	var count: int = RunModifiers.extra_cache_count(RunState.run_modifier_id)
 	for _i in range(count):
 		var spawn_position = SpawnHelpers.take_random_tile(walkable_tiles)
 		if spawn_position == null:
@@ -446,7 +446,7 @@ func spawn_map_events() -> void:
 		var spawn_position = SpawnHelpers.take_random_tile(walkable_tiles)
 		if spawn_position == null:
 			break
-		var event_id := MapEventHandler.roll_event_id()
+		var event_id: String = MapEventHandler.roll_event_id()
 		var event := MapEvent.new()
 		event.event_id = event_id
 		items_node.add_child(event)
@@ -455,7 +455,7 @@ func spawn_map_events() -> void:
 		map_events.append(event)
 
 func _on_map_event_triggered(event_id: String) -> void:
-	var msg := MapEventHandler.resolve(event_id, self, characters)
+	var msg: String = MapEventHandler.resolve(event_id, self, characters)
 	if msg != "":
 		ui.show_map_toast(msg)
 
@@ -474,7 +474,7 @@ func start_map_ambush() -> void:
 		enemy_node.add_child(foe)
 		foe.request_ready()
 		if foe is ConfigurableEnemy:
-			var cfg := foe as ConfigurableEnemy
+			var cfg: ConfigurableEnemy = foe as ConfigurableEnemy
 			cfg.apply_run_scaling(RunState.get_run_depth())
 			if randf() < GameConstants.ELITE_SPAWN_CHANCE:
 				cfg.mark_elite()
@@ -621,7 +621,7 @@ func end_battle(remaining_characters):
 		character.battle_started = false
 		character.hide_battle_bars()
 	_reassign_party_leadership()
-	var main_character := _get_party_leader()
+	var main_character: Character = _get_party_leader()
 	if main_character == null:
 		return
 	fountain.players = characters
@@ -661,7 +661,7 @@ func _prune_defeated_enemies() -> void:
 
 func return_to_hub(victory: bool, voluntary_abandon: bool = false) -> void:
 	resume_paused_game()
-	var payload := RunDirector.build_end_payload(self, victory, voluntary_abandon)
+	var payload: RunEndPayload = RunDirector.build_end_payload(self, victory, voluntary_abandon)
 	RunDirector.apply_hub_return(self, payload)
 
 func abandon_run() -> void:

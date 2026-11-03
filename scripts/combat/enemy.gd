@@ -44,7 +44,7 @@ func _physics_process(delta):
 	if battle_started:
 		sprite.flip_h = true
 		return
-	var target := _get_chase_target()
+	var target: Character = _get_chase_target()
 	if target == null:
 		is_chasing = false
 		return
@@ -122,7 +122,7 @@ func handle_collision():
 		var collider = collision.get_collider()
 		if collider == null:
 			continue
-		var target := _get_chase_target()
+		var target: Character = _get_chase_target()
 		if collider == target and !battle_started and !target.battle_started:
 			target.collided_with_enemy()
 			enemy_battle_start.emit(self)

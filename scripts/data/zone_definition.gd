@@ -3,7 +3,7 @@ class_name ZoneDefinition
 
 @export var zone_id: String = ""
 @export var display_name: String = "Unknown Zone"
-@export var floor_source_id: int = 0 # TileSet source ids used in Map.gd
+@export var floor_source_id: int = 0 # TileSet source ids used in map.gd
 @export var wall_source_id: int = 6
 @export var map_music: AudioStream
 @export var enemy_scenes: Array[PackedScene] = []
