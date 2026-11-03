@@ -78,9 +78,9 @@ func draw_corridor(start, end):
 			var coord = Vector2i(main_coord + offset, i) if is_vertical else Vector2i(i, main_coord + offset)
 			var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
 			var is_border_tile = offset < 0 or offset >= corridor_width
-			if is_border_tile:
+			if is_border_tile and !get_used_cells().has(coord):
 				set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
-			else:
+			elif !is_border_tile:
 				set_cell(coord, level, _walkable_floor_atlas(floor_map))
 
 func _atlas_coord(noise_sample: float, divisor: float) -> Vector2i:
