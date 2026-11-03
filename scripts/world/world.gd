@@ -222,8 +222,6 @@ func generate_map():
 				if !connections_visited.has(c):
 					connect_rooms(pp, cp)
 			connections_visited.append(p)
-	for room in rooms:
-		tilemap.seal_room_corners(room)
 	tilemap.refresh_physics()
 
 func spawn_player():
@@ -540,7 +538,6 @@ func connect_rooms(center_a, center_b):
 	var vertical_end = Vector2(center_b.x, center_b.y)
 	tilemap.draw_corridor(horizontal_start, horizontal_end)
 	tilemap.draw_corridor(vertical_start, vertical_end)
-	tilemap.stamp_corridor_junction(center_a, center_b)
 
 func find_boss_room() -> Rect2:
 	var start_position: Vector2 = starting_room.get_center()

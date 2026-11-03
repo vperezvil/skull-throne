@@ -48,53 +48,6 @@ func generate_chunk(room_position, room_size):
 				var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
 				set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
 
-func seal_room_corners(room: Rect2) -> void:
-	var left := int(room.position.x)
-	var top := int(room.position.y)
-	var right := int(room.position.x + room.size.x) - 1
-	var bottom := int(room.position.y + room.size.y) - 1
-	for corner in [Vector2i(left, top), Vector2i(right, top), Vector2i(left, bottom), Vector2i(right, bottom)]:
-		_paint_wall(corner)
-
-func stamp_corridor_junction(center_a: Vector2, center_b: Vector2) -> void:
-	var junction := Vector2i(int(center_b.x), int(center_a.y))
-	var hx := signi(int(center_b.x) - int(center_a.x))
-	var vy := signi(int(center_b.y) - int(center_a.y))
-	if hx == 0 or vy == 0:
-		return
-	var outer: int = corridor_width + border_width
-	var north: int = junction.y - border_width
-	var east: int = junction.x + corridor_width + border_width - 1
-	var west: int = junction.x - border_width
-	var caps: Array[Vector2i] = [
-		Vector2i(junction.x + hx * outer, north),
-		Vector2i(junction.x + hx * (outer - 1), north),
-		Vector2i(junction.x + hx * outer, north - 1),
-	]
-	if hx > 0:
-		caps.append_array([
-			Vector2i(east, junction.y + vy * outer),
-			Vector2i(east, junction.y + vy * (outer - 1)),
-			Vector2i(east + 1, junction.y + vy * outer),
-		])
-	else:
-		caps.append_array([
-			Vector2i(west, junction.y + vy * outer),
-			Vector2i(west, junction.y + vy * (outer - 1)),
-			Vector2i(west - 1, junction.y + vy * outer),
-		])
-	for coord in caps:
-		_paint_wall(coord)
-
-func _cell_is_walkable_floor(coord: Vector2i) -> bool:
-	return get_cell_source_id(coord) == level
-
-func _paint_wall(coord: Vector2i, allow_overwrite_floor: bool = false) -> void:
-	if !allow_overwrite_floor and _cell_is_walkable_floor(coord):
-		return
-	var floor_map := map.get_noise_2d(coord.x, coord.y) * 10.0
-	set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
-
 func print_room_border(room_position, room_size):
 	var room_right = int(room_position.x + room_size.x)
 	var room_bottom = int(room_position.y + room_size.y)
@@ -112,7 +65,8 @@ func print_room_border(room_position, room_size):
 func _set_wall(coord: Vector2i) -> void:
 	if get_used_cells().has(coord):
 		return
-	_paint_wall(coord)
+	var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
+	set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
 
 func draw_corridor(start, end):
 	var is_vertical = start.x == end.x
@@ -126,9 +80,9 @@ func draw_corridor(start, end):
 			var coord = Vector2i(main_coord + offset, i) if is_vertical else Vector2i(i, main_coord + offset)
 			var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
 			var is_border_tile = offset < 0 or offset >= corridor_width
-			if is_border_tile:
-				_paint_wall(coord)
-			elif !_cell_is_walkable_floor(coord):
+			if is_border_tile and !get_used_cells().has(coord):
+				set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
+			elif !is_border_tile:
 				set_cell(coord, level, _atlas_coord(floor_map, floor_noise_divisor))
 
 func _atlas_coord(noise_sample: float, divisor: float) -> Vector2i:

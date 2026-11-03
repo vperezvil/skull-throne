@@ -91,14 +91,15 @@ func apply_battle_presentation_scale(factor: float) -> void:
 		xp_bar.scale = Vector2(inv, inv)
 
 func align_battle_hud_to_sprite() -> void:
+	var cx := _sprite_center_x()
 	var top_y := _sprite_top_local_y()
 	var bar_h := 14.0
 	var gap := 10.0
+	var half_w := 56.0
+	progress_bar.offset_left = cx - half_w
+	progress_bar.offset_right = cx + half_w
 	progress_bar.offset_top = top_y - bar_h - gap
 	progress_bar.offset_bottom = top_y - gap
-	var half_w := 58.0
-	progress_bar.offset_left = -half_w
-	progress_bar.offset_right = half_w
 	if mp_bar:
 		mp_bar.offset_left = progress_bar.offset_left
 		mp_bar.offset_right = progress_bar.offset_right
@@ -107,6 +108,11 @@ func align_battle_hud_to_sprite() -> void:
 	if xp_bar:
 		xp_bar.offset_left = progress_bar.offset_left
 		xp_bar.offset_right = progress_bar.offset_right
+
+func _sprite_center_x() -> float:
+	if has_node("Body"):
+		return ($Body as Node2D).position.x
+	return 0.0
 
 func _sprite_top_local_y() -> float:
 	if has_node("Body"):

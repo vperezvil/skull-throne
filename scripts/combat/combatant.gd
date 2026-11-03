@@ -75,15 +75,20 @@ func _sprite_top_local_y() -> float:
 				height = tex.get_height() * absf(a.scale.y)
 	return sprite.position.y - height * 0.5
 
+func _sprite_center_x() -> float:
+	var sprite := _visual_sprite_node()
+	return sprite.position.x if sprite != null else 0.0
+
 func align_battle_hud_to_sprite() -> void:
+	var cx := _sprite_center_x()
 	var top_y := _sprite_top_local_y()
 	var bar_h := 14.0
 	var gap := 10.0
+	var half_w := 56.0
+	progress_bar.offset_left = cx - half_w
+	progress_bar.offset_right = cx + half_w
 	progress_bar.offset_top = top_y - bar_h - gap
 	progress_bar.offset_bottom = top_y - gap
-	var half_w := 54.0
-	progress_bar.offset_left = -half_w
-	progress_bar.offset_right = half_w
 
 func prepare_battle_hud() -> void:
 	_battle_hud_active = true
