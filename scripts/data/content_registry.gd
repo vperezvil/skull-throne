@@ -34,7 +34,7 @@ func get_zone_by_id(zone_id: String) -> ZoneDefinition:
 	return zones_by_id.get(zone_id)
 
 func build_run_plan() -> Array[String]:
-	var biome_count := randi_range(GameConstants.RUN_BIOME_FLOORS_MIN, GameConstants.RUN_BIOME_FLOORS_MAX)
+	var biome_count: int = randi_range(GameConstants.RUN_BIOME_FLOORS_MIN, GameConstants.RUN_BIOME_FLOORS_MAX)
 	var plan: Array[String] = []
 	if run_biome_ids.is_empty():
 		plan.append("grim_fields")
@@ -80,8 +80,8 @@ func get_character_by_id(id: String) -> CharacterDefinition:
 	return null
 
 func get_next_character_unlock(lifetime_floors: int) -> String:
-	var best_name := ""
-	var best_need := 99999
+	var best_name: String = ""
+	var best_need: int = 99999
 	for def in characters:
 		if lifetime_floors >= def.unlock_after_zones_cleared:
 			continue

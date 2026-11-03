@@ -333,13 +333,13 @@ func _spawn_throne_skulls(arena_center: Vector2) -> void:
 	if texture == null:
 		return
 	const MAX_SKULL_SPRITES := 40
-	var visible_count := mini(skull_count, MAX_SKULL_SPRITES)
+	var visible_count: int = mini(skull_count, MAX_SKULL_SPRITES)
 	for i in visible_count:
 		var skull := Sprite2D.new()
 		skull.texture = texture
-		var ring := 1 + (i % 3)
+		var ring: int = 1 + (i % 3)
 		var angle := TAU * float(i) / float(visible_count)
-		var radius := 72.0 + ring * 28.0
+		var radius: float = 72.0 + ring * 28.0
 		skull.position = arena_center + Vector2(cos(angle), sin(angle)) * radius
 		skull.scale = Vector2(1.4, 1.4)
 		skull.modulate = _throne_skull_tint()
@@ -412,8 +412,8 @@ func spawn_fountain():
 	fountain.spawn(fountain_room, tilemap, characters)
 
 func spawn_items():
-	var max_items := mini(GameConstants.ITEMS_MAX_SPAWN, items_dict.size())
-	var total_items := randi_range(GameConstants.ITEMS_MIN_SPAWN, max_items)
+	var max_items: int = mini(GameConstants.ITEMS_MAX_SPAWN, items_dict.size())
+	var total_items: int = randi_range(GameConstants.ITEMS_MIN_SPAWN, max_items)
 	for i in range(total_items):
 		var spawn_position = SpawnHelpers.take_random_tile(walkable_tiles)
 		if spawn_position == null:
@@ -434,12 +434,12 @@ func spawn_treasure_caches() -> void:
 			break
 		var cache := TreasureCache.new()
 		items_node.add_child(cache)
-		var gold := 12 + RunState.get_run_depth() * 4 + randi_range(0, 10)
+		var gold: int = 12 + RunState.get_run_depth() * 4 + randi_range(0, 10)
 		cache.setup(tilemap, spawn_position, gold)
 		treasure_caches.append(cache)
 
 func spawn_map_events() -> void:
-	var count := GameConstants.MAP_EVENTS_PER_FLOOR + RunState.get_run_depth() / 3
+	var count: int = GameConstants.MAP_EVENTS_PER_FLOOR + RunState.get_run_depth() / 3
 	if RunState.ascended_run:
 		count += 1
 	for _i in range(count):
@@ -533,7 +533,7 @@ func connect_rooms(center_a, center_b):
 func find_boss_room() -> Rect2:
 	var start_position: Vector2 = starting_room.get_center()
 	var farthest_room: Rect2 = starting_room
-	var max_dist := 0.0
+	var max_dist: float = 0.0
 	for room in rooms:
 		if room == starting_room:
 			continue
@@ -546,11 +546,11 @@ func find_boss_room() -> Rect2:
 func _duck_map_music() -> void:
 	if !map_music.playing:
 		map_music.play()
-	var tween := create_tween()
+	var tween: Tween = create_tween()
 	tween.tween_property(map_music, "volume_db", _map_music_normal_db + MAP_MUSIC_DUCK_DB, 0.35)
 
 func _restore_map_music_volume() -> void:
-	var tween := create_tween()
+	var tween: Tween = create_tween()
 	tween.tween_property(map_music, "volume_db", _map_music_normal_db, 0.5)
 
 func _prepare_party_for_combat() -> void:
@@ -585,7 +585,7 @@ func start_battle(enemy):
 	enemy.battle_started = true
 	fountain.visible = false
 	var enemies_to_battle = [enemy]
-	var extra_count := randi() % 2 + 1
+	var extra_count: int = randi() % 2 + 1
 	for i in range(extra_count):
 		var dup_enemy: Enemy = enemy.duplicate()
 		dup_enemy.name = enemy.name + " (" + str(i) + ")"

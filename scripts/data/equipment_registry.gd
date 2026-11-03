@@ -17,7 +17,7 @@ func get_shop_ids(use_run_gold: bool) -> Array:
 	if !use_run_gold:
 		return ids
 	var depth: int = RunState.floors_cleared_this_run
-	var count := clampi(4 + depth / 2, 4, ids.size())
+	var count: int = clampi(4 + depth / 2, 4, ids.size())
 	return ids.slice(0, count)
 
 func _register_all() -> void:

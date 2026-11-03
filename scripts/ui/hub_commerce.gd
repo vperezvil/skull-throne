@@ -7,7 +7,7 @@ static func buy_equipment(equipment_id: String, use_run_gold: bool) -> bool:
 	var def: EquipmentDefinition = EquipmentRegistry.get_definition(equipment_id)
 	if def == null:
 		return false
-	var price := def.waystation_price if use_run_gold else def.sanctum_price
+	var price: int = def.waystation_price if use_run_gold else def.sanctum_price
 	if use_run_gold:
 		if !RunState.spend_run_gold(price):
 			return false
@@ -18,7 +18,7 @@ static func buy_equipment(equipment_id: String, use_run_gold: bool) -> bool:
 	return true
 
 static func buy_potion(use_run_gold: bool) -> bool:
-	var price := 18 if use_run_gold else 25
+	var price: int = 18 if use_run_gold else 25
 	if use_run_gold:
 		if !RunState.spend_run_gold(price):
 			return false
@@ -28,7 +28,7 @@ static func buy_potion(use_run_gold: bool) -> bool:
 	return MetaProgress.grant_potion_to_inventory()
 
 static func train_skill(character_id: String, use_run_gold: bool) -> bool:
-	var price := 20 if use_run_gold else 35
+	var price: int = 20 if use_run_gold else 35
 	if use_run_gold:
 		if !RunState.spend_run_gold(price):
 			return false

@@ -6,7 +6,7 @@ class_name SpawnHelpers
 static func take_random_tile(walkable_tiles: Array) -> Variant:
 	if walkable_tiles.is_empty():
 		return null
-	var index := randi() % walkable_tiles.size()
+	var index: int = randi() % walkable_tiles.size()
 	var tile = walkable_tiles[index]
 	walkable_tiles.remove_at(index)
 	return tile

@@ -40,7 +40,7 @@ static func _on_rebind_pressed(action: String) -> void:
 	var current := KEY_W
 	if events.size() > 0 and events[0] is InputEventKey:
 		current = (events[0] as InputEventKey).physical_keycode
-	var idx := cycle.find(current)
+	var idx: int = cycle.find(current)
 	var next_key: Key = cycle[(idx + 1) % cycle.size()] if idx >= 0 else KEY_W
 	Global.save_movement_binding(action, next_key)
 

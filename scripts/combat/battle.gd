@@ -324,8 +324,8 @@ func _on_skills_pressed():
 		combat_dialog.text += " Sanctum tier 2+ unlocks extra skills."
 	for skill in current_combatant.skills:
 		var btn := Button.new()
-		var cd := current_combatant.get_skill_cooldown_remaining(skill.skill_id)
-		var label := skill.display_name
+		var cd: int = current_combatant.get_skill_cooldown_remaining(skill.skill_id)
+		var label: String = skill.display_name
 		if skill.mp_cost > 0:
 			label += " (%d MP)" % skill.mp_cost
 		if user != null and skill.damage_kind != SkillDefinition.DamageKind.HEAL:
@@ -403,7 +403,7 @@ func _apply_skill(user: Character, skill: SkillDefinition, target) -> void:
 		pending_skill = null
 		battle_menu.visible = true
 		return
-	var target_name := target.name if target else user.name
+	var target_name: String = target.name if target else user.name
 	combat_dialog.text += SKILL_MSG.replace("{player1}", user.name).replace("{skill}", skill.display_name).replace("{player2}", target_name)
 	match skill.damage_kind:
 		SkillDefinition.DamageKind.HEAL:
@@ -455,12 +455,12 @@ func _on_enemy_selected(enemy):
 	advance_turn()
 
 func _award_battle_xp(survivors: Array) -> void:
-	var xp_total := int(battle_xp_reward * RunModifiers.xp_multiplier(RunState.run_modifier_id))
+	var xp_total: int = int(battle_xp_reward * RunModifiers.xp_multiplier(RunState.run_modifier_id))
 	if xp_total <= 0:
 		return
 	for character in survivors:
 		if character is Character:
-			var before := character.level
+			var before: int = character.level
 			character.gain_xp(xp_total)
 			if character.level > before:
 				combat_dialog.text += LEVEL_UP_MSG.replace("{player1}", character.name).replace("{level}", str(character.level))
@@ -469,7 +469,7 @@ func _award_battle_gold(survivors: Array) -> void:
 	if is_boss_battle:
 		return
 	var depth: int = RunState.get_run_depth()
-	var gold := GameConstants.BATTLE_GOLD_BASE + depth * 2
+	var gold: int = GameConstants.BATTLE_GOLD_BASE + depth * 2
 	for foe in enemy_original_state.keys():
 		if is_instance_valid(foe) and foe.get("is_elite") == true:
 			gold += 14
@@ -477,7 +477,7 @@ func _award_battle_gold(survivors: Array) -> void:
 	RunState.add_run_gold(gold)
 	var gained: int = RunState.run_gold - before
 	if gained > 0:
-		var shown := gained
+		var shown: int = gained
 		for ch in survivors:
 			if ch is Character:
 				shown = CharacterTraits.modify_run_gold_gain(shown, ch.character_id)
@@ -521,7 +521,7 @@ func start_turn():
 		battle_menu.visible = true
 		highlight_character(current_combatant)
 		if current_combatant is Character:
-			var regen := current_combatant.regenerate_mp_this_turn()
+			var regen: int = current_combatant.regenerate_mp_this_turn()
 			if regen > 0:
 				combat_dialog.text += MP_REGEN_MSG.replace("{player1}", current_combatant.name).replace("{amount}", str(regen))
 			var status_msg: String = current_combatant.tick_status_effects_start_of_turn()

@@ -136,7 +136,7 @@ static func on_first_enemy_kill_in_battle(killer: Character) -> void:
 		killer.initiative = clampi(killer.initiative + 2, 1, 100)
 
 static func roll_random_stain(character_id: String) -> Dictionary:
-	var stains := _stain_pool()
+	var stains: Array = _stain_pool()
 	stains.shuffle()
 	for tid in stains:
 		if MetaProgress.try_add_trait(character_id, tid):
@@ -144,7 +144,7 @@ static func roll_random_stain(character_id: String) -> Dictionary:
 	return {}
 
 static func roll_random_oath(character_id: String) -> Dictionary:
-	var oaths := _oath_pool()
+	var oaths: Array = _oath_pool()
 	oaths.shuffle()
 	for tid in oaths:
 		if MetaProgress.try_add_trait(character_id, tid):
@@ -152,7 +152,7 @@ static func roll_random_oath(character_id: String) -> Dictionary:
 	return {}
 
 static func get_incoming_damage_multiplier(character_id: String) -> float:
-	var mult := 1.0
+	var mult: float = 1.0
 	for trait_id in MetaProgress.get_traits(character_id):
 		var data: Dictionary = DEFINITIONS.get(trait_id, {})
 		if data.has("incoming_damage_mult"):
@@ -160,7 +160,7 @@ static func get_incoming_damage_multiplier(character_id: String) -> float:
 	return mult
 
 static func get_healing_multiplier(character_id: String) -> float:
-	var mult := 1.0
+	var mult: float = 1.0
 	for trait_id in MetaProgress.get_traits(character_id):
 		var data: Dictionary = DEFINITIONS.get(trait_id, {})
 		if data.has("healing_mult"):
@@ -172,7 +172,7 @@ static func tick_combat_turn_start(character: Character) -> String:
 		return ""
 	for trait_id in MetaProgress.get_traits(character.character_id):
 		var data: Dictionary = DEFINITIONS.get(trait_id, {})
-		var loss := int(data.get("turn_start_hp_loss", 0))
+		var loss: int = int(data.get("turn_start_hp_loss", 0))
 		if loss <= 0:
 			continue
 		character.current_hp = maxi(0, character.current_hp - loss)
@@ -186,20 +186,20 @@ static func format_roster_line(character_id: String, display_name: String) -> St
 		return display_name
 	var parts: PackedStringArray = []
 	for tid in traits:
-		var tag := OATH_LABEL if is_positive(tid) else STAIN_LABEL
+		var tag: String = OATH_LABEL if is_positive(tid) else STAIN_LABEL
 		parts.append("%s: %s" % [tag, get_title(tid)])
 	return "%s (%s)" % [display_name, "; ".join(parts)]
 
 static func roll_early_retreat_traits(party: Array, penalty_fraction: float, is_early: bool) -> Array:
 	var results: Array = []
-	var stains := _stain_pool()
+	var stains: Array = _stain_pool()
 	if stains.is_empty():
 		return results
 	for member in party:
 		if !(member is Character):
 			continue
 		var ch: Character = member
-		var chance := 0.12
+		var chance: float = 0.12
 		if is_early:
 			chance = 0.30 + penalty_fraction * 0.50
 		if randf() > chance:
@@ -219,7 +219,7 @@ static func roll_early_retreat_traits(party: Array, penalty_fraction: float, is_
 
 static func roll_victory_oaths(party: Array) -> Array:
 	var results: Array = []
-	var oaths := _oath_pool()
+	var oaths: Array = _oath_pool()
 	if oaths.is_empty():
 		return results
 	for member in party:

@@ -172,7 +172,7 @@ func record_zone_cleared() -> void:
 	MetaProgress.record_lifetime_floor_cleared()
 	if campaign_active:
 		floors_cleared_this_run += 1
-		var floor_gold := GameConstants.RUN_GOLD_PER_FLOOR
+		var floor_gold: int = GameConstants.RUN_GOLD_PER_FLOOR
 		floor_gold += RunModifiers.floor_clear_gold_bonus(run_modifier_id)
 		run_gold += int(floor_gold * RunModifiers.gold_multiplier(run_modifier_id))
 		run_gold_earned_total += int(floor_gold * RunModifiers.gold_multiplier(run_modifier_id))
@@ -204,7 +204,7 @@ func is_early_return() -> bool:
 func get_early_return_penalty_fraction() -> float:
 	if !is_early_return():
 		return 0.0
-	var missing := GameConstants.EARLY_RETURN_SAFE_FLOORS - floors_cleared_this_run
+	var missing: int = GameConstants.EARLY_RETURN_SAFE_FLOORS - floors_cleared_this_run
 	return clampf(missing * 0.25, 0.25, 0.75)
 
 func get_voluntary_abandon_warning_text() -> String:
@@ -225,7 +225,7 @@ func get_progression_hint_text() -> String:
 		lines.append("Next unlock: %s (clear %d lifetime floors)." % [next_unlock, ContentRegistry.get_unlock_floor_for(next_unlock)])
 	if MetaProgress.can_use_ascended():
 		lines.append("Ascended descent available in sanctum.")
-	var est_tithe := maxi(0, GameConstants.RUN_BIOME_FLOORS_MIN) * 12
+	var est_tithe: int = maxi(0, GameConstants.RUN_BIOME_FLOORS_MIN) * 12
 	lines.append("Typical failed run tithe: ~%d-%d (deeper = more)." % [est_tithe, est_tithe * 3])
 	if MetaProgress.get_locked_stat_character_id() != "":
 		lines.append("Mirror lock active for %s." % MetaProgress.get_locked_stat_character_id())
@@ -233,8 +233,8 @@ func get_progression_hint_text() -> String:
 
 func get_early_return_warning_text() -> String:
 	var penalty: float = get_early_return_penalty_fraction()
-	var pct := int(round(penalty * 100.0))
-	var tithe_estimate := int(maxi(0, floors_cleared_this_run) * 12 * (1.0 - penalty))
+	var pct: int = int(round(penalty * 100.0))
+	var tithe_estimate: int = int(maxi(0, floors_cleared_this_run) * 12 * (1.0 - penalty))
 	return (
 		"You are leaving the descent early (only %d floor(s) cleared).\n\n"
 		% floors_cleared_this_run

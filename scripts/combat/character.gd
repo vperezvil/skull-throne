@@ -51,7 +51,7 @@ var is_defending = false
 var is_colliding = false
 var is_party_leader: bool = true
 var follow_target: Character = null
-var follow_offset := Vector2.ZERO
+var follow_offset: Vector2 = Vector2.ZERO
 
 const PARTY_FOLLOW_SPEED := 8.0
 
@@ -172,7 +172,7 @@ func _physics_process(delta):
 			_follow_leader(delta)
 
 func _follow_leader(delta: float) -> void:
-	var to_target := (follow_target.position + follow_offset) - position
+	var to_target: Vector2 = (follow_target.position + follow_offset) - position
 	if to_target.length() < 8.0:
 		ap.stop()
 		return
@@ -286,7 +286,7 @@ func _show_damage_number(amount: int, is_crit: bool, is_heal: bool) -> void:
 	damage_text.modulate = Color.WHITE
 
 func _flash_hit() -> void:
-	var original := modulate
+	var original: Color = modulate
 	modulate = Color(1.4, 0.6, 0.6)
 	await get_tree().create_timer(0.12).timeout
 	modulate = original
@@ -313,7 +313,7 @@ func hide_battle_bars() -> void:
 		xp_bar.visible = false
 
 func apply_healing(amount: int) -> void:
-	var received := int(amount * CharacterTraits.get_healing_multiplier(character_id))
+	var received: int = int(amount * CharacterTraits.get_healing_multiplier(character_id))
 	if poison_stacks > 0:
 		received = int(received * 0.75)
 	current_hp = mini(current_hp + received, max_hp)
@@ -332,11 +332,11 @@ func clear_status_effects() -> void:
 func tick_status_effects_start_of_turn() -> String:
 	var parts: PackedStringArray = []
 	if bleed_stacks > 0:
-		var bleed_damage := bleed_stacks * 3
+		var bleed_damage: int = bleed_stacks * 3
 		current_hp = maxi(0, current_hp - bleed_damage)
 		parts.append("bleed %d" % bleed_damage)
 	if poison_stacks > 0:
-		var poison_damage := poison_stacks * 2
+		var poison_damage: int = poison_stacks * 2
 		current_hp = maxi(0, current_hp - poison_damage)
 		parts.append("poison %d" % poison_damage)
 	if parts.is_empty():
@@ -416,8 +416,8 @@ func can_use_skill(skill: SkillDefinition) -> bool:
 func regenerate_mp_this_turn() -> int:
 	if max_mp <= 0:
 		return 0
-	var amount := mp_regen_per_turn + level / 4
-	var before := current_mp
+	var amount: int = mp_regen_per_turn + level / 4
+	var before: int = current_mp
 	restore_mp(amount)
 	return current_mp - before
 
@@ -482,14 +482,14 @@ func get_crit_chance() -> float:
 	return crit_rate
 
 func roll_crit(skill: SkillDefinition = null) -> bool:
-	var bonus := skill.crit_bonus if skill else 0.0
+	var bonus: float = skill.crit_bonus if skill else 0.0
 	return randf() < get_crit_chance() + bonus
 
 func receive_damage_from_attack(damage: int, was_crit: bool) -> void:
 	receive_damage(damage, was_crit)
 
 func compute_skill_damage(skill: SkillDefinition, _target) -> int:
-	var damage := 0
+	var damage: int = 0
 	match skill.damage_kind:
 		SkillDefinition.DamageKind.PHYSICAL:
 			damage = attack + skill.power

@@ -67,7 +67,7 @@ func check_aggro(target: Character) -> void:
 
 func chase_player(delta, target: Character):
 	velocity = Vector2.ZERO
-	var delta_pos := target.position - position
+	var delta_pos: Vector2 = target.position - position
 	if abs(delta_pos.x) > abs(delta_pos.y):
 		velocity.x = 1.0 if delta_pos.x > 0.0 else -1.0
 	else:
@@ -81,10 +81,10 @@ func chase_player(delta, target: Character):
 	handle_collision()
 
 func has_clear_path_to(target: Character) -> bool:
-	var space_state := get_world_2d().direct_space_state
-	var query := PhysicsRayQueryParameters2D.create(position, target.position)
+	var space_state: PhysicsDirectSpaceState2D = get_world_2d().direct_space_state
+	var query: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(position, target.position)
 	query.exclude = [get_rid()]
-	var result := space_state.intersect_ray(query)
+	var result: Dictionary = space_state.intersect_ray(query)
 	if result.is_empty():
 		return true
 	return _collider_is_target(result.get("collider"), target)

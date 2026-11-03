@@ -152,5 +152,5 @@ func apply_to_player(player: AudioStreamPlayer, stream: AudioStream, normal_db: 
 	player.volume_db = normal_db - 10.0
 	player.stream = stream
 	player.play()
-	var tween := player.create_tween()
+	var tween: Tween = player.create_tween()
 	tween.tween_property(player, "volume_db", normal_db, 0.65)
