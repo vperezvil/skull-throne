@@ -11,6 +11,7 @@ func _run_validation() -> void:
 	if errors.is_empty():
 		print("Content validation OK")
 		quit(0)
+		return
 	for e in errors:
 		push_error(e)
 	quit(1)

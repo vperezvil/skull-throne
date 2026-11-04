@@ -15,6 +15,7 @@ func _run() -> void:
 	if errors.is_empty():
 		print("Smoke test OK")
 		quit(0)
+		return
 	for e in errors:
 		push_error(e)
 	quit(1)
