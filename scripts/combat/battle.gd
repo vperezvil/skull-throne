@@ -83,8 +83,9 @@ func _configure_battle_ui_layout() -> void:
 func _reposition_battle_formation(party_size: int, enemy_size: int, boss_fight: bool) -> void:
 	const LOG_BOTTOM := 24.0
 	const LOG_HEIGHT := 148.0
-	const LOG_GAP := 64.0
-	const FORMATION_LIFT := 280.0
+	const LOG_GAP := 48.0
+	const FORMATION_LIFT := 130.0
+	const VIEW_TOP_MARGIN := 96.0
 	const PARTY_ROW := 200.0
 	const ENEMY_ROW := 250.0
 	const BASE_OFFSET := 30.0
@@ -98,8 +99,11 @@ func _reposition_battle_formation(party_size: int, enemy_size: int, boss_fight: 
 	if enemy_size > 1:
 		enemy_depth = BASE_OFFSET + float(enemy_size - 1) * ENEMY_ROW + sprite_foot
 	var stack_depth := maxf(party_depth, enemy_depth)
+	var crown_headroom := sprite_foot + 72.0
 	var formation_y := log_top - stack_depth - FORMATION_LIFT
-	formation_y = clampf(formation_y, 72.0, log_top - sprite_foot)
+	var min_y := VIEW_TOP_MARGIN + crown_headroom
+	var max_y := log_top - sprite_foot * 0.45
+	formation_y = clampf(formation_y, min_y, max_y)
 	enemy_container.position = Vector2(447.0, formation_y)
 	character_container.position = Vector2(1426.0, formation_y)
 
