@@ -16,6 +16,7 @@ var _bar_value_label: Label
 var _mp_bar_value_label: Label
 var _battle_hud_active: bool = false
 var _battle_bar_mount: Dictionary = {}
+var _overworld_bar_theme: Theme
 
 signal boss_battle_start
 signal enemy_battle_start
@@ -122,11 +123,13 @@ func _sync_bar_value_label() -> void:
 		_mp_bar_value_label.text = "%d/%d" % [current_mp, max_mp]
 
 func _setup_resource_bars() -> void:
-	var theme: Theme = progress_bar.theme
+	_overworld_bar_theme = progress_bar.theme
+	var theme: Theme = _overworld_bar_theme
 	mp_bar = ProgressBar.new()
 	mp_bar.name = "MpBar"
 	mp_bar.visible = false
 	mp_bar.show_percentage = false
+	mp_bar.theme = theme
 	mp_bar.offset_left = progress_bar.offset_left
 	mp_bar.offset_right = progress_bar.offset_right
 	mp_bar.offset_top = progress_bar.offset_top + 14.0
@@ -138,6 +141,7 @@ func _setup_resource_bars() -> void:
 	xp_bar.name = "XpBar"
 	xp_bar.visible = false
 	xp_bar.show_percentage = false
+	xp_bar.theme = theme
 	xp_bar.offset_left = progress_bar.offset_left
 	xp_bar.offset_right = progress_bar.offset_right
 	xp_bar.offset_top = progress_bar.offset_top + 28.0
@@ -392,6 +396,11 @@ func reset_presentation_bars() -> void:
 	if _mp_bar_value_label:
 		_mp_bar_value_label.visible = false
 	_battle_bar_mount.clear()
+	progress_bar.theme = _overworld_bar_theme
+	if mp_bar:
+		mp_bar.theme = _overworld_bar_theme
+	if xp_bar:
+		xp_bar.theme = _overworld_bar_theme
 	progress_bar.scale = Vector2.ONE
 	if mp_bar:
 		mp_bar.scale = Vector2.ONE

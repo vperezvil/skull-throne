@@ -43,6 +43,17 @@ static func frame_height(sprite: Node2D) -> float:
 				return tex.get_height() * absf(a.scale.y)
 	return 64.0
 
+static func sprite_center_x(_host: Node2D, sprite: Node2D) -> float:
+	if sprite is Sprite2D:
+		var s: Sprite2D = sprite as Sprite2D
+		if s.centered:
+			return sprite.position.x + s.offset.x
+		var frame_w: float = 64.0
+		if s.texture != null:
+			frame_w = float(s.texture.get_width()) / maxf(float(maxi(s.hframes, 1)), 1.0)
+		return sprite.position.x + s.offset.x + frame_w * absf(s.scale.x) * 0.5
+	return sprite.position.x
+
 static func _battle_stack_height(show_mp: bool, show_xp: bool) -> float:
 	var stack_h := BAR_H
 	if show_mp:
@@ -64,17 +75,19 @@ static func _ensure_on_host(host: Node2D, bar: ProgressBar) -> void:
 
 static func _place_bar(host: Node2D, bar: ProgressBar, cx: float, top_y: float, bar_h: float = BAR_H) -> void:
 	_ensure_on_host(host, bar)
-	var bar_w := BAR_HALF_W * 2.0
+	var sx := maxf(absf(bar.scale.x), 0.001)
+	var logical_w := BAR_HALF_W * 2.0
+	var visual_w := logical_w * sx
 	bar.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	bar.set_offsets_preset(Control.PRESET_TOP_LEFT)
 	bar.offset_left = 0
 	bar.offset_top = 0
-	bar.offset_right = int(bar_w)
+	bar.offset_right = int(logical_w)
 	bar.offset_bottom = int(bar_h)
-	bar.custom_minimum_size = Vector2(bar_w, bar_h)
+	bar.custom_minimum_size = Vector2(logical_w, bar_h)
 	bar.size = bar.custom_minimum_size
 	bar.pivot_offset = Vector2.ZERO
-	bar.position = Vector2(cx - bar_w * 0.5, top_y)
+	bar.position = Vector2(cx - visual_w * 0.5, top_y)
 	bar.z_index = 100
 
 static func _hp_theme_ref() -> Theme:
@@ -151,7 +164,7 @@ static func mount_bar(host: Node2D, bar: ProgressBar) -> Dictionary:
 	if sprite == null:
 		_layout_fallback(host, bar)
 		return {}
-	_place_bar(host, bar, sprite.position.x, _crown_top_y(sprite, BAR_H))
+	_place_bar(host, bar, sprite_center_x(host, sprite), _crown_top_y(sprite, BAR_H))
 	return {}
 
 static func mount_party_bars(
@@ -168,7 +181,7 @@ static func mount_party_bars(
 	if sprite == null:
 		_layout_fallback(host, hp_bar)
 		return
-	var cx := sprite.position.x
+	var cx := sprite_center_x(host, sprite)
 	var show_mp_bar := show_mp and mp_bar != null
 	var stack_h := _battle_stack_height(show_mp_bar, show_xp and xp_bar != null)
 	var hp_top := _crown_top_y(sprite, stack_h)

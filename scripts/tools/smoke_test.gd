@@ -3,6 +3,7 @@ extends SceneTree
 # Run: godot --headless --path . --script res://scripts/tools/smoke_test.gd
 
 const WORLD_SCENE := "res://scenes/main/world.tscn"
+const ContentRegistryScript := preload("res://scripts/data/content_registry.gd")
 
 func _init() -> void:
 	call_deferred("_run")
@@ -28,8 +29,20 @@ func _check_world_scene() -> PackedStringArray:
 	world.free()
 	return PackedStringArray()
 
+func _content_registry() -> Node:
+	var root := get_root()
+	if root == null:
+		return null
+	return root.get_node_or_null("/root/ContentRegistry")
+
 func _check_map_generation() -> PackedStringArray:
-	var zone: ZoneDefinition = ContentRegistry.get_zone_by_id("grim_fields")
+	var registry: Node = _content_registry()
+	if registry == null:
+		registry = ContentRegistryScript.new()
+		registry.call("_ready")
+	if registry == null:
+		return PackedStringArray(["ContentRegistry unavailable"])
+	var zone: ZoneDefinition = registry.call("get_zone_by_id", "grim_fields") as ZoneDefinition
 	if zone == null:
 		return PackedStringArray(["ContentRegistry missing zone: grim_fields"])
 	var packed: PackedScene = load(WORLD_SCENE)

@@ -33,20 +33,29 @@ func clear_map() -> void:
 func refresh_physics() -> void:
 	update_internals()
 
+func _used_cell_lookup() -> Dictionary:
+	var lookup := {}
+	for cell in get_used_cells():
+		lookup[cell] = true
+	return lookup
+
 func stamp_throne_arena(room: Rect2) -> void:
 	var center: Vector2 = room.get_center()
+	var occupied := _used_cell_lookup()
 	for offset in [Vector2i(-2, 0), Vector2i(2, 0), Vector2i(0, -2), Vector2i(0, 2)]:
 		var coord := Vector2i(int(center.x) + offset.x, int(center.y) + offset.y)
-		if get_used_cells().has(coord):
+		if occupied.has(coord):
 			set_cell(coord, level, Vector2i(0, 0))
 
 func generate_chunk(room_position, room_size):
+	var occupied := _used_cell_lookup()
 	for x in range(int(room_size.x)):
 		for y in range(int(room_size.y)):
 			var coord = Vector2i(int(room_position.x) + x, int(room_position.y) + y)
-			if !get_used_cells().has(coord):
+			if !occupied.has(coord):
 				var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
 				set_cell(coord, level, _walkable_floor_atlas(floor_map))
+				occupied[coord] = true
 
 func print_room_border(room_position, room_size):
 	var room_right = int(room_position.x + room_size.x)
@@ -67,6 +76,7 @@ func _set_wall(coord: Vector2i) -> void:
 	set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
 
 func draw_corridor(start, end):
+	var occupied := _used_cell_lookup()
 	var is_vertical = start.x == end.x
 	var main_coord = start.x if is_vertical else start.y
 	var range_start = min(start.y, end.y) if is_vertical else min(start.x, end.x)
@@ -78,19 +88,29 @@ func draw_corridor(start, end):
 			var coord = Vector2i(main_coord + offset, i) if is_vertical else Vector2i(i, main_coord + offset)
 			var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
 			var is_border_tile = offset < 0 or offset >= corridor_width
-			if is_border_tile and !get_used_cells().has(coord):
+			if is_border_tile and !occupied.has(coord):
 				set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
+				occupied[coord] = true
 			elif !is_border_tile:
 				set_cell(coord, level, _walkable_floor_atlas(floor_map))
+				occupied[coord] = true
 
 func _atlas_coord(noise_sample: float, divisor: float) -> Vector2i:
 	var atlas_index: int = int(round((noise_sample + 10.0) / divisor))
 	atlas_index = clampi(atlas_index, 0, _max_atlas_index_for_source(level))
 	return Vector2i(atlas_index, 0)
 
+func _floor_tile_is_valid(atlas: Vector2i) -> bool:
+	if tile_set == null or !tile_set.has_source(level):
+		return false
+	var source := tile_set.get_source(level) as TileSetAtlasSource
+	if source == null:
+		return false
+	return source.get_tile_data(atlas, 0) != null
+
 func _walkable_floor_atlas(noise_sample: float) -> Vector2i:
 	var candidate := _atlas_coord(noise_sample, floor_noise_divisor)
-	if !_floor_tile_blocks_movement(candidate):
+	if _floor_tile_is_valid(candidate) and !_floor_tile_blocks_movement(candidate):
 		return candidate
 	return _first_walkable_floor_atlas()
 
@@ -98,7 +118,7 @@ func _first_walkable_floor_atlas() -> Vector2i:
 	var max_i := _max_atlas_index_for_source(level)
 	for i in range(max_i + 1):
 		var atlas := Vector2i(i, 0)
-		if !_floor_tile_blocks_movement(atlas):
+		if _floor_tile_is_valid(atlas) and !_floor_tile_blocks_movement(atlas):
 			return atlas
 	return Vector2i(0, 0)
 
@@ -116,7 +136,22 @@ func _floor_tile_blocks_movement(atlas: Vector2i) -> bool:
 func _wall_atlas_coord(noise_sample: float) -> Vector2i:
 	var atlas_index: int = int(round((noise_sample + 10.0) / wall_noise_divisor))
 	atlas_index = clampi(atlas_index, 0, _max_atlas_index_for_source(wall_level))
-	return Vector2i(atlas_index, 0)
+	var atlas := Vector2i(atlas_index, 0)
+	if _wall_tile_is_valid(atlas):
+		return atlas
+	for i in range(_max_atlas_index_for_source(wall_level) + 1):
+		var fallback := Vector2i(i, 0)
+		if _wall_tile_is_valid(fallback):
+			return fallback
+	return Vector2i(0, 0)
+
+func _wall_tile_is_valid(atlas: Vector2i) -> bool:
+	if tile_set == null or !tile_set.has_source(wall_level):
+		return false
+	var source := tile_set.get_source(wall_level) as TileSetAtlasSource
+	if source == null:
+		return false
+	return source.get_tile_data(atlas, 0) != null
 
 func _max_atlas_index_for_source(source_id: int) -> int:
 	if tile_set == null or !tile_set.has_source(source_id):
@@ -125,4 +160,4 @@ func _max_atlas_index_for_source(source_id: int) -> int:
 	if source == null or source.texture == null:
 		return 11
 	var cols: int = maxi(1, int(source.texture.get_width()) / source.texture_region_size.x)
-	return clampi(cols - 1, 0, 11)
+	return maxi(cols - 1, 0)

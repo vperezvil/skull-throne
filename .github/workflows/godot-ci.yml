@@ -16,6 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install fontconfig (headless Godot)
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends fontconfig libfontconfig1
+
       - name: Import project (asset pipeline)
         run: godot --headless --path . --import
 

@@ -21,8 +21,10 @@ var attack: int = 10
 var _bar_value_label: Label
 var _battle_hud_active: bool = false
 var _battle_bar_mount: Dictionary = {}
+var _overworld_bar_theme: Theme
 
 func _ready_combatant() -> void:
+	_overworld_bar_theme = progress_bar.theme
 	progress_bar.max_value = max_hp
 	current_hp = max_hp
 	if damage_sound:
@@ -73,6 +75,7 @@ func reset_presentation_bars() -> void:
 		_bar_value_label.visible = false
 	BattleHudLayout.unmount_bar(progress_bar, _battle_bar_mount)
 	_battle_bar_mount.clear()
+	progress_bar.theme = _overworld_bar_theme
 	progress_bar.scale = Vector2.ONE
 	progress_bar.position = Vector2.ZERO
 	progress_bar.offset_left = -52.0

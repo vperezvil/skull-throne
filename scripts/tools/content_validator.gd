@@ -2,8 +2,9 @@ extends SceneTree
 
 # Run: godot --headless --path . --script res://scripts/tools/content_validator.gd
 
+const EquipmentRegistryScript := preload("res://scripts/data/equipment_registry.gd")
+
 func _init() -> void:
-	# Autoload _ready() runs after _init; defer so equipment catalog is registered.
 	call_deferred("_run_validation")
 
 func _run_validation() -> void:
@@ -12,14 +13,15 @@ func _run_validation() -> void:
 	if errors.is_empty():
 		print("Content validation OK")
 		quit(0)
-	else:
-		for e in errors:
-			push_error(e)
-		quit(1)
+	for e in errors:
+		push_error(e)
+	quit(1)
 
 func _validate_equipment() -> PackedStringArray:
 	var out: PackedStringArray = []
-	for eq_id in EquipmentRegistry.get_shop_ids(false):
-		if EquipmentRegistry.get_definition(eq_id) == null:
+	var registry: Node = EquipmentRegistryScript.new()
+	registry.call("_register_all")
+	for eq_id in registry.get_shop_ids(false):
+		if registry.get_definition(eq_id) == null:
 			out.append("Missing equipment def: %s" % eq_id)
 	return out

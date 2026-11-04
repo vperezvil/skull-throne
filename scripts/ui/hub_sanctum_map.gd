@@ -123,25 +123,18 @@ func _floor_atlas(cell: Vector2i) -> Vector2i:
 	for attempt in range(max_i + 1):
 		var idx: int = (cell.x * 5 + cell.y * 11 + attempt * 3) % (max_i + 1)
 		var atlas := Vector2i(idx, 0)
-		if !_hub_floor_blocks_movement(atlas):
+		if _hub_tile_exists(_floor_source, atlas) and !_hub_floor_blocks_movement(atlas):
 			return atlas
 	return Vector2i(0, 0)
 
-func _hub_floor_blocks_movement(atlas: Vector2i) -> bool:
-	if _tilemap == null or _tilemap.tile_set == null or !_tilemap.tile_set.has_source(_floor_source):
-		return false
-	var source := _tilemap.tile_set.get_source(_floor_source) as TileSetAtlasSource
-	if source == null:
-		return false
-	var data: TileData = source.get_tile_data(atlas, 0)
-	if data == null:
-		return true
-	return data.get_collision_polygons_count(0) > 0
-
 func _wall_atlas(cell: Vector2i) -> Vector2i:
 	var max_i := _max_atlas_index(_wall_source)
-	var idx: int = (cell.x + cell.y * 3) % (max_i + 1)
-	return Vector2i(idx, 0)
+	for attempt in range(max_i + 1):
+		var idx: int = (cell.x + cell.y * 3 + attempt) % (max_i + 1)
+		var atlas := Vector2i(idx, 0)
+		if _hub_tile_exists(_wall_source, atlas):
+			return atlas
+	return Vector2i(0, 0)
 
 func _set_floor(cell: Vector2i) -> void:
 	_tilemap.set_cell(cell, _floor_source, _floor_atlas(cell))
@@ -167,25 +160,38 @@ func _paint_sanctum_town() -> void:
 	for y in range(1, TOWN_TILES_H - 1):
 		_set_floor(Vector2i(mid_x, y))
 		_set_floor(Vector2i(mid_x - 1, y))
-	for def in NPC_DEFS:
-		_stamp_service_building(def["tile"] as Vector2i, Vector2i(mid_x, mid_y))
+	_stamp_service_pads()
 
-func _stamp_service_building(npc_tile: Vector2i, plaza_center: Vector2i) -> void:
-	var rect := Rect2i(npc_tile.x - 2, npc_tile.y - 2, 5, 5)
-	for x in range(rect.position.x, rect.position.x + rect.size.x):
-		for y in range(rect.position.y, rect.position.y + rect.size.y):
-			var cell := Vector2i(x, y)
-			if cell.x <= 0 or cell.y <= 0 or cell.x >= TOWN_TILES_W - 1 or cell.y >= TOWN_TILES_H - 1:
-				continue
-			var on_edge := x == rect.position.x or x == rect.position.x + rect.size.x - 1 or y == rect.position.y or y == rect.position.y + rect.size.y - 1
-			if on_edge:
-				_set_wall(cell)
-			else:
-				_set_floor(cell)
-	var door := npc_tile + Vector2i(signi(plaza_center.x - npc_tile.x), signi(plaza_center.y - npc_tile.y))
-	if door.x > 0 and door.y > 0 and door.x < TOWN_TILES_W - 1 and door.y < TOWN_TILES_H - 1:
-		_set_floor(door)
-	_set_floor(npc_tile)
+func _in_town_interior(cell: Vector2i) -> bool:
+	return cell.x > 0 and cell.y > 0 and cell.x < TOWN_TILES_W - 1 and cell.y < TOWN_TILES_H - 1
+
+func _stamp_service_pads() -> void:
+	for def in NPC_DEFS:
+		var npc_tile: Vector2i = def["tile"]
+		for dx in range(-1, 2):
+			for dy in range(-1, 2):
+				var cell := npc_tile + Vector2i(dx, dy)
+				if _in_town_interior(cell):
+					_set_floor(cell)
+
+func _hub_tile_exists(source_id: int, atlas: Vector2i) -> bool:
+	if _tilemap == null or _tilemap.tile_set == null or !_tilemap.tile_set.has_source(source_id):
+		return false
+	var source := _tilemap.tile_set.get_source(source_id) as TileSetAtlasSource
+	if source == null:
+		return false
+	return source.get_tile_data(atlas, 0) != null
+
+func _hub_floor_blocks_movement(atlas: Vector2i) -> bool:
+	if _tilemap == null or _tilemap.tile_set == null or !_tilemap.tile_set.has_source(_floor_source):
+		return false
+	var source := _tilemap.tile_set.get_source(_floor_source) as TileSetAtlasSource
+	if source == null:
+		return false
+	var data: TileData = source.get_tile_data(atlas, 0)
+	if data == null:
+		return true
+	return data.get_collision_polygons_count(0) > 0
 
 func _build_player() -> void:
 	_player = CharacterBody2D.new()
@@ -216,11 +222,11 @@ func _build_npcs() -> void:
 		var icon_path: String = String(def.get("icon", ""))
 		if icon_path != "" and ResourceLoader.exists(icon_path):
 			sprite.texture = load(icon_path)
-			sprite.scale = Vector2(0.55, 0.55)
+			sprite.scale = Vector2(0.95, 0.95)
 		else:
 			sprite.texture = load("res://assets/monsters/harpy.png")
 			sprite.modulate = Color(0.85, 0.75, 0.95)
-			sprite.scale = Vector2(0.5, 0.5)
+			sprite.scale = Vector2(0.85, 0.85)
 		npc_root.add_child(sprite)
 		var tag := Label.new()
 		tag.text = String(def["label"]).split(" — ")[0]
@@ -265,8 +271,8 @@ func _update_walker_animation(dir: Vector2) -> void:
 	if _walker_ap == null or !_walker_ap.is_inside_tree():
 		return
 	if dir.length_squared() < 0.001:
-		if _walker_ap.has_animation("walk_down"):
-			_walker_ap.play("walk_down")
+		if _walker_ap.has_animation("RESET"):
+			_walker_ap.play("RESET")
 		return
 	if absf(dir.x) >= absf(dir.y):
 		if dir.x >= 0.0 and _walker_ap.has_animation("walk_right"):
