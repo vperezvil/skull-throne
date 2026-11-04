@@ -1,0 +1,163 @@
+extends TileMapLayer
+
+var map = FastNoiseLite.new()
+var width = 570
+var height = 550
+var level = 0
+var wall_level = 6
+var border_width: int = 1
+var corridor_width: int = 2
+var floor_noise_divisor: float = 1.3
+var wall_noise_divisor: float = 5.0
+var _theme_id := "grim_fields"
+
+func _ready() -> void:
+	map.seed = randi()
+
+func apply_zone(zone: ZoneDefinition) -> void:
+	if zone == null:
+		return
+	_theme_id = zone.map_theme_id
+	var theme_sources: Dictionary = MapTileBuilder.apply_theme(self, _theme_id)
+	level = theme_sources["floor"]
+	wall_level = theme_sources["wall"]
+	MapTileBuilder.ensure_wall_physics(tile_set, wall_level)
+	floor_noise_divisor = MapThemeSettings.get_floor_noise_divisor(_theme_id)
+	wall_noise_divisor = MapThemeSettings.get_wall_noise_divisor(_theme_id)
+	map.seed = randi() + zone.noise_seed_offset
+	map.frequency = 0.04 if zone.is_final_zone else 0.05
+
+func clear_map() -> void:
+	clear()
+
+func refresh_physics() -> void:
+	update_internals()
+
+func _used_cell_lookup() -> Dictionary:
+	var lookup := {}
+	for cell in get_used_cells():
+		lookup[cell] = true
+	return lookup
+
+func stamp_throne_arena(room: Rect2) -> void:
+	var center: Vector2 = room.get_center()
+	var occupied := _used_cell_lookup()
+	for offset in [Vector2i(-2, 0), Vector2i(2, 0), Vector2i(0, -2), Vector2i(0, 2)]:
+		var coord := Vector2i(int(center.x) + offset.x, int(center.y) + offset.y)
+		if occupied.has(coord):
+			set_cell(coord, level, Vector2i(0, 0))
+
+func generate_chunk(room_position, room_size):
+	var occupied := _used_cell_lookup()
+	for x in range(int(room_size.x)):
+		for y in range(int(room_size.y)):
+			var coord = Vector2i(int(room_position.x) + x, int(room_position.y) + y)
+			if !occupied.has(coord):
+				var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
+				set_cell(coord, level, _walkable_floor_atlas(floor_map))
+				occupied[coord] = true
+
+func print_room_border(room_position, room_size):
+	var room_right = int(room_position.x + room_size.x)
+	var room_bottom = int(room_position.y + room_size.y)
+	var room_left = int(room_position.x)
+	var room_top = int(room_position.y)
+	for x in range(room_left, room_right):
+		_set_wall(Vector2i(x, room_top))
+	for x in range(room_left, room_right):
+		_set_wall(Vector2i(x, room_bottom))
+	for y in range(room_top, room_bottom):
+		_set_wall(Vector2i(room_left, y))
+	for y in range(room_top, room_bottom):
+		_set_wall(Vector2i(room_right - 1, y))
+
+func _set_wall(coord: Vector2i) -> void:
+	var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
+	set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
+
+func draw_corridor(start, end):
+	var occupied := _used_cell_lookup()
+	var is_vertical = start.x == end.x
+	var main_coord = start.x if is_vertical else start.y
+	var range_start = min(start.y, end.y) if is_vertical else min(start.x, end.x)
+	var range_end = max(start.y, end.y) if is_vertical else max(start.x, end.x)
+	range_end += border_width + 1
+	var total_width = corridor_width + 2 * border_width
+	for offset in range(-border_width, total_width - border_width):
+		for i in range(int(range_start), int(range_end)):
+			var coord = Vector2i(main_coord + offset, i) if is_vertical else Vector2i(i, main_coord + offset)
+			var floor_map = map.get_noise_2d(coord.x, coord.y) * 10
+			var is_border_tile = offset < 0 or offset >= corridor_width
+			if is_border_tile and !occupied.has(coord):
+				set_cell(coord, wall_level, _wall_atlas_coord(floor_map))
+				occupied[coord] = true
+			elif !is_border_tile:
+				set_cell(coord, level, _walkable_floor_atlas(floor_map))
+				occupied[coord] = true
+
+func _atlas_coord(noise_sample: float, divisor: float) -> Vector2i:
+	var atlas_index: int = int(round((noise_sample + 10.0) / divisor))
+	atlas_index = clampi(atlas_index, 0, _max_atlas_index_for_source(level))
+	return Vector2i(atlas_index, 0)
+
+func _floor_tile_is_valid(atlas: Vector2i) -> bool:
+	if tile_set == null or !tile_set.has_source(level):
+		return false
+	var source := tile_set.get_source(level) as TileSetAtlasSource
+	if source == null:
+		return false
+	return source.get_tile_data(atlas, 0) != null
+
+func _walkable_floor_atlas(noise_sample: float) -> Vector2i:
+	var candidate := _atlas_coord(noise_sample, floor_noise_divisor)
+	if _floor_tile_is_valid(candidate) and !_floor_tile_blocks_movement(candidate):
+		return candidate
+	return _first_walkable_floor_atlas()
+
+func _first_walkable_floor_atlas() -> Vector2i:
+	var max_i := _max_atlas_index_for_source(level)
+	for i in range(max_i + 1):
+		var atlas := Vector2i(i, 0)
+		if _floor_tile_is_valid(atlas) and !_floor_tile_blocks_movement(atlas):
+			return atlas
+	return Vector2i(0, 0)
+
+func _floor_tile_blocks_movement(atlas: Vector2i) -> bool:
+	if tile_set == null or !tile_set.has_source(level):
+		return false
+	var source := tile_set.get_source(level) as TileSetAtlasSource
+	if source == null:
+		return false
+	var data: TileData = source.get_tile_data(atlas, 0)
+	if data == null:
+		return true
+	return data.get_collision_polygons_count(0) > 0
+
+func _wall_atlas_coord(noise_sample: float) -> Vector2i:
+	var atlas_index: int = int(round((noise_sample + 10.0) / wall_noise_divisor))
+	atlas_index = clampi(atlas_index, 0, _max_atlas_index_for_source(wall_level))
+	var atlas := Vector2i(atlas_index, 0)
+	if _wall_tile_is_valid(atlas):
+		return atlas
+	for i in range(_max_atlas_index_for_source(wall_level) + 1):
+		var fallback := Vector2i(i, 0)
+		if _wall_tile_is_valid(fallback):
+			return fallback
+	return Vector2i(0, 0)
+
+func _wall_tile_is_valid(atlas: Vector2i) -> bool:
+	if tile_set == null or !tile_set.has_source(wall_level):
+		return false
+	var source := tile_set.get_source(wall_level) as TileSetAtlasSource
+	if source == null:
+		return false
+	return source.get_tile_data(atlas, 0) != null
+
+func _max_atlas_index_for_source(source_id: int) -> int:
+	if tile_set == null or !tile_set.has_source(source_id):
+		return 11
+	var source := tile_set.get_source(source_id) as TileSetAtlasSource
+	if source == null or source.texture == null:
+		return 11
+	var cols: int = maxi(1, int(source.texture.get_width()) / source.texture_region_size.x)
+	return maxi(cols - 1, 0)

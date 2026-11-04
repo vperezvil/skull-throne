@@ -1,0 +1,128 @@
+[gd_scene load_steps=12 format=3 uid="uid://cxi5qs6i5uu08"]
+
+[ext_resource type="Script" path="res://scripts/combat/rock_troll.gd" id="1_revc0"]
+[ext_resource type="Texture2D" uid="uid://cp8t24oa11alr" path="res://assets/monsters/rock_troll.png" id="2_61u08"]
+[ext_resource type="Theme" uid="uid://b0fpbbe4v0qbx" path="res://assets/themes/progress_bar_theme.tres" id="3_3q0nt"]
+[ext_resource type="Texture2D" uid="uid://c7mmy81n0morr" path="res://assets/hand_cursor0000.png" id="4_54uu0"]
+[ext_resource type="AudioStream" uid="uid://dvj7v2caadhru" path="res://assets/music/hit.ogg" id="4_ok6cd"]
+[ext_resource type="AudioStream" uid="uid://5f2a6wtfmgsy" path="res://assets/music/hurt.ogg" id="5_e2ov8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jnkec"]
+size = Vector2(40, 37)
+
+[sub_resource type="Animation" id="Animation_0dn0f"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("EnemySprite:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_7x1p3"]
+resource_name = "death"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("EnemySprite:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_pwukq"]
+resource_name = "hurt"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("EnemySprite:self_modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1), Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1), Color(0.729412, 0.0392157, 0.0235294, 1), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DamageReceived:self_modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(0.729412, 0.0392157, 0.0235294, 1), Color(0.729412, 0.0392157, 0.0235294, 0), Color(0.729412, 0.0392157, 0.0235294, 1), Color(0.729412, 0.0392157, 0.0235294, 0), Color(0.729412, 0.0392157, 0.0235294, 1), Color(0.729412, 0.0392157, 0.0235294, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1tdj8"]
+_data = {
+"RESET": SubResource("Animation_0dn0f"),
+"death": SubResource("Animation_7x1p3"),
+"hurt": SubResource("Animation_pwukq")
+}
+
+[node name="Rock Troll Enemy" type="CharacterBody2D"]
+script = ExtResource("1_revc0")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_jnkec")
+
+[node name="EnemySprite" type="Sprite2D" parent="."]
+position = Vector2(0, -1.19209e-07)
+scale = Vector2(1.21875, 1.15625)
+texture = ExtResource("2_61u08")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+visible = false
+offset_left = -52.0
+offset_top = -42.0
+offset_right = 53.0
+offset_bottom = -24.0
+theme = ExtResource("3_3q0nt")
+step = 1.0
+show_percentage = false
+
+[node name="DamageReceived" type="RichTextLabel" parent="."]
+visible = false
+self_modulate = Color(0.729412, 0.0392157, 0.0235294, 0)
+offset_left = -12.0
+offset_top = -45.0
+offset_right = 12.0
+offset_bottom = -26.0
+text = "-15"
+scroll_active = false
+
+[node name="DamageSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_ok6cd")
+volume_db = -5.0
+
+[node name="DeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_e2ov8")
+
+[node name="Focus" type="TextureButton" parent="."]
+visible = false
+offset_left = -57.0
+offset_top = -23.0
+offset_right = 22.0
+offset_bottom = 18.0
+texture_normal = ExtResource("4_54uu0")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_1tdj8")
+}
+
+[connection signal="pressed" from="Focus" to="." method="_on_focus_pressed"]
