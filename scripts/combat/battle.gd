@@ -13,6 +13,7 @@ extends Node2D
 @onready var win_music = $"Win Battle"
 @onready var inventory_button = $UI/Options/Inventory
 @onready var skill_panel = $UI/SkillPanel
+@onready var battle_ui_layer = $UI
 var original_positions = {}
 var original_scales = {}
 var original_parents = {}
@@ -59,6 +60,11 @@ func _configure_battle_ui_layout() -> void:
 	const PANEL_W := 210.0
 	const LOG_BOTTOM := 24.0
 	const LOG_HEIGHT := 148.0
+	const FORMATION_Y := 460.0
+	battle_ui_layer.layer = 20
+	enemy_container.position = Vector2(447.0, FORMATION_Y)
+	character_container.position = Vector2(1426.0, FORMATION_Y)
+	combat_dialog.z_index = 10
 	battle_menu.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	battle_menu.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	battle_menu.offset_left = -PANEL_W - MARGIN

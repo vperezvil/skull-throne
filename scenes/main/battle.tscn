@@ -48,10 +48,10 @@ offset_bottom = 1077.0
 texture = ExtResource("3_wklv1")
 
 [node name="EnemyContainer" type="Node2D" parent="."]
-position = Vector2(447.0, 608.0)
+position = Vector2(447.0, 460.0)
 
 [node name="CharacterContainer" type="Node2D" parent="."]
-position = Vector2(1426.0, 608.0)
+position = Vector2(1426.0, 460.0)
 
 [node name="UI" type="CanvasLayer" parent="."]
 

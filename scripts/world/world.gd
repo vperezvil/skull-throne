@@ -12,6 +12,7 @@ enum GameState {IDLE, RUNNING, ENDED}
 @onready var battle_scene = $Battle
 @onready var enemy_node = $Enemies
 @onready var items_node = $Objects/Items
+@onready var objects_node = $Objects
 signal map_generated
 signal paused_game
 var rooms = []
@@ -75,20 +76,12 @@ func _ready():
 
 func _process(_delta):
 	read_input()
-	_update_party_hud()
 
-func _update_party_hud() -> void:
-	if ui == null:
-		return
-	var show_hud: bool = (
-		RunState.campaign_active
-		and !ui.hub_panel.visible
-		and !ui.waystation_panel.visible
-		and !ui.in_battle
-		and (ui.shrine_panel == null or !ui.shrine_panel.visible)
-		and tilemap.visible
-	)
-	ui.update_party_hud(characters, show_hud)
+func _set_overworld_map_presentation_visible(visible: bool) -> void:
+	objects_node.visible = visible
+	if zone_decor != null:
+		zone_decor.visible = visible
+	enemy_node.visible = visible
 
 func read_input():
 	if characters.is_empty():
@@ -501,7 +494,7 @@ func start_map_ambush() -> void:
 		return
 	for item in items:
 		item.visible = false
-	fountain.visible = false
+	_set_overworld_map_presentation_visible(false)
 	battle_scene.start_battle(characters, foes)
 	battle_scene.visible = true
 	tilemap.visible = false
@@ -588,7 +581,7 @@ func start_boss_battle():
 		if is_instance_valid(e) and !e.battle_started:
 			e.visible = false
 			e.is_chasing = false
-	fountain.visible = false
+	_set_overworld_map_presentation_visible(false)
 	battle_scene.start_battle(characters, [boss])
 	battle_scene.visible = true
 	tilemap.visible = false
@@ -610,7 +603,6 @@ func start_battle(enemy):
 	boss.visible = false
 	_prepare_party_for_combat()
 	enemy.battle_started = true
-	fountain.visible = false
 	var enemies_to_battle = [enemy]
 	var extra_count: int = randi() % 2 + 1
 	for i in range(extra_count):
@@ -628,6 +620,7 @@ func start_battle(enemy):
 		if is_instance_valid(e) and !e.battle_started:
 			e.visible = false
 			e.is_chasing = false
+	_set_overworld_map_presentation_visible(false)
 	battle_scene.start_battle(characters, enemies_to_battle)
 	battle_scene.visible = true
 	tilemap.visible = false
@@ -640,6 +633,7 @@ func end_battle(remaining_characters):
 		map_music.play()
 	battle_scene.visible = false
 	tilemap.visible = true
+	_set_overworld_map_presentation_visible(true)
 	_cleanup_battle_spawned_enemies()
 	characters = remaining_characters
 	if characters.is_empty():
