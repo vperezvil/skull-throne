@@ -16,9 +16,15 @@ func get_shop_ids(use_run_gold: bool) -> Array:
 	ids.sort()
 	if !use_run_gold:
 		return ids
-	var depth: int = RunState.floors_cleared_this_run
+	var depth: int = _floors_cleared_this_run()
 	var count: int = clampi(4 + depth / 2, 4, ids.size())
 	return ids.slice(0, count)
+
+func _floors_cleared_this_run() -> int:
+	var run_state: Node = get_node_or_null("/root/RunState")
+	if run_state == null:
+		return 0
+	return int(run_state.get("floors_cleared_this_run"))
 
 func _register_all() -> void:
 	_add("weapon_blessed_blade", "Blessed Blade", EquipmentDefinition.Slot.WEAPON,

@@ -3,7 +3,7 @@ extends SceneTree
 # Run: godot --headless --path . --script res://scripts/tools/check_gdscript_patterns.gd
 
 const FORBIDDEN := [
-	{"pattern": "Key\\.[A-Z]", "hint": "Use KEY_W-style globals, not Key.W (Godot 4.7)."},
+	{"pattern": "Key\\.[A-Z]", "hint": "Use KEY_W-style globals, not Key dot W (Godot 4.7)."},
 	{"pattern": "\\btrait:\\s*String", "hint": "Rename parameter; trait is reserved in GDScript 4.7."},
 	{"pattern": "var trait :=", "hint": "Rename variable; trait is reserved."},
 ]
@@ -35,6 +35,8 @@ func _scan_directory(dir_path: String) -> PackedStringArray:
 	return out
 
 func _check_file(path: String) -> PackedStringArray:
+	if path.get_file() == "check_gdscript_patterns.gd":
+		return PackedStringArray()
 	var out: PackedStringArray = []
 	var f := FileAccess.open(path, FileAccess.READ)
 	if f == null:
