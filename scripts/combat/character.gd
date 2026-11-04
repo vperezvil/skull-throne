@@ -61,7 +61,7 @@ var _encounter_grace_until_msec: int = 0
 
 const PARTY_FOLLOW_SPEED := 8.0
 const ENCOUNTER_GRACE_SEC := 1.75
-const OVERWORLD_BAR_ROW_STEP := 10.0
+const OVERWORLD_BAR_ROW_STEP := 8.0
 
 var _spawn_collision_layer: int
 var _spawn_collision_mask: int
@@ -95,7 +95,11 @@ func apply_battle_presentation_scale(factor: float) -> void:
 		xp_bar.scale = Vector2(inv, inv)
 
 func align_battle_hud_to_sprite() -> void:
-	BattleHudLayout.mount_party_bars(self, progress_bar, mp_bar, max_mp > 0, xp_bar, _battle_hud_active)
+	if !_battle_hud_active:
+		return
+	var show_mp := max_mp > 0 and mp_bar != null and mp_bar.visible
+	var show_xp := xp_bar != null and xp_bar.visible
+	BattleHudLayout.mount_party_bars(self, progress_bar, mp_bar, show_mp, xp_bar, show_xp)
 
 func prepare_battle_hud() -> void:
 	_battle_hud_active = true
@@ -106,10 +110,18 @@ func prepare_battle_hud() -> void:
 		_mp_bar_value_label = BattleHudLayout.ensure_bar_label(mp_bar)
 		_mp_bar_value_label.visible = true
 		mp_bar.show_percentage = false
+		mp_bar.visible = true
+	if xp_bar != null:
+		xp_bar.visible = true
 	_update_resource_bars()
 	align_battle_hud_to_sprite()
 	_sync_bar_value_label()
-	call_deferred("align_battle_hud_to_sprite")
+	call_deferred("_deferred_align_battle_hud")
+
+func _deferred_align_battle_hud() -> void:
+	if !is_instance_valid(self) or !is_inside_tree():
+		return
+	align_battle_hud_to_sprite()
 
 func _ensure_bar_value_label() -> void:
 	if _bar_value_label == null:
@@ -283,7 +295,7 @@ func handle_collision():
 				if collider.name.contains("Boss") and !battle_started and !_in_encounter_grace():
 					collided_with_enemy()
 					boss_battle_start.emit()
-				elif collider.name.contains("Enemy") and !battle_started and !_in_encounter_grace():
+				elif collider.name.contains("Enemy") and is_instance_valid(collider) and !battle_started and !_in_encounter_grace():
 					collided_with_enemy()
 					enemy_battle_start.emit(collider)
 				elif collider.name.contains("Fountain") and !battle_started:

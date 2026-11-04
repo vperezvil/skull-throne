@@ -259,9 +259,16 @@ func _wire_party_leader(lead: Character) -> void:
 
 func _get_party_leader() -> Character:
 	for member in characters:
-		if member.is_party_leader and member.current_hp > 0:
+		if is_instance_valid(member) and member.is_party_leader and member.current_hp > 0:
 			return member
 	return null
+
+func _sanitize_enemies_list() -> void:
+	var live: Array = []
+	for e in enemies:
+		if is_instance_valid(e):
+			live.append(e)
+	enemies = live
 
 func _sync_enemy_chase_targets() -> void:
 	var leader: Character = _get_party_leader()
@@ -578,7 +585,7 @@ func start_boss_battle():
 	for item in items:
 		item.visible = false
 	for e in enemies:
-		if !e.battle_started:
+		if is_instance_valid(e) and !e.battle_started:
 			e.visible = false
 			e.is_chasing = false
 	fountain.visible = false
@@ -586,7 +593,18 @@ func start_boss_battle():
 	battle_scene.visible = true
 	tilemap.visible = false
 
+func _abort_enemy_encounter_start() -> void:
+	for member in characters:
+		if is_instance_valid(member):
+			member.battle_started = false
+			if member is Character:
+				member.begin_encounter_grace(0.5)
+
 func start_battle(enemy):
+	if !is_instance_valid(enemy):
+		_abort_enemy_encounter_start()
+		return
+	_sanitize_enemies_list()
 	ui.in_battle = true
 	_duck_map_music()
 	boss.visible = false
@@ -607,7 +625,7 @@ func start_battle(enemy):
 	for item in items:
 		item.visible = false
 	for e in enemies:
-		if !e.battle_started:
+		if is_instance_valid(e) and !e.battle_started:
 			e.visible = false
 			e.is_chasing = false
 	battle_scene.start_battle(characters, enemies_to_battle)
@@ -616,6 +634,7 @@ func start_battle(enemy):
 
 func end_battle(remaining_characters):
 	ui.in_battle = false
+	_sanitize_enemies_list()
 	_restore_map_music_volume()
 	if !map_music.playing:
 		map_music.play()

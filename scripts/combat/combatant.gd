@@ -58,7 +58,12 @@ func prepare_battle_hud() -> void:
 	progress_bar.show_percentage = false
 	align_battle_hud_to_sprite()
 	_sync_bar_value_label()
-	call_deferred("align_battle_hud_to_sprite")
+	call_deferred("_deferred_align_battle_hud")
+
+func _deferred_align_battle_hud() -> void:
+	if !is_instance_valid(self) or !is_inside_tree():
+		return
+	align_battle_hud_to_sprite()
 
 func _ensure_bar_value_label() -> void:
 	if _bar_value_label == null:

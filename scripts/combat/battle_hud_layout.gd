@@ -6,7 +6,7 @@ const BAR_H := 18.0
 const BAR_XP_H := 4.0
 const BAR_STACK_GAP := 0.0
 const BAR_XP_GAP := 0.0
-const BAR_ROW_TIGHTEN := 3.0
+const BAR_ROW_TIGHTEN := 6.0
 const GAP_ABOVE_CROWN := 4.0
 const CROWN_FRAC := 0.36
 const BAR_FONT_SIZE := 13
@@ -30,19 +30,19 @@ static func find_sprite(host: Node) -> Node2D:
 	return null
 
 static func frame_height(sprite: Node2D) -> float:
+	var local_h := 64.0
 	if sprite is Sprite2D:
 		var s: Sprite2D = sprite as Sprite2D
 		if s.texture != null:
-			var frame_h: float = s.texture.get_height() / maxf(float(maxi(s.vframes, 1)), 1.0)
-			return frame_h * absf(s.scale.y)
-		return 64.0 * absf(s.scale.y)
-	if sprite is AnimatedSprite2D:
+			local_h = s.texture.get_height() / maxf(float(maxi(s.vframes, 1)), 1.0)
+		local_h *= absf(s.scale.y)
+	elif sprite is AnimatedSprite2D:
 		var a: AnimatedSprite2D = sprite as AnimatedSprite2D
 		if a.sprite_frames != null and a.sprite_frames.has_animation(a.animation):
 			var tex: Texture2D = a.sprite_frames.get_frame_texture(a.animation, 0)
 			if tex != null:
-				return tex.get_height() * absf(a.scale.y)
-	return 64.0
+				local_h = tex.get_height() * absf(a.scale.y)
+	return local_h
 
 static func sprite_center_x(_host: Node2D, sprite: Node2D) -> float:
 	if sprite is Sprite2D:
@@ -167,7 +167,8 @@ static func mount_bar(host: Node2D, bar: ProgressBar) -> Dictionary:
 	if sprite == null:
 		_layout_fallback(host, bar)
 		return {}
-	_place_bar(host, bar, sprite_center_x(host, sprite), _crown_top_y(sprite, BAR_H))
+	var stack_h := _battle_stack_height(false, false)
+	_place_bar(host, bar, sprite_center_x(host, sprite), _crown_top_y(sprite, stack_h))
 	return {}
 
 static func mount_party_bars(

@@ -133,6 +133,6 @@ func handle_collision():
 		if collider == null:
 			continue
 		var target: Character = _get_chase_target()
-		if collider == target and !battle_started and !target.battle_started and !_in_encounter_grace() and !target._in_encounter_grace():
+		if collider == target and is_instance_valid(target) and !battle_started and !target.battle_started and !_in_encounter_grace() and !target._in_encounter_grace():
 			target.collided_with_enemy()
 			enemy_battle_start.emit(self)
