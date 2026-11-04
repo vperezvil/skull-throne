@@ -60,10 +60,7 @@ func _configure_battle_ui_layout() -> void:
 	const PANEL_W := 210.0
 	const LOG_BOTTOM := 24.0
 	const LOG_HEIGHT := 148.0
-	const FORMATION_Y := 460.0
 	battle_ui_layer.layer = 20
-	enemy_container.position = Vector2(447.0, FORMATION_Y)
-	character_container.position = Vector2(1426.0, FORMATION_Y)
 	combat_dialog.z_index = 10
 	battle_menu.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	battle_menu.grow_vertical = Control.GROW_DIRECTION_BEGIN
@@ -82,6 +79,29 @@ func _configure_battle_ui_layout() -> void:
 	combat_dialog.offset_top = -LOG_BOTTOM - LOG_HEIGHT
 	combat_dialog.offset_right = -PANEL_W - MARGIN * 2.0
 	combat_dialog.offset_bottom = -LOG_BOTTOM
+
+func _reposition_battle_formation(party_size: int, enemy_size: int, boss_fight: bool) -> void:
+	const LOG_BOTTOM := 24.0
+	const LOG_HEIGHT := 148.0
+	const LOG_GAP := 64.0
+	const FORMATION_LIFT := 280.0
+	const PARTY_ROW := 200.0
+	const ENEMY_ROW := 250.0
+	const BASE_OFFSET := 30.0
+	var sprite_foot := 260.0 if boss_fight else 210.0
+	var view_h := get_viewport().get_visible_rect().size.y
+	var log_top := view_h - LOG_BOTTOM - LOG_HEIGHT - LOG_GAP
+	var party_depth := sprite_foot
+	if party_size > 1:
+		party_depth = BASE_OFFSET + float(party_size - 1) * PARTY_ROW + sprite_foot
+	var enemy_depth := sprite_foot
+	if enemy_size > 1:
+		enemy_depth = BASE_OFFSET + float(enemy_size - 1) * ENEMY_ROW + sprite_foot
+	var stack_depth := maxf(party_depth, enemy_depth)
+	var formation_y := log_top - stack_depth - FORMATION_LIFT
+	formation_y = clampf(formation_y, 72.0, log_top - sprite_foot)
+	enemy_container.position = Vector2(447.0, formation_y)
+	character_container.position = Vector2(1426.0, formation_y)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -108,6 +128,7 @@ func start_battle(characters, enemies):
 			battle_xp_reward += foe.xp_reward
 	fill_characters(characters)
 	fill_enemies(enemies)
+	_reposition_battle_formation(characters.size(), enemies.size(), is_boss_battle)
 	battle_camera.make_current()
 	initialize_combatants(characters,enemies)
 	sort_combatants_by_initiative()
