@@ -11,17 +11,17 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	var sprite := Sprite2D.new()
 	sprite.texture = load("res://assets/items/misc/gold_pile.png")
-	sprite.scale = Vector2(2.5, 2.5)
+	GameConstants.fit_sprite_to_map_tile(sprite)
 	add_child(sprite)
 	var shape := CollisionShape2D.new()
 	var circle := CircleShape2D.new()
-	circle.radius = 28.0
+	circle.radius = GameConstants.MAP_TILE_SIZE * 0.42
 	shape.shape = circle
 	add_child(shape)
 
 func setup(tilemap: Node2D, cell: Vector2i, gold: int) -> void:
 	gold_amount = gold
-	position = tilemap.map_to_local(cell)
+	position = GameConstants.tile_map_cell_center(tilemap, cell)
 
 func _on_body_entered(body: Node2D) -> void:
 	if _picked or !(body is Character):

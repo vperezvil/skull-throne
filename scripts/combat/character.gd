@@ -61,6 +61,7 @@ var _encounter_grace_until_msec: int = 0
 
 const PARTY_FOLLOW_SPEED := 8.0
 const ENCOUNTER_GRACE_SEC := 1.75
+const OVERWORLD_BAR_ROW_STEP := 10.0
 
 var _spawn_collision_layer: int
 var _spawn_collision_mask: int
@@ -132,8 +133,8 @@ func _setup_resource_bars() -> void:
 	mp_bar.theme = theme
 	mp_bar.offset_left = progress_bar.offset_left
 	mp_bar.offset_right = progress_bar.offset_right
-	mp_bar.offset_top = progress_bar.offset_top + 14.0
-	mp_bar.offset_bottom = progress_bar.offset_bottom + 14.0
+	mp_bar.offset_top = progress_bar.offset_top + OVERWORLD_BAR_ROW_STEP
+	mp_bar.offset_bottom = progress_bar.offset_bottom + OVERWORLD_BAR_ROW_STEP
 	if mp_bar:
 		mp_bar.modulate = Color.WHITE
 	add_child(mp_bar)
@@ -144,8 +145,8 @@ func _setup_resource_bars() -> void:
 	xp_bar.theme = theme
 	xp_bar.offset_left = progress_bar.offset_left
 	xp_bar.offset_right = progress_bar.offset_right
-	xp_bar.offset_top = progress_bar.offset_top + 28.0
-	xp_bar.offset_bottom = progress_bar.offset_bottom + 28.0
+	xp_bar.offset_top = progress_bar.offset_top + OVERWORLD_BAR_ROW_STEP * 2.0
+	xp_bar.offset_bottom = progress_bar.offset_bottom + OVERWORLD_BAR_ROW_STEP * 2.0
 	add_child(xp_bar)
 	_update_resource_bars()
 	
@@ -414,14 +415,14 @@ func reset_presentation_bars() -> void:
 		mp_bar.position = Vector2.ZERO
 		mp_bar.offset_left = progress_bar.offset_left
 		mp_bar.offset_right = progress_bar.offset_right
-		mp_bar.offset_top = progress_bar.offset_top + 14.0
-		mp_bar.offset_bottom = progress_bar.offset_bottom + 14.0
+		mp_bar.offset_top = progress_bar.offset_top + OVERWORLD_BAR_ROW_STEP
+		mp_bar.offset_bottom = progress_bar.offset_bottom + OVERWORLD_BAR_ROW_STEP
 	if xp_bar:
 		xp_bar.scale = Vector2.ONE
 		xp_bar.offset_left = progress_bar.offset_left
 		xp_bar.offset_right = progress_bar.offset_right
-		xp_bar.offset_top = progress_bar.offset_top + 28.0
-		xp_bar.offset_bottom = progress_bar.offset_bottom + 28.0
+		xp_bar.offset_top = progress_bar.offset_top + OVERWORLD_BAR_ROW_STEP * 2.0
+		xp_bar.offset_bottom = progress_bar.offset_bottom + OVERWORLD_BAR_ROW_STEP * 2.0
 
 func apply_healing(amount: int) -> void:
 	var received: int = int(amount * CharacterTraits.get_healing_multiplier(character_id))

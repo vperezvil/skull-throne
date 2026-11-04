@@ -11,7 +11,8 @@ func handle_collision():
 		await get_tree().create_timer(1.0).timeout
 
 func spawn(spawn_position, tilemap, characters):
-	position = tilemap.map_to_local(spawn_position.get_center())
+	position = GameConstants.tile_map_cell_center(tilemap, Vector2i(spawn_position.get_center()))
+	GameConstants.fit_animated_sprite_to_map_tile(animated_sprite)
 	visible = true
 	players = characters
 	animated_sprite.play("default")

@@ -4,8 +4,9 @@ class_name BattleHudLayout
 const BAR_HALF_W := 80.0
 const BAR_H := 18.0
 const BAR_XP_H := 4.0
-const BAR_STACK_GAP := 1.0
+const BAR_STACK_GAP := 0.0
 const BAR_XP_GAP := 0.0
+const BAR_ROW_TIGHTEN := 3.0
 const GAP_ABOVE_CROWN := 4.0
 const CROWN_FRAC := 0.36
 const BAR_FONT_SIZE := 13
@@ -55,12 +56,14 @@ static func sprite_center_x(_host: Node2D, sprite: Node2D) -> float:
 	return sprite.position.x
 
 static func _battle_stack_height(show_mp: bool, show_xp: bool) -> float:
-	var stack_h := BAR_H
+	var row_advance := BAR_H - BAR_ROW_TIGHTEN + BAR_STACK_GAP
+	if show_mp and show_xp:
+		return row_advance * 2.0 + BAR_XP_H + BAR_XP_GAP
 	if show_mp:
-		stack_h += BAR_STACK_GAP + BAR_H
+		return row_advance + BAR_H
 	if show_xp:
-		stack_h += BAR_XP_GAP + BAR_XP_H
-	return stack_h
+		return row_advance + BAR_XP_H + BAR_XP_GAP
+	return BAR_H
 
 static func _crown_top_y(sprite: Node2D, stack_height: float) -> float:
 	var h := frame_height(sprite)
@@ -186,15 +189,15 @@ static func mount_party_bars(
 	var stack_h := _battle_stack_height(show_mp_bar, show_xp and xp_bar != null)
 	var hp_top := _crown_top_y(sprite, stack_h)
 	_place_bar(host, hp_bar, cx, hp_top)
-	var next_y := hp_top + BAR_H
+	var row_advance := BAR_H - BAR_ROW_TIGHTEN + BAR_STACK_GAP
+	var next_y := hp_top + row_advance
 	if show_mp_bar:
 		mp_bar.theme = _mp_theme_ref()
 		mp_bar.show_percentage = false
 		mp_bar.modulate = Color.WHITE
-		next_y += BAR_STACK_GAP
 		_place_bar(host, mp_bar, cx, next_y)
 		mp_bar.visible = true
-		next_y += BAR_H
+		next_y += row_advance
 	elif mp_bar != null:
 		mp_bar.visible = false
 	if show_xp and xp_bar != null:
